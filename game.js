@@ -91,6 +91,7 @@ Game.object = function(parent, pt) {
     this.animFrame = -1;
     this.moving = false;
     this.offset = new Position(0,0,0);
+    this.dy = 0;
 }
 
 Game.object.prototype = {
@@ -157,11 +158,35 @@ Game.object.prototype = {
                 test.x--;
             else if (this.facing == Dir.Right)
                 test.x++;
+            var onTile = this.parent.stage.getTile(this.point, this.layer);
             var testTile = this.parent.stage.getTileType(test,this.layer);
             var upTile = this.parent.stage.getTileType(test,this.layer+1);
-            if (testTile == Game.TileType.SOLID && upTile == Game.TileType.EMPTY)
+            var downTile = this.parent.stage.getTileType(test, this.layer-1);
+            if (testTile == Game.TileType.SOLID && upTile == Game.TileType.EMPTY) {
                 this.moving = true;
-            
+            } else if ((upTile == Game.TileType.SLOPE_UP && this.facing == Dir.Up)
+                    || (upTile == Game.TileType.SLOPE_DOWN && this.facing == Dir.Down)
+                    || (upTile == Game.TileType.SLOPE_LEFT && this.facing == Dir.Left)
+                    || (upTile == Game.TileType.SLOPE_RIGHT && this.facing == Dir.Right)) {
+                this.dy = +1;
+                this.moving = true;
+                this.layer = this.layer + 1;
+            } else if ((onTile == Game.TileType.SLOPE_UP && this.facing == Dir.Down)
+                    || (onTile == Game.TileType.SLOPE_DOWN && this.facing == Dir.Up)
+                    || (onTile == Game.TileType.SLOPE_LEFT && this.facing == Dir.Right)
+                    || (onTile == Game.TileType.SLOPE_RIGHT && this.facing == Dir.Left)
+                    && this.downTile == Game.TileType.SOLID) {
+                this.moving = true;
+                this.layer = this.layer - 1;
+                this.dy = -1;
+            } else if ((testTile == Game.TileType.SLOPE_UP && this.facing == Dir.Down)
+                    || (testTile == Game.TileType.SLOPE_DOWN && this.facing == Dir.Up)
+                    || (testTile == Game.TileType.SLOPE_LEFT && this.facing == Dir.Right)
+                    || (testTile == Game.TileType.SLOPE_RIGHT && this.facing == Dir.Left)
+                    && this.downTile == Game.TileType.SOLID) {
+                this.moving = true;
+            }
+            this.offset.layer = -this.dy*8;
         }
     },
 
@@ -179,10 +204,11 @@ Game.object.prototype = {
             } else if (this.facing == Dir.Right) {
                 this.point.x++;
             }
-            this.offset = new Point(0,0);
+            this.offset = new Position(0,0,0);
             this.animFrame = -1;
             this.ready = true;
             this.moving = false;
+            this.dy = 0;
             return;
         }
         if (this.facing == Dir.Up) {
@@ -194,6 +220,12 @@ Game.object.prototype = {
         } else if (this.facing == Dir.Right) {
             this.offset.x = +this.animFrame;
         }
+
+        if (this.dy == 1) {
+            this.offset.layer = +this.animFrame-8;
+        } else if (this.dy == -1) {
+            this.offset.layer = -this.animFrame+8;
+        }
     },
 
     draw: function(ctr) {
@@ -201,7 +233,7 @@ Game.object.prototype = {
         var base = this;
         var iso_pt = new Point(ctr.x, ctr.y).getIsometric();
         ctr = new Point(Game.center).subtract(iso_pt);
-        var iso_c = new Point((this.point.x-this.layer)*8+this.offset.x, (this.point.y-this.layer)*8+this.offset.y).getIsometric();
+        var iso_c = new Point((this.point.x-this.layer)*8+this.offset.x-this.offset.layer, (this.point.y-this.layer)*8+this.offset.y-this.offset.layer).getIsometric();
         iso_c.add(ctr);
         drawable.coord = iso_c.subtract(new Point(8, 8));
         drawable.position = new Position(this.point.x, this.point.y, this.layer);
@@ -242,12 +274,17 @@ Game.stage.prototype = {
     getTile: function(pt,layer) {
         if (pt.x < 0 || pt.x > this.width || pt.y < 0 || pt.y > this.height)
             return 0;
-        if (layer > this.layers || layer < 0)
+        if (layer >= this.layers || layer < 0)
             return 0;
         return this.tileMap[layer][pt.x + pt.y*this.width];
     },
     getTileType: function(pt, layer) {
         return this.key[this.getTile(pt, layer)];
+    },
+    onSlope: function(pt, layer) {
+        var tile = this.getTileType(pt, layer);
+        return ((tile == Game.TileType.SLOPE_UP) || (tile == Game.TileType.SLOPE_DOWN)
+            || (tile == Game.TileType.SLOPE_LEFT) || (tile == Game.TileType.SLOPE_RIGHT))
     },
     renderLayer: function(ctx, layer) {
         this.getDrawables(layer).forEach(function (e) {e.draw(ctx);});
