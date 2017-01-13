@@ -158,58 +158,6 @@ window.oncontextmenu = function(event) {
     return false;
 };
 
-// Graphics handlers
-
-var Logo = new Image();
-Logo.src = "./images/logo.png";
-
-var gfx = {
-    initialize: function() {
-        gamecanvas.style.backgroundColor = this.backgrounds[0];
-        this.tiles = new Image();
-        this.tiles.src = "./images/train_map.png";
-        this.objects = new Image();
-        this.objects.src = "./images/objects.png";
-        this.blocks = new Image();
-        this.blocks.src = "./images/train_map.png";
-        this.title = new Image();
-        this.title.src = "./images/title.png";
-        this.font = new Image();
-        this.font.src = "./images/cgafont.png";
-    },
-    
-    backgrounds: [
-        "#b8d880",
-        "#FFFFFF",
-        "#FFFFFF",
-        "#FFFFFF",
-        "#000000",
-        "#FFFFFF",
-        "#FFFFA5",
-        "#FFE6C5",
-        "#FFFFFF",
-        "#FFFFFF",
-        "#FFFFFF",
-        "#FFFFFF",
-        "#FFFFFF"
-    ],
-    
-    adapt: function(index) {
-        if (index == 0) {
-            this.initialize();
-            return;
-        }
-        gamecanvas.style.backgroundColor = this.backgrounds[index];
-        index = index - 1;
-        var desig = "./images/alt/" + index.toString() + "-";
-        this.font.src = desig + "cgafont.png";
-        this.tiles.src = desig + "train_map.png";
-        this.objects.src = desig + "objects.png";
-        this.blocks.src = desig + "block_map.png";
-        this.title.src = desig + "title.png";
-    }
-}
-gfx.initialize();
 
 // Helper functions
 

@@ -1,6 +1,6 @@
 var music = {
-    sounds: ['appear', 'aspect', 'crystal', 'die', 'key', 'pause', 'pew', 'push', 'whistle', 'win'],
-    music: ['bold', 'cave', 'chant', 'distance', 'firmly', 'frenzy', 'march', 'mystery', 'phasic', 'right', 'spiral', 'tapenade', 'title', 'under', 'where'],
+    sounds: [],
+    music: [],
     data: {},
     initialize: function() {
         for (var i = 0; i < this.sounds.length; i++) {
@@ -20,9 +20,6 @@ var music = {
                 loop: true
             })
             this.data[this.music[i]] = music;
-        }
-        if (this.data.where) {
-            this.data.where.loop = false;
         }
     },
     loaded: 0,
@@ -64,4 +61,15 @@ var music = {
         }
     }
 };
+
+// Graphics handlers
+var gfx = {
+    initialize: function() {
+        this.font = new Image();
+        this.font.src = "./images/font.png";
+        this.player = new Image();
+        this.player.src = "./images/player.png";
+    }
+}
+gfx.initialize();
 
