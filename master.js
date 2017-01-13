@@ -6,7 +6,7 @@ var runner = new LoadingScreen();
 var __debug = false;
 
 function Loop() {
-    setTimeout(Loop, 500 / 60);
+    setTimeout(Loop, 1000 / 60); // 60 fps
     var ctx = gamecanvas.getContext("2d");
     ctx.clearRect(0, 0, gamecanvas.width, gamecanvas.height);
     runner.update();
