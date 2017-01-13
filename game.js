@@ -73,7 +73,7 @@ Game.prototype = {
         drawables.sort(function(a,b) {
             return a.position.y - b.position.y;
         });
-        drawables.forEach(function (e) {e.draw(ctx);})
+        drawables.forEach(function (e) {e.draw(ctx);});
     }
 }
 
@@ -177,7 +177,6 @@ Game.object.prototype = {
                     || (onTile == Game.TileType.SLOPE_RIGHT && this.facing == Dir.Left)
                     && this.downTile == Game.TileType.SOLID) {
                 this.moving = true;
-                this.layer = this.layer - 1;
                 this.dy = -1;
             } else if ((testTile == Game.TileType.SLOPE_UP && this.facing == Dir.Down)
                     || (testTile == Game.TileType.SLOPE_DOWN && this.facing == Dir.Up)
@@ -186,7 +185,8 @@ Game.object.prototype = {
                     && this.downTile == Game.TileType.SOLID) {
                 this.moving = true;
             }
-            this.offset.layer = -this.dy*8;
+            if (this.dy > 0)
+                this.offset.layer = -this.dy*8;
         }
     },
 
@@ -195,6 +195,17 @@ Game.object.prototype = {
             return;
         this.animFrame++;
         if (this.animFrame == 8) {
+
+            this.offset = new Position(0,0,0);
+            if (this.dy == -1)
+                this.layer = this.layer - 1;
+            this.animFrame = -1;
+            this.ready = true;
+            this.moving = false;
+            this.dy = 0;
+            return;
+        }
+        if (this.animFrame == 4) {
             if (this.facing == Dir.Up) {
                 this.point.y--;
             } else if (this.facing == Dir.Down) {
@@ -204,27 +215,24 @@ Game.object.prototype = {
             } else if (this.facing == Dir.Right) {
                 this.point.x++;
             }
-            this.offset = new Position(0,0,0);
-            this.animFrame = -1;
-            this.ready = true;
-            this.moving = false;
-            this.dy = 0;
-            return;
         }
+        var del = 0;
+        if (this.animFrame >= 4)
+            del = 8;
         if (this.facing == Dir.Up) {
-            this.offset.y = -this.animFrame;
+            this.offset.y = -(this.animFrame-del);
         } else if (this.facing == Dir.Down) {
-            this.offset.y = +this.animFrame;
+            this.offset.y = +(this.animFrame-del);
         } else if (this.facing == Dir.Left) {
-            this.offset.x = -this.animFrame;
+            this.offset.x = -(this.animFrame-del);
         } else if (this.facing == Dir.Right) {
-            this.offset.x = +this.animFrame;
+            this.offset.x = +(this.animFrame-del);
         }
 
         if (this.dy == 1) {
             this.offset.layer = +this.animFrame-8;
         } else if (this.dy == -1) {
-            this.offset.layer = -this.animFrame+8;
+            this.offset.layer = -this.animFrame;
         }
     },
 
@@ -239,6 +247,8 @@ Game.object.prototype = {
         drawable.position = new Position(this.point.x, this.point.y, this.layer);
         drawable.draw = function(ctx) {
             ctx.drawImage(gfx.player, (base.facing*3 + base.frame)*16, 0, 16, 16, iso_c.x, iso_c.y, 16, 16);
+            ctx.fillStyle = "rgba(255,0,0,1)";
+            ctx.fillRect(iso_c.x + 8, iso_c.y + 8, 1, 1);
         }
         return drawable;
     }

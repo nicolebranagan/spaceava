@@ -103,10 +103,10 @@ var Controls = {
         if (event.keyCode == 9) {
             // Take screenshot
             var offCanvas = document.createElement('canvas');
-            offCanvas.width = 160; offCanvas.height = 144;
+            offCanvas.width = gamecanvas.width; offCanvas.height = gamecanvas.height;
             var ctx = offCanvas.getContext("2d");
             ctx.fillStyle = gamecanvas.style.backgroundColor;
-            ctx.fillRect(0, 0, 160, 144);
+            ctx.fillRect(0, 0, gamecanvas.width, gamecanvas.height);
             ctx.drawImage(gamecanvas, 0, 0);
             var image = offCanvas.toDataURL("image/png");
             window.open(image, '_blank');
