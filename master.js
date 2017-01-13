@@ -159,7 +159,16 @@ window.oncontextmenu = function(event) {
 };
 
 
-// Helper functions
+// Helper functions and classes
+var Point = function(x, y) {
+    this.x = x;
+    this.y = y;
+}
+Point.prototype = {
+    getIsometric: function() {
+        return new Point(this.x - this.y, (this.x + this.y) / 2)
+    },
+}
 
 function inRectangle(x, y, tlx, tly, sx, sy) {
     return ((x - tlx) >= 0) && ((x - tlx) <= sx) && ((y - tly) >= 0) && ((y - tly) <= sy)

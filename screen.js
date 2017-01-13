@@ -241,7 +241,7 @@ ControlsScreen.prototype = {
     update: function(ctx) {
         if (Controls.Enter) {
             Controls.Enter = false;
-            Game.activate(true);
+            runner = new Game();
         }
     }
 };
