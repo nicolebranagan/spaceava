@@ -3,7 +3,7 @@
 var gamecanvas = document.getElementById('gamecanvas');
 var gamecontrols = document.getElementById('gamecontrols');
 var runner = new LoadingScreen();
-var __debug = false;
+var __debug = true;
 
 function Loop() {
     setTimeout(Loop, 1000 / 60); // 60 fps
@@ -161,13 +161,35 @@ window.oncontextmenu = function(event) {
 
 // Helper functions and classes
 var Point = function(x, y) {
-    this.x = x;
-    this.y = y;
+    if (x.x) {
+        this.x = x.x;
+        this.y = x.y;
+    } else { 
+        this.x = x;
+        this.y = y;
+    }
 }
 Point.prototype = {
     getIsometric: function() {
         return new Point(this.x - this.y, (this.x + this.y) / 2)
     },
+    add: function(pt) {
+        this.x = this.x + pt.x;
+        this.y = this.y + pt.y;
+        return this;
+    },
+    subtract: function(pt) {
+        this.x = this.x - pt.x;
+        this.y = this.y - pt.y;
+        return this;
+    }
+}
+
+var Dir = {
+    Down: 0,
+    Up: 1,
+    Left: 3,
+    Right: 2
 }
 
 function inRectangle(x, y, tlx, tly, sx, sy) {
