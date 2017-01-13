@@ -161,7 +161,7 @@ window.oncontextmenu = function(event) {
 
 // Helper functions and classes
 var Point = function(x, y) {
-    if (x.x) {
+    if (x instanceof Point) {
         this.x = x.x;
         this.y = x.y;
     } else { 
@@ -182,7 +182,18 @@ Point.prototype = {
         this.x = this.x - pt.x;
         this.y = this.y - pt.y;
         return this;
+    },
+    multiply: function(mul) {
+        this.x = this.x * mul;
+        this.y = this.y * mul;
+        return this;
     }
+}
+
+var Position = function(x, y, l) {
+    this.x = x;
+    this.y = y;
+    this.layer = l;
 }
 
 var Dir = {
