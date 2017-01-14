@@ -282,7 +282,7 @@ Game.stage = function(width, layers) {
 
 Game.stage.prototype = {
     getTile: function(pt,layer) {
-        if (pt.x < 0 || pt.x > this.width || pt.y < 0 || pt.y > this.height)
+        if (pt.x < 0 || pt.x >= this.width || pt.y < 0 || pt.y >= this.height)
             return 0;
         if (layer >= this.layers || layer < 0)
             return 0;
