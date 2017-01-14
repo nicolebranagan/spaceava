@@ -247,8 +247,6 @@ Game.object.prototype = {
         drawable.position = new Position(this.point.x, this.point.y, this.layer);
         drawable.draw = function(ctx) {
             ctx.drawImage(gfx.player, (base.facing*3 + base.frame)*16, 0, 16, 16, iso_c.x, iso_c.y, 16, 16);
-            ctx.fillStyle = "rgba(255,0,0,1)";
-            ctx.fillRect(iso_c.x + 8, iso_c.y + 8, 1, 1);
         }
         return drawable;
     }
@@ -263,7 +261,7 @@ Game.stage = function(width, layers) {
     for (var i = 0; i < this.layers; i++) {
         this.tileMap.push([]);
         for (var j = 0; j < (this.width*this.height); j++)
-            this.tileMap[i].push(i == 0 ? 1 : 0);
+            this.tileMap[i].push(i == 0 ? 2 : 0);
     }
     this.tileMap[0][40] = 2;
     this.tileMap[0][15] = 0;
@@ -271,7 +269,7 @@ Game.stage = function(width, layers) {
     this.tileMap[0][25] = 0;
     this.tileMap[0][26] = 0;
     this.tileMap[1][11] = 1;
-    this.tileMap[1][21] = 2;
+    this.tileMap[1][21] = 1;
     this.tileMap[1][31] = 1;
     this.tileMap[1][41] = 3;
     this.buffer = document.createElement('canvas');
