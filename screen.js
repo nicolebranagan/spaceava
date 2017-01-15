@@ -27,11 +27,13 @@ class TitleScreen {
     }
     draw(ctx) {
         //ctx.drawImage(gfx.title, 0, 0);
+        drawCenteredText(ctx, 8*4, "Space Ava")
+        drawCenteredText(ctx, 8*5, "Beta Version")
         drawText(ctx, 8*8, 10*8, "New Game");
         drawText(ctx, 8*8, 12*8, "Continue");
         drawText(ctx, 8*8, 14*8, "Options");
         drawText(ctx, 6*8, (10 + (this.selection*2))*8, [26]);
-        drawText(ctx, 1*8, 16*8, "(c) 2016-7 Nicole");
+        drawText(ctx, 1*8, 16*8, "(c) 2017 Nicole");
     }
 };
 
