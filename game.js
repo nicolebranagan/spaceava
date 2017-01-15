@@ -4,7 +4,7 @@ class Game {
     this.stage = new Game.stage(10, 3);
     this.player = new Game.object.player(this, new Point(0,0));
     this.turns = 0;
-    this.enemies = [new Game.object.shooter(this, new Point(4,5), Dir.Down)]; // Generate from Game.stage most likely
+    this.enemies = [new Game.object.shooter(this, new Point(4,5), Dir.Down, Game.object.shooter.Type.STATIONARY)]; // Generate from Game.stage most likely
     this.mode = Game.Mode.PLAYER;
     }
     update() {
@@ -110,7 +110,9 @@ Game.stage = class {
         this.height = width;
         this.layers = layers;
         this.tileMap = [];
+        this.registeredPoints = [];
         this.key = [Game.TileType.EMPTY, Game.TileType.SOLID, Game.TileType.SOLID, Game.TileType.SLOPE_UP];
+
         for (var i = 0; i < this.layers; i++) {
             this.tileMap.push([]);
             for (var j = 0; j < (this.width*this.height); j++)
@@ -130,10 +132,20 @@ Game.stage = class {
         this.tileMap[1][41] = 3;
         this.tileMap[2][31] = 3;
         this.tileMap[2][21] = 1;
+
         this.buffer = document.createElement('canvas');
         this.buffer.height = (this.width+this.height)*4+8;
         this.buffer.width = (this.width+this.height)*8+8;
         this.renderLayer(this.buffer.getContext('2d'), 0);
+    }
+    register(pt, layer, type) {
+        this.registeredPoints.push(
+            {
+                pt: pt,
+                layer: layer,
+                type: type
+            }
+        );
     }
     getTile(pt,layer) {
         if (pt.x < 0 || pt.x >= this.width || pt.y < 0 || pt.y >= this.height)
@@ -143,6 +155,11 @@ Game.stage = class {
         return this.tileMap[layer][pt.x + pt.y*this.width];
     }
     getTileType(pt, layer) {
+        for (var i = 0; i < this.registeredPoints.length; i++) {
+            var e = this.registeredPoints[i];
+            if (e.pt.equals(pt) && e.layer == layer)
+                return e.type;
+        }
         return this.key[this.getTile(pt, layer)];
     }
     onSlope(pt, layer) {

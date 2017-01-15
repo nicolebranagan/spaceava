@@ -181,6 +181,7 @@ Game.object.player = class extends Game.object {
             }
             if (this.dy > 0)
                 this.offset.layer = -this.dy*8;
+            this.ready = this.moving;
         }
     }
     hurt(hurter) {
@@ -190,14 +191,15 @@ Game.object.player = class extends Game.object {
 }
 
 Game.object.shooter = class extends Game.object {
-    constructor(parent, pt, facing) {
+    constructor(parent, pt, facing, type) {
         super(parent, pt);
         this.facing = facing;
         this.frameMax = 1;
         this.tile = 16;
         this.movetime = 0;
-        this.type = Game.object.shooter.Type.SPINNER;
+        this.type = type;
         this.moving = false;
+        this.parent.stage.register(this.point, this.layer+1, Game.TileType.SOLID);
     }
     update(mode) {
         super.update(mode);
@@ -272,14 +274,14 @@ Game.object.bullet = class extends Game.object {
         else if (this.facing == Dir.Right)
             test.x++;
         var testTile = this.parent.stage.getTileType(test,this.layer+1);
-        if (testTile !== Game.TileType.SOLID)
+        if (testTile === Game.TileType.EMPTY)
             this.moving = true;
         else
             this.doomed = true;
         if (!this.doomed && (test.x >= this.parent.stage.width || test.y >= this.parent.stage.height || test.x < 0 || test.y < 0))
             this.doomed = true;
         this.ready = true;
-        if (test.equals(this.parent.player.point) && this.layer == this.parent.player.layer)
+        if ((test.equals(this.parent.player.point) || (this.point.equals(this.parent.player.point))) && this.layer == this.parent.player.layer)
             this.parent.player.hurt(this);
     }
 }
