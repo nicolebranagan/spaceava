@@ -189,6 +189,9 @@ class Point {
         this.y = this.y * mul;
         return this;
     }
+    equals(pt) {
+        return (this.x == pt.x && this.y == pt.y)
+    }
 }
 
 class Position{ 

@@ -183,6 +183,10 @@ Game.object.player = class extends Game.object {
                 this.offset.layer = -this.dy*8;
         }
     }
+    hurt(hurter) {
+        // TODO: Something better than this;
+        this.point = new Point(0,0);
+    }
 }
 
 Game.object.shooter = class extends Game.object {
@@ -192,7 +196,7 @@ Game.object.shooter = class extends Game.object {
         this.frameMax = 1;
         this.tile = 16;
         this.movetime = 0;
-        this.type = Game.object.shooter.Type.STATIONARY;
+        this.type = Game.object.shooter.Type.SPINNER;
         this.moving = false;
     }
     update(mode) {
@@ -275,5 +279,7 @@ Game.object.bullet = class extends Game.object {
         if (!this.doomed && (test.x >= this.parent.stage.width || test.y >= this.parent.stage.height || test.x < 0 || test.y < 0))
             this.doomed = true;
         this.ready = true;
+        if (test.equals(this.parent.player.point) && this.layer == this.parent.player.layer)
+            this.parent.player.hurt(this);
     }
 }
