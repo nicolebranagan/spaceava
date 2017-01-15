@@ -4,9 +4,10 @@ Game.object = class {
         this.parent = parent;
         this.point = pt;
         this.facing = Dir.Down;
-        this.frame = 1;
+        this.frame = 0;
         this.frameMax = 3;
         this.timerMax = 15;
+        this.tile = 0;
         this.timer = this.timerMax;
         this.up = true;
         this.layer = 0;
@@ -15,21 +16,24 @@ Game.object = class {
         this.moving = false;
         this.offset = new Position(0,0,0);
         this.dy = 0;
+        this.active = true;
     }
     update(mode) {
         this.timer--;
         if (this.timer == 0) {
             this.timer = this.timerMax;
-            if (this.up)
-                this.frame++;
-            else
-                this.frame--;
-            if (this.frame == this.frameMax) {
-                this.frame = this.frame - 2;
-                this.up = false;
-            } else if (this.frame == -1) {
-                this.frame = this.frame + 2;
-                this.up = true;
+            if (this.frameMax !== 1) {
+                if (this.up)
+                    this.frame++;
+                else
+                    this.frame--;
+                if (this.frame == this.frameMax) {
+                    this.frame = this.frame - 2;
+                    this.up = false;
+                } else if (this.frame == -1) {
+                    this.frame = this.frame + 2;
+                    this.up = true;
+                }
             }
         }
         
@@ -93,7 +97,7 @@ Game.object = class {
         drawable.coord = iso_c.subtract(new Point(8, 8));
         drawable.position = new Position(this.point.x, this.point.y, this.layer);
         drawable.draw = function(ctx) {
-            ctx.drawImage(gfx.player, (base.facing*3 + base.frame)*16, 0, 16, 16, iso_c.x, iso_c.y, 16, 16);
+            ctx.drawImage(gfx.player, (base.facing*base.frameMax + base.frame)*16 + base.tile*16, 0, 16, 16, iso_c.x, iso_c.y, 16, 16);
         }
         return drawable;
     }
@@ -178,5 +182,98 @@ Game.object.player = class extends Game.object {
             if (this.dy > 0)
                 this.offset.layer = -this.dy*8;
         }
+    }
+}
+
+Game.object.shooter = class extends Game.object {
+    constructor(parent, pt, facing) {
+        super(parent, pt);
+        this.facing = facing;
+        this.frameMax = 1;
+        this.tile = 16;
+        this.movetime = 0;
+        this.type = Game.object.shooter.Type.STATIONARY;
+        this.moving = false;
+    }
+    update(mode) {
+        super.update(mode);
+        if (this.ready)
+            return;
+        if (mode == Game.Mode.PLAYER || mode == Game.Mode.PLAYER_ANIM) {
+            this.ready = true;
+        } else if (mode == Game.Mode.ENEMY) {
+            this.cycle();
+        } else if (mode == Game.Mode.ENEMY_ANIM) {
+            this.ready = true;
+        }
+    }
+    cycle() {
+        this.movetime++;
+        if (this.movetime == 3)
+            this.movetime = 0;
+        if (this.movetime == 1)
+            this.parent.enemies.push(new Game.object.bullet(this.parent, new Point(this.point), this.facing));
+        if (this.type == Game.object.shooter.Type.SPINNER) {
+            if (this.movetime == 0) {
+                if (this.facing == Dir.Up)
+                    this.facing = Dir.Right;
+                else if (this.facing == Dir.Right)
+                    this.facing = Dir.Down;
+                else if (this.facing == Dir.Down)
+                    this.facing = Dir.Left;
+                else if (this.facing == Dir.Left)
+                    this.facing = Dir.Up;
+            }
+        }
+        this.ready = true;
+    }
+}
+
+Game.object.shooter.Type = {
+    STATIONARY: 0,
+    SPINNER: 1
+}
+
+Game.object.bullet = class extends Game.object {
+    constructor(parent, pt, facing) {
+        super(parent, pt);
+        this.facing = facing;
+        this.frameMax = 1;
+        this.tile = 32;
+        this.byte = 1;
+        this.doomed = false;
+    }
+    update(mode) {
+        super.update(mode);
+        if (this.ready)
+            return;
+        if (mode == Game.Mode.PLAYER || mode == Game.Mode.PLAYER_ANIM) {
+            this.ready = true;
+        } else if (mode == Game.Mode.ENEMY) {
+            this.cycle();
+        } else if (mode == Game.Mode.ENEMY_ANIM) {
+            this.animate();
+            if (this.animFrame == 4 && this.doomed)
+                this.active = false;
+        }
+    }
+    cycle() {
+        var test = new Point(this.point);
+        if (this.facing == Dir.Up)
+            test.y--;
+        else if (this.facing == Dir.Down)
+            test.y++;
+        else if (this.facing == Dir.Left)
+            test.x--;
+        else if (this.facing == Dir.Right)
+            test.x++;
+        var testTile = this.parent.stage.getTileType(test,this.layer+1);
+        if (testTile !== Game.TileType.SOLID)
+            this.moving = true;
+        else
+            this.doomed = true;
+        if (!this.doomed && (test.x >= this.parent.stage.width || test.y >= this.parent.stage.height || test.x < 0 || test.y < 0))
+            this.doomed = true;
+        this.ready = true;
     }
 }

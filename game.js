@@ -4,10 +4,11 @@ class Game {
     this.stage = new Game.stage(10, 3);
     this.player = new Game.object.player(this, new Point(0,0));
     this.turns = 0;
-    this.enemies = []; // Generate from Game.stage most likely
+    this.enemies = [new Game.object.shooter(this, new Point(4,5), Dir.Down)]; // Generate from Game.stage most likely
     this.mode = Game.Mode.PLAYER;
     }
     update() {
+        var lastMode = this.mode;
         if (this.mode == Game.Mode.PLAYER) {
             if (this.player.ready) {
                 this.player.ready = false;
@@ -27,13 +28,34 @@ class Game {
                 }
             }
             if (ready) {
-                this.enemies.forEach(function(e) {e.ready = false;})
+                this.mode = Game.Mode.ENEMY_ANIM;
+                this.turns++;
+            }
+        } else if (this.mode == Game.Mode.ENEMY_ANIM) {
+            var ready = true;
+            for (var i = 0; i < this.enemies.length; i++) {
+                if (!this.enemies[i].ready) {
+                    ready = false;
+                    break;
+                }
+            }
+            if (ready) {
                 this.mode = Game.Mode.PLAYER;
                 this.turns++;
             }
         }
+        if (lastMode !== this.mode) {
+            this.player.ready = false;
+            this.enemies.forEach((e) => e.ready = false);
+        }
         this.player.update(this.mode);
-        this.enemies.forEach((e) => {e.update(this.mode)});
+        this.enemies.forEach((e) => {
+                e.update(this.mode);
+                if (e.active == false) {
+                    var index = this.enemies.indexOf(e);
+                    this.enemies.splice(index, 1);
+                };
+            });
     }
     draw(ctx) {
         if (__debug) {
@@ -46,6 +68,11 @@ class Game {
         for (var i = 0; i < this.stage.layers; i++) {
             if (i !== 0)
                 drawables = drawables.concat(this.stage.getDrawables(i, drawPt));
+            for (var j = 0; j < this.enemies.length; j++) {
+                var e = this.enemies[j];
+                if (e.layer == i)
+                    drawables.push(e.draw(drawPt));
+            }
             if (i == this.player.layer)
                 drawables.push(this.player.draw(drawPt));
         }
@@ -65,7 +92,7 @@ Game.Mode = {
     PLAYER: 0,
     PLAYER_ANIM: 1,
     ENEMY: 2,
-    //ENEMY_ANIM: 3
+    ENEMY_ANIM: 3
 }
 Game.TileType = {
     EMPTY: 0,
