@@ -1,10 +1,10 @@
 "use strict";
 
-var TitleScreen = function() { };
-
-TitleScreen.prototype = {
-    selection: 0,
-    update: function() {
+class TitleScreen {
+    constructor() {
+        this.selection = 0;
+    }
+    update() {
         if (Controls.Enter || Controls.Shoot) {
             Controls.Enter = false;
             if (this.selection == 0) {
@@ -24,16 +24,15 @@ TitleScreen.prototype = {
                 this.selection++;
             Controls.Down = false;
         }
-    },
-    
-    draw: function(ctx) {
+    }
+    draw(ctx) {
         //ctx.drawImage(gfx.title, 0, 0);
         drawText(ctx, 8*8, 10*8, "New Game");
         drawText(ctx, 8*8, 12*8, "Continue");
         drawText(ctx, 8*8, 14*8, "Options");
         drawText(ctx, 6*8, (10 + (this.selection*2))*8, [26]);
         drawText(ctx, 1*8, 16*8, "(c) 2016-7 Nicole");
-    },
+    }
 };
 
 /*var LogoScreen = {
@@ -110,7 +109,7 @@ TextScreen.prototype = {
 var OptionsScreen = function() {
     this.music = ["No", "music"];
     music.playMusic("");
-}
+};
 
 OptionsScreen.prototype = {
     selection: 7,

@@ -160,40 +160,43 @@ window.oncontextmenu = function(event) {
 
 
 // Helper functions and classes
-var Point = function(x, y) {
-    if (x instanceof Point) {
-        this.x = x.x;
-        this.y = x.y;
-    } else { 
-        this.x = x;
-        this.y = y;
+
+class Point {
+    constructor(x, y) {
+        if (x instanceof Point) {
+            this.x = x.x;
+            this.y = x.y;
+        } else { 
+            this.x = x;
+            this.y = y;
+        }
     }
-}
-Point.prototype = {
-    getIsometric: function() {
+    getIsometric() {
         return new Point(this.x - this.y, (this.x + this.y) / 2)
-    },
-    add: function(pt) {
+    }
+    add(pt) {
         this.x = this.x + pt.x;
         this.y = this.y + pt.y;
         return this;
-    },
-    subtract: function(pt) {
+    }
+    subtract(pt) {
         this.x = this.x - pt.x;
         this.y = this.y - pt.y;
         return this;
-    },
-    multiply: function(mul) {
+    }
+    multiply(mul) {
         this.x = this.x * mul;
         this.y = this.y * mul;
         return this;
     }
 }
 
-var Position = function(x, y, l) {
-    this.x = x;
-    this.y = y;
-    this.layer = l;
+class Position{ 
+    constructor(x, y, l) {
+        this.x = x;
+        this.y = y;
+        this.layer = l;
+    }
 }
 
 var Dir = {
@@ -203,7 +206,7 @@ var Dir = {
     Right: 2
 }
 
-function inRectangle(x, y, tlx, tly, sx, sy) {
+/*function inRectangle(x, y, tlx, tly, sx, sy) {
     return ((x - tlx) >= 0) && ((x - tlx) <= sx) && ((y - tly) >= 0) && ((y - tly) <= sy)
 }
 
@@ -220,7 +223,7 @@ Array.prototype.compare = function(array2) {
         }
     }
     return false;
-}
+}*/
 
 // Text-drawing functions
 
