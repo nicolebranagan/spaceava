@@ -8,46 +8,33 @@ class Game {
     this.mode = Game.Mode.PLAYER;
     }
     update() {
-        var lastMode = this.mode;
-        if (this.mode == Game.Mode.PLAYER) {
-            if (this.player.ready) {
-                this.player.ready = false;
-                this.mode = Game.Mode.PLAYER_ANIM;
-            }
-        } else if (this.mode == Game.Mode.PLAYER_ANIM) {
-            if (this.player.ready) {
-                this.player.ready = false;
-                this.mode = Game.Mode.ENEMY;
-            }
-        } else if (this.mode == Game.Mode.ENEMY) {
-            var ready = true;
+        // Check if mode should be changed
+        var changeMode = true;
+        if (!this.player.ready) {
+            changeMode = false;
+        } else {
             for (var i = 0; i < this.enemies.length; i++) {
                 if (!this.enemies[i].ready) {
-                    ready = false;
+                    changeMode = false;
                     break;
                 }
-            }
-            if (ready) {
-                this.mode = Game.Mode.ENEMY_ANIM;
-                this.turns++;
-            }
-        } else if (this.mode == Game.Mode.ENEMY_ANIM) {
-            var ready = true;
-            for (var i = 0; i < this.enemies.length; i++) {
-                if (!this.enemies[i].ready) {
-                    ready = false;
-                    break;
-                }
-            }
-            if (ready) {
-                this.mode = Game.Mode.PLAYER;
-                this.turns++;
             }
         }
-        if (lastMode !== this.mode) {
+        if (changeMode) {
+            if (this.mode == Game.Mode.PLAYER)
+                this.mode = Game.Mode.PLAYER_ANIM
+            else if (this.mode == Game.Mode.PLAYER_ANIM)
+                this.mode = Game.Mode.ENEMY
+            else if (this.mode == Game.Mode.ENEMY)
+                this.mode = Game.Mode.ENEMY_ANIM
+            else if (this.mode == Game.Mode.ENEMY_ANIM)
+                this.mode = Game.Mode.PLAYER
+
             this.player.ready = false;
             this.enemies.forEach((e) => e.ready = false);
         }
+
+        // Run the update cycle
         this.player.update(this.mode);
         this.enemies.forEach((e) => {
                 e.update(this.mode);

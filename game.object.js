@@ -36,9 +36,6 @@ Game.object = class {
                 }
             }
         }
-        
-        if (this.ready)
-            return;
     }
     cycle() {
         this.ready = true;
@@ -112,35 +109,32 @@ Game.object.player = class extends Game.object {
 
         if (mode == Game.Mode.PLAYER)
             this.cycle();
-        if (mode == Game.Mode.PLAYER_ANIM) {
+        else if (mode == Game.Mode.PLAYER_ANIM) {
             if (!this.moving)
                 this.ready = true;
             else
                 this.animate();
+        } else if (mode == Game.Mode.ENEMY || mode == Game.Mode.ENEMY_ANIM) {
+            this.ready = true;
         }
     }
     cycle() {
-        // TODO: Create actual controls
         if (Controls.Up) {
             Controls.Up = false;
             this.facing = Dir.Up;
             this.ready = true;
-            //this.moving = true;
         } else if (Controls.Down) {
             Controls.Down = false;
             this.facing = Dir.Down;
             this.ready = true;
-            //this.moving = true;
         } else if (Controls.Left) {
             Controls.Left = false;
             this.facing = Dir.Left;
             this.ready = true;
-            //this.moving = true;
         } else if (Controls.Right) {
             Controls.Right = false;
             this.facing = Dir.Right;
             this.ready = true;
-            //this.moving = true;
         }
         if (this.ready) {
             var test = new Point(this.point);
