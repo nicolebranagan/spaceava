@@ -1,0 +1,44 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+PixelGrid	images/process/pixelgrid.py	/^class PixelGrid:$/;"	kind:class	line:10
+PixelSubset	images/process/pixelgrid.py	/^class PixelSubset(PixelGrid):$/;"	kind:class	line:242
+PixelTile	images/process/pixelgrid.py	/^class PixelTile:$/;"	kind:class	line:211
+__init__	images/process/pixelgrid.py	/^    def __init__(self, fill=0):$/;"	kind:member	line:212
+__init__	images/process/pixelgrid.py	/^    def __init__(self, palette):$/;"	kind:member	line:11
+__init__	images/process/pixelgrid.py	/^    def __init__(self, parent, selection):$/;"	kind:member	line:243
+_getmaxtuple	images/process/pixelgrid.py	/^    def _getmaxtuple(self):$/;"	kind:member	line:157
+bounds	images/process/pixelgrid.py	/^    def bounds(self, x, y):$/;"	kind:member	line:61
+changepage	images/process/pixelgrid.py	/^    def changepage(self, pagenum):$/;"	kind:member	line:200
+clearTile	images/process/pixelgrid.py	/^    def clearTile(self, x, y): $/;"	kind:member	line:58
+dellastpage	images/process/pixelgrid.py	/^    def dellastpage(self):$/;"	kind:member	line:205
+draw	images/process/pixelgrid.py	/^    def draw(self, photo, zoom, palette, x, y):$/;"	kind:member	line:230
+drawTkSubset	images/process/pixelgrid.py	/^    def drawTkSubset(self, photo, zoom, x, y, rx, ry, nx, ny, block=True, p=-1):$/;"	kind:member	line:118
+dump	images/process/pixelgrid.py	/^    def dump(self):$/;"	kind:member	line:162
+dump	images/process/pixelgrid.py	/^    def dump(self):$/;"	kind:member	line:227
+flip	images/process/pixelgrid.py	/^    def flip(self, val1, val2):$/;"	kind:member	line:224
+flipColors	images/process/pixelgrid.py	/^    def flipColors(self, val1, val2, s):$/;"	kind:member	line:76
+gbpalette	images/process/process.py	/^gbpalette = [$/;"	kind:variable	line:10
+get	images/process/pixelgrid.py	/^    def get(self, x, y):$/;"	kind:member	line:217
+get	images/process/pixelgrid.py	/^    def get(self, x, y, tileset=None):$/;"	kind:member	line:26
+getColor	images/process/pixelgrid.py	/^    def getColor(self, x, y, tileset=None):$/;"	kind:member	line:40
+getTkImage	images/process/pixelgrid.py	/^    def getTkImage(self, zoom, block=True):$/;"	kind:member	line:104
+getTkStrip	images/process/pixelgrid.py	/^    def getTkStrip(self, height, block=True):$/;"	kind:member	line:141
+getTkSubset	images/process/pixelgrid.py	/^    def getTkSubset(self, zoom, x, y, r):$/;"	kind:member	line:136
+ispageclear	images/process/pixelgrid.py	/^    def ispageclear(self, num):$/;"	kind:member	line:208
+linearshift	images/process/pixelgrid.py	/^    def linearshift(self, a, b, c, d, e, f):$/;"	kind:member	line:84
+load	images/process/pixelgrid.py	/^    def load(self, info):$/;"	kind:member	line:180
+load	images/process/pixelgrid.py	/^    def load(self, pixels):$/;"	kind:member	line:238
+mergeSubset	images/process/pixelgrid.py	/^    def mergeSubset(self, subset, x, y):$/;"	kind:member	line:65
+pages	images/process/pixelgrid.py	/^    def pages(self):$/;"	kind:member	line:23
+pixelgrid	images/process/process.py	/^pixelgrid = PixelGrid(gbpalette)$/;"	kind:variable	line:58
+pixelgrid.py	images/process/pixelgrid.py	1;"	kind:file	line:1
+process	images/process/process.py	/^def process(designation):$/;"	kind:function	line:22
+process.py	images/process/process.py	1;"	kind:file	line:1
+rgb	images/process/process.py	/^def rgb(hex_color):$/;"	kind:function	line:18
+set	images/process/pixelgrid.py	/^    def set(self, x, y, val):$/;"	kind:member	line:220
+set	images/process/pixelgrid.py	/^    def set(self, x, y, val):$/;"	kind:member	line:45
+shift	images/process/pixelgrid.py	/^    def shift(self, dx, dy):$/;"	kind:member	line:93

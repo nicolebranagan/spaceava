@@ -67,8 +67,10 @@ var gfx = {
     initialize: function() {
         this.font = new Image();
         this.font.src = "./images/font.png";
-        this.player = new Image();
-        this.player.src = "./images/player.png";
+        this.objects = new Image();
+        this.objects.src = "./images/objects.png";
+        this.tiles = new Image();
+        this.tiles.src = "./images/tiles.png";
     }
 }
 gfx.initialize();

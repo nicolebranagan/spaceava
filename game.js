@@ -98,7 +98,7 @@ Game.stage = class {
         this.layers = layers;
         this.tileMap = [];
         this.registeredPoints = [];
-        this.key = [Game.TileType.EMPTY, Game.TileType.SOLID, Game.TileType.SOLID, Game.TileType.SLOPE_UP];
+        this.key = [Game.TileType.EMPTY, Game.TileType.SOLID, Game.TileType.SOLID, Game.TileType.SLOPE_UP, Game.TileType.LEFT, Game.TileType.SLOPE_DOWN, Game.TileType.SLOPE_RIGHT, Game.TileType.SOLID];
 
         for (var i = 0; i < this.layers; i++) {
             this.tileMap.push([]);
@@ -113,12 +113,10 @@ Game.stage = class {
         this.tileMap[0][36] = 0;
         this.tileMap[0][37] = 0;
         this.tileMap[0][27] = 0;
-        this.tileMap[1][11] = 1;
-        this.tileMap[1][12] = 1;
         this.tileMap[1][31] = 1;
         this.tileMap[1][41] = 3;
         this.tileMap[2][31] = 3;
-        this.tileMap[2][21] = 1;
+        this.tileMap[2][21] = 7;
 
         this.buffer = document.createElement('canvas');
         this.buffer.height = (this.width+this.height)*4+8;
@@ -160,7 +158,7 @@ Game.stage = class {
     getDrawables(layer, ctrpt) {
         var out = [];
         var base = this;
-        var drawTile = (ctx, pt, tile) => {if (tile == 0) return; ctx.drawImage(gfx.player, (16-tile)*16, 0, 16, 16, pt.x , pt.y, 16, 16)};
+        var drawTile = (ctx, pt, tile) => {if (tile == 0) return; ctx.drawImage(gfx.tiles, (tile)*16, 0, 16, 16, pt.x , pt.y, 16, 16)};
             for(let i = 0; i < this.width; i++) {
                 for (let j = 0; j < this.height; j++) {
                     if (this.getTile(new Point(i,j), layer) == 0)

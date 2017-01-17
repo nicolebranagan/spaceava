@@ -94,7 +94,7 @@ Game.object = class {
         drawable.coord = iso_c.subtract(new Point(8, 8));
         drawable.position = new Position(this.point.x, this.point.y, this.layer);
         drawable.draw = function(ctx) {
-            ctx.drawImage(gfx.player, (base.facing*base.frameMax + base.frame)*16 + base.tile*16, 0, 16, 16, iso_c.x, iso_c.y, 16, 16);
+            ctx.drawImage(gfx.objects, (base.facing*base.frameMax + base.frame)*16 + base.tile*16, 0, 16, 16, iso_c.x, iso_c.y, 16, 16);
         }
         return drawable;
     }
