@@ -1,7 +1,7 @@
 'use strict';
 class Game {
     constructor() {
-    this.stage = new Game.stage(10, 3);
+    this.stage = new Game.stage(worldfile.rooms[0]);
     this.player = new Game.object.player(this, new Point(0,0));
     this.turns = 0;
     this.enemies = [new Game.object.shooter(this, new Point(4,5), Dir.Down, Game.object.shooter.Type.STATIONARY)]; // Generate from Game.stage most likely
@@ -92,15 +92,15 @@ Game.TileType = {
 }
 
 Game.stage = class {
-    constructor(width, layers) {
-        this.width = width;
-        this.height = width;
-        this.layers = layers;
-        this.tileMap = [];
+    constructor(room) {
+        this.width = room.width;
+        this.height = room.height;
+        this.layers = room.tiles.length;
+        this.tileMap = room.tiles;
         this.registeredPoints = [];
-        this.key = [Game.TileType.EMPTY, Game.TileType.SOLID, Game.TileType.SOLID, Game.TileType.SLOPE_UP, Game.TileType.LEFT, Game.TileType.SLOPE_DOWN, Game.TileType.SLOPE_RIGHT, Game.TileType.SOLID];
+        this.key = worldfile.key;
 
-        for (var i = 0; i < this.layers; i++) {
+        /*for (var i = 0; i < this.layers; i++) {
             this.tileMap.push([]);
             for (var j = 0; j < (this.width*this.height); j++)
                 this.tileMap[i].push(i == 0 ? 2 : 0);
@@ -116,7 +116,7 @@ Game.stage = class {
         this.tileMap[1][31] = 1;
         this.tileMap[1][41] = 3;
         this.tileMap[2][31] = 3;
-        this.tileMap[2][21] = 7;
+        this.tileMap[2][21] = 7;*/
 
         this.buffer = document.createElement('canvas');
         this.buffer.height = (this.width+this.height)*4+8;

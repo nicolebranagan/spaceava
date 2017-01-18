@@ -64,9 +64,25 @@ class Application(tk.Frame):
         self.master.bind("<Left>", lambda x: self.moveset(-1))
         self.master.bind("<Right>", lambda x: self.moveset(1))
         self.master.bind("<Delete>", self.delroom)
+        
+        commandbar = tk.Frame(self)
+        commandbar.grid(row=0, column=1)
+        loadbutton = tk.Button(commandbar, text="Open", command=self.open)
+        loadbutton.grid(row=0, column=0)
+        savebutton = tk.Button(commandbar, text="Save", command=self.save)
+        savebutton.grid(row=0, column=1)
+        imagebutton = tk.Button(
+            commandbar, text="Update images", command=
+            lambda: subprocess.Popen(
+                ["python3", "process.py"], cwd="../images/process/"))
+        imagebutton.grid(row=0, column=2)
+        dumpmapbutton = tk.Button(
+            commandbar, text="Dump map", command=
+            lambda: self.roomset.drawgrid().save("map.png"))
+        dumpmapbutton.grid(row=0, column=3)
        
         scrolltilecanvas = tk.Scrollbar(self, orient=tk.HORIZONTAL)
-        scrolltilecanvas.grid(row=1, column=0, columnspan=4, sticky=tk.W+tk.E)
+        scrolltilecanvas.grid(row=2, column=0, columnspan=4, sticky=tk.W+tk.E)
         self.tilecanvas = tk.Canvas(self, 
                                     scrollregion=(0,0,self.tiles.width,
                                                   self.tiles.height),
@@ -74,71 +90,44 @@ class Application(tk.Frame):
                                     xscrollcommand=scrolltilecanvas.set)
         self.tilecanvasimg = self.tilecanvas.create_image(
                 0,0,anchor=tk.NW,image=self.tilesTk)
-        self.tilecanvas.grid(row=0, column=0, columnspan=4, sticky=tk.W+tk.E)
+        self.tilecanvas.grid(row=1, column=0, columnspan=4, sticky=tk.W+tk.E)
         self.tilecanvas.bind("<Button-1>", self.tileclick)
         self.tilecanvas.bind("<Motion>", self.tilemove)
         scrolltilecanvas.config(command=self.tilecanvas.xview)
 
-        # self.gridcanvas = tk.Canvas(self, width=320, height=320)
-        # self.gridcanvas.grid(row=2, column=0)
-        # self.gridcanvasimage = self.gridcanvas.create_image(0,0,anchor=tk.NW)
-        # self.gridcanvas.bind("<Button-1>", self.gridclick)
-        
         viewpanel = tk.Frame(self)
-        viewpanel.grid(row=2, column=1)
+        viewpanel.grid(row=3, column=1)
         self.viewcanvas = tk.Canvas(viewpanel, width=10*32, height=10*32)
-        self.viewcanvas.grid(row=0, column=0,columnspan=3)
+        self.viewcanvas.grid(row=0, column=0)
         self.viewcanvasimage = self.viewcanvas.create_image(0,0,anchor=tk.NW)
         self.viewcanvas.bind("<Button-1>", self.viewclick)
         self.viewcanvas.bind("<B1-Motion>", self.viewclick)
         self.viewcanvas.bind("<Motion>", self.viewmove)
         self.viewcanvas.bind("<Button-2>", self.cviewclick)
         self.viewcanvas.bind("<Button-3>", self.rviewclick)
-        self.spinner = tk.Spinbox(viewpanel, from_=0, to=99, width=3,
-                             command=lambda *x: 
-                             self.room.setarea(int(self.spinner.get())))
-        self.spinner.delete(0, "end")
-        self.spinner.insert(0,0)
-        self.spinner.grid(row=1, column=0)
 
-        renderpanel = tk.Frame(self)
-        renderpanel.grid(row=3, column=1)
-        self.rendercanvas = tk.Canvas(renderpanel, width=10*32, height=10*32)
-        self.rendercanvas.grid(row=0, column=0)
+        self.rendercanvas = tk.Canvas(viewpanel, width=10*32, height=10*32)
+        self.rendercanvas.grid(row=0, column=1)
         self.rendercanvasimage = self.rendercanvas.create_image(0,0,anchor=tk.NW)
-
-        imagebutton = tk.Button(
-            viewpanel, text="Update images", command=
-            lambda: subprocess.Popen(
-                ["python3", "process.py"], cwd="../images/process/"))
-        imagebutton.grid(row=1, column=1)
-
-        dumpmapbutton = tk.Button(
-            viewpanel, text="Dump map", command=
-            lambda: self.roomset.drawgrid().save("map.png"))
-        dumpmapbutton.grid(row=1, column=2)
 
         self.objectview = []
 
         controls = tk.Frame(self, width=12*32, height=12*32)
-        controls.grid(row=2, column=2)
-        loadbutton = tk.Button(controls, text="Open", command=self.open)
-        loadbutton.grid(row=0, column=0)
-        savebutton = tk.Button(controls, text="Save", command=self.save)
-        savebutton.grid(row=0, column=1)
+        controls.grid(row=4, column=1, sticky=tk.W)
+
 
         self.objectlist = tk.Listbox(controls)
-        self.objectlist.grid(row=1, column=0, columnspan=2)
+        self.objectlist.grid(row=1, column=0, rowspan=3)
         self.xentry = tk.Entry(controls, width=3)
         self.xentry.insert(0, "0")
-        self.xentry.grid(row=2, column=0)
+        self.xentry.grid(row=1, column=1)
         self.yentry = tk.Entry(controls, width=3)
         self.yentry.insert(0, "0")
         self.yentry.grid(row=2, column=1)
         
         delbutton = tk.Button(controls, text="Delete selection",
                                    command=self.deleteobj )
-        delbutton.grid(row=3, column=0, columnspan=2, sticky=tk.W)
+        delbutton.grid(row=4, column=0, columnspan=2, sticky=tk.W)
         
         #self.selectedblock = tk.StringVar(self)
         #self.selectedblock.set(Type[100])
@@ -164,14 +153,17 @@ class Application(tk.Frame):
         
         self.arbitraryentry = tk.Entry(controls, width=3)
         self.arbitraryentry.insert(0, "200")
-        self.arbitraryentry.grid(row=6, column=0)
+        self.arbitraryentry.grid(row=3, column=1)
         
         addenemybutton = tk.Button(controls, text="Add",
                                    command=self.addarbitrary )
-        addenemybutton.grid(row=6, column=1, sticky=tk.W)
+        addenemybutton.grid(row=4 , column=1, sticky=tk.W)
 
-        tilepanel = tk.Frame(self)
-        tilepanel.grid(row=2, column=3)
+        sidepanel = tk.Frame(self)
+        sidepanel.grid(row=3, column=3)
+
+        tilepanel = tk.Frame(sidepanel)
+        tilepanel.pack()
         tk.Label(tilepanel, text="Current tile:").pack()
         self.currenttileimg = ImageTk.PhotoImage(self.tileset[self.select])
         self.currenttile = tk.Label(tilepanel, image=self.currenttileimg)
@@ -182,13 +174,30 @@ class Application(tk.Frame):
             tilepanel, self.tiletypevar,
             *[TileType[x] for x in range(0, len(TileType))],
             command=self.changetype).pack()
-        #tk.Radiobutton(tilepanel, text="Clear", variable=self.tiletypevar,
-        #               value=0, command=self.changetype).pack()
 
+        layerpanel = tk.Frame(sidepanel)
+        layerpanel.pack()
+        tk.Label(layerpanel, text="Layer:").grid(row=0, column=0)
+        self.layerspin = tk.Spinbox(layerpanel, from_=0, to=99, width=3,
+                                command=lambda *x:
+                                self.setlayer(int(self.layerspin.get())))
+        self.layerspin.delete(0, "end")
+        self.layerspin.insert(0,0)
+        self.layerspin.grid(row=0, column=1)
+                
+        musicpanel = tk.Frame(sidepanel)
+        musicpanel.pack()
+        tk.Label(musicpanel, text="Music: ").grid(row=0, column=0)
+        self.spinner = tk.Spinbox(musicpanel, from_=0, to=99, width=3,
+                             command=lambda *x: 
+                             self.room.setarea(int(self.spinner.get())))
+        self.spinner.delete(0, "end")
+        self.spinner.insert(0,0)
+        self.spinner.grid(row=0, column=1)
 
         self.statusbar = tk.Label(self, text="Loaded successfully!", bd=1,
                                   relief=tk.SUNKEN, anchor=tk.W)
-        self.statusbar.grid(row=4, column=0, columnspan=4, sticky=tk.W+tk.E)
+        self.statusbar.grid(row=100, column=0, columnspan=4, sticky=tk.W+tk.E)
 
     def drawroom(self):
         self.roomimg = self.room.draw(self.layer)
@@ -262,7 +271,7 @@ class Application(tk.Frame):
     def rviewclick(self, event):
         clickX = math.floor(self.viewcanvas.canvasx(event.x) / 32)
         clickY = math.floor(self.viewcanvas.canvasy(event.y) / 32)
-        self.select = self.room.get(clickX, clickY)
+        self.select = self.room.get(self.layer, clickX, clickY)
 
     def viewmove(self, event):
         clickX = math.floor(self.viewcanvas.canvasx(event.x) / 32)
@@ -284,6 +293,8 @@ class Application(tk.Frame):
         if (i >= 0 and i < 16):
             self.currenti = i
             self.room = self.roomset.getroom(self.currenti)
+            self.layerspin.delete(0, "end")
+            self.layerspin.insert(0, 0)
             self.spinner.delete(0,"end")
             self.spinner.insert(0,self.room.area)
             self.drawroom()
@@ -378,6 +389,11 @@ class Application(tk.Frame):
         self.room.objects.pop(todel[0])
         self.drawroom()
 
+    def setlayer(self, x):
+        self.layer = x
+        self.room.checklayer(x)
+        self.drawroom()
+
     @property
     def select(self):
         return self.__select
@@ -403,12 +419,14 @@ class Room:
         self.tiles = [[0 for x in range(0,self.width*self.height)]]
         self.objects = []
 
+    def checklayer(self, l):
+        if l >= len(self.tiles):
+            for i in range(len(self.tiles), l+1):
+                self.tiles.append([0 for x in range(0,self.width*self.height)])
+
     def set(self, l, x, y, v):
         if x >= self.width or y >= self.height or x < 0 or y < 0:
             return
-        if l >= len(self.tiles):
-            for i in range(len(self.tiles), l+1):
-                self.tiles[i] = [0 for x in range(0,self.width*self.height)]
         self.tiles[l][x + y*self.width] = v
 
     def get(self, l, x, y):
@@ -419,10 +437,13 @@ class Room:
     def setarea(self, x):
         self.music = x
     
-    def render(self, image=None, top=0, left=0):
-        if image is None:
-            image = Image.new("RGB",(self.width*32, self.height*32))
+    def render(self, top=0, left=0):
+        image = Image.new(
+            "RGB",(
+                (self.width+self.height)*16+32, (self.width+self.height)*16+16))
         i = 0
+        left = left+(self.width+self.height)*8
+        top = top+(self.width+self.height)*8
         for z in range(0, len(self.tiles)):
             for y in range(0, self.height):
                 for x in range(0, self.width):
@@ -432,6 +453,8 @@ class Room:
                         image.paste(tile,(left + coord[0], top + coord[1]), 
                                     tile)
                     i = i+1
+            i = 0
+            
         return image
 
     def draw(self, layer, image=None, top=0, left=0):
