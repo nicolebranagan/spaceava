@@ -154,7 +154,6 @@ Game.object.player = class extends Game.object {
             var testTile = this.parent.stage.getTileType(test,this.layer);
             var upTile = this.parent.stage.getTileType(test,this.layer+1);
             var downTile = this.parent.stage.getTileType(test, this.layer-1);
-            console.log(onTile, upTile)
             if (testTile == Game.TileType.SOLID && upTile == Game.TileType.EMPTY) {
                 this.moving = true;
             } else if ((upTile == Game.TileType.SLOPE_UP && this.facing == Dir.Up)

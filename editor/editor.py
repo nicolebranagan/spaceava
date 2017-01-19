@@ -120,9 +120,9 @@ class Application(tk.Frame):
 
         objfield = tk.Frame(controls, borderwidth=4, relief=tk.SUNKEN)
         objfield.grid(row=0, column=2, columnspan=2)
-        self.arbitraryentry = tk.Entry(objfield, width=20)
+        self.arbitraryentry = tk.Entry(objfield, width=50)
         self.arbitraryentry.insert(0, "Insert function here")
-        self.arbitraryentry.grid(row=1, column=0, columnspan=2)
+        self.arbitraryentry.grid(row=1, column=0, columnspan=3)
         tk.Label(objfield, text="z: ").grid(row=2, column=0)
         self.lentry = tk.Entry(objfield, width=3)
         self.lentry.insert(0, "0")
@@ -135,6 +135,9 @@ class Application(tk.Frame):
         self.yentry = tk.Entry(objfield, width=3)
         self.yentry.insert(0, "0")
         self.yentry.grid(row=4, column=1)
+        addenemybutton = tk.Button(objfield, text="Add",
+                                   command=self.addarbitrary )
+        addenemybutton.grid(row=5, column=0, sticky=tk.W+tk.E, columnspan=2)
         
         delbutton = tk.Button(controls, text="Delete selection",
                                    command=self.deleteobj )
@@ -144,9 +147,7 @@ class Application(tk.Frame):
                                    command=self.editobj )
         delbutton.grid(row=1, column=1, sticky=tk.W+tk.E)
         
-        addenemybutton = tk.Button(objfield, text="Add",
-                                   command=self.addarbitrary )
-        addenemybutton.grid(row=4, column=0, sticky=tk.W+tk.E, columnspan=2)
+
 
         sidepanel = tk.Frame(self)
         sidepanel.grid(row=3, column=3)
