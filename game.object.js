@@ -1,8 +1,7 @@
 'use strict'
 Game.object = class {
-    constructor(parent, pt) {
-        this.parent = parent;
-        this.point = pt;
+    constructor() {
+        this.point = new Point(0,0);
         this.facing = Dir.Down;
         this.frame = 0;
         this.frameMax = 3;
@@ -17,6 +16,10 @@ Game.object = class {
         this.offset = new Position(0,0,0);
         this.dy = 0;
         this.active = true;
+    }
+    initialize(parent, point) {
+        this.parent = parent;
+        this.point = point;
     }
     update(mode) {
         this.timer--;
@@ -101,8 +104,9 @@ Game.object = class {
 }
 
 Game.object.player = class extends Game.object {
-    constructor(parent, pt) {
-        super(parent, pt);
+    constructor(parent, point) {
+        super();
+        super.initialize(parent, point);
     }
     update(mode) {
         super.update(mode);
@@ -150,6 +154,7 @@ Game.object.player = class extends Game.object {
             var testTile = this.parent.stage.getTileType(test,this.layer);
             var upTile = this.parent.stage.getTileType(test,this.layer+1);
             var downTile = this.parent.stage.getTileType(test, this.layer-1);
+            console.log(onTile, upTile)
             if (testTile == Game.TileType.SOLID && upTile == Game.TileType.EMPTY) {
                 this.moving = true;
             } else if ((upTile == Game.TileType.SLOPE_UP && this.facing == Dir.Up)
@@ -184,15 +189,27 @@ Game.object.player = class extends Game.object {
     }
 }
 
+Game.object.enemy = class extends Game.object {
+    constructor() {
+        super(null);
+    }
+
+
+}
+
 Game.object.shooter = class extends Game.object {
-    constructor(parent, pt, facing, type) {
-        super(parent, pt);
+    constructor(facing, type) {
+        super();
         this.facing = facing;
         this.frameMax = 1;
         this.tile = 16;
         this.movetime = 0;
         this.type = type;
         this.moving = false;
+        
+    }
+    initialize(parent, point) {
+        super.initialize(parent, point);
         this.parent.stage.register(this.point, this.layer+1, Game.TileType.SOLID);
     }
     update(mode) {
@@ -236,7 +253,8 @@ Game.object.shooter.Type = {
 
 Game.object.bullet = class extends Game.object {
     constructor(parent, pt, facing) {
-        super(parent, pt);
+        super();
+        super.initialize(parent, pt);
         this.facing = facing;
         this.frameMax = 1;
         this.tile = 32;

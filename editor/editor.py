@@ -112,52 +112,41 @@ class Application(tk.Frame):
 
         self.objectview = []
 
-        controls = tk.Frame(self, width=12*32, height=12*32)
+        controls = tk.Frame(self)
         controls.grid(row=4, column=1, sticky=tk.W)
 
+        self.objectlist = tk.Listbox(controls, width=32)
+        self.objectlist.grid(row=0, column=0, columnspan=2)
 
-        self.objectlist = tk.Listbox(controls)
-        self.objectlist.grid(row=1, column=0, rowspan=3)
-        self.xentry = tk.Entry(controls, width=3)
+        objfield = tk.Frame(controls, borderwidth=4, relief=tk.SUNKEN)
+        objfield.grid(row=0, column=2, columnspan=2)
+        self.arbitraryentry = tk.Entry(objfield, width=20)
+        self.arbitraryentry.insert(0, "Insert function here")
+        self.arbitraryentry.grid(row=1, column=0, columnspan=2)
+        tk.Label(objfield, text="z: ").grid(row=2, column=0)
+        self.lentry = tk.Entry(objfield, width=3)
+        self.lentry.insert(0, "0")
+        self.lentry.grid(row=2, column=1)
+        tk.Label(objfield, text="x: ").grid(row=3, column=0)
+        self.xentry = tk.Entry(objfield, width=3)
         self.xentry.insert(0, "0")
-        self.xentry.grid(row=1, column=1)
-        self.yentry = tk.Entry(controls, width=3)
+        self.xentry.grid(row=3, column=1)
+        tk.Label(objfield, text="y: ").grid(row=4, column=0)
+        self.yentry = tk.Entry(objfield, width=3)
         self.yentry.insert(0, "0")
-        self.yentry.grid(row=2, column=1)
+        self.yentry.grid(row=4, column=1)
         
         delbutton = tk.Button(controls, text="Delete selection",
                                    command=self.deleteobj )
-        delbutton.grid(row=4, column=0, columnspan=2, sticky=tk.W)
-        
-        #self.selectedblock = tk.StringVar(self)
-        #self.selectedblock.set(Type[100])
-        #tk.OptionMenu(
-        #        controls, self.selectedblock, 
-        #        *[Type[x] for x in range(100,110)]).grid(
-        #            row=4, column=0)
-        #addblockbutton = tk.Button(controls, text="Add", 
-        #                           command=lambda: self.addobject(
-        #                               self.selectedblock.get) )
-        #addblockbutton.grid(row=4, column=1, sticky=tk.W)
+        delbutton.grid(row=1, column=0, sticky=tk.W+tk.E)
 
-        #self.selectedenemy = tk.StringVar(self)
-        #self.selectedenemy.set(Type[0])
-        #tk.OptionMenu(
-        #        controls, self.selectedenemy, 
-        #        *[Type[x] for x in range(0,12)]).grid(
-        #            row=5, column=0)
-        #addenemybutton = tk.Button(controls, text="Add",
-        #                           command=lambda: self.addobject(
-        #                               self.selectedenemy.get) )
-        #addenemybutton.grid(row=5, column=1, sticky=tk.W)
+        delbutton = tk.Button(controls, text="Edit selection",
+                                   command=self.editobj )
+        delbutton.grid(row=1, column=1, sticky=tk.W+tk.E)
         
-        self.arbitraryentry = tk.Entry(controls, width=3)
-        self.arbitraryentry.insert(0, "200")
-        self.arbitraryentry.grid(row=3, column=1)
-        
-        addenemybutton = tk.Button(controls, text="Add",
+        addenemybutton = tk.Button(objfield, text="Add",
                                    command=self.addarbitrary )
-        addenemybutton.grid(row=4 , column=1, sticky=tk.W)
+        addenemybutton.grid(row=4, column=0, sticky=tk.W+tk.E, columnspan=2)
 
         sidepanel = tk.Frame(self)
         sidepanel.grid(row=3, column=3)
@@ -211,34 +200,19 @@ class Application(tk.Frame):
                                      image=self.renderTk)
 
         [self.viewcanvas.delete(x) for x in self.objectview]
+        i = 0
         for x in self.room.objects:
-            if x[0] >= 107:
+            if x[1] == self.layer:
                 color = "#00AA00"
                 self.objectview.append(self.viewcanvas.create_text((
-                                       x[1]*32+16, x[2]*32+16), fill=color,
-                                       text=str(x[0]),
-                                       font=('Helvetica', -16)))
-            elif x[0] >= 100:
-                self.objectview.append(
-                        self.viewcanvas.create_image(
-                            x[1]*32+16, x[2]*32+16, 
-                            image=self.tilesetTk[x[0]-100+9]))
-                self.objectview.append(
-                        self.viewcanvas.create_rectangle(
-                            x[1]*32, x[2]*32, x[1]*32+32-1, x[2]*32+32-1,
-                            outline='blue'))
-            else:
-                color = "#FF0000"
-                signif = Type[x[0]][-1]
-                self.objectview.append(self.viewcanvas.create_text((
-                                       x[1]*32+16, x[2]*32+16), fill=color,
-                                       text=signif,
-                                       font=('Helvetica', -32)))
+                                        x[2]*32+16, x[3]*32+16), fill=color,
+                                        text=str(i),
+                                        font=('Helvetica', -16)))
+            i = i + 1
 
-    # def drawgrid(self,x,y):
-    #     self.gridimg = self.roomset.draw(x, y)
-    #     self.gridcanvas.itemconfig(self.gridcanvasimage,
-    #                                image=self.gridimg)
+        self.lentry.delete(0, tk.END)
+        self.lentry.insert(0, str(self.layer))
+        self.lentry.grid(row=2, column=1)
 
     def tileclick(self, event):
         x = math.floor(self.tilecanvas.canvasx(event.x) / 32)
@@ -298,16 +272,7 @@ class Application(tk.Frame):
             self.spinner.delete(0,"end")
             self.spinner.insert(0,self.room.area)
             self.drawroom()
-            self.objectlist.delete(0, tk.END)
-            #[self.objectlist.insert(i, "{}, {}, {}".format(*x)) 
-            #    for i,x in enumerate(self.room.objects)]
-            for i,x in enumerate(self.room.objects):
-                if (x[0] >= 200):
-                    self.objectlist.insert(
-                        i, "Arbitrary {}: {}, {}".format(*x))
-                else:
-                    self.objectlist.insert(
-                        i, "{}: {}, {}".format(Type[x[0]], x[1], x[2]))
+            self.enumerateobjects()
             self.statusbar.config(
                     text="Loaded room #{}".format(i))
 
@@ -350,32 +315,26 @@ class Application(tk.Frame):
             self.currenti = 0
             self.room = self.roomset.getroom(0)
             self.drawroom()
-            self.objectlist.delete(0, tk.END)
-            for i,x in enumerate(self.room.objects):
-                if (x[0] >= 200):
-                    self.objectlist.insert(
-                        i, "Arbitrary {}: {}, {}".format(*x))
-                else:
-                    self.objectlist.insert(
-                        i, "{}: {}, {}".format(Type[x[0]], x[1], x[2]))
-
-    def addobject(self, source):
-        val = source();
-        if (val == ""):
-            return
-        blockid = TypeLabel[val]
-        newobj = (blockid, int(self.xentry.get()), int(self.yentry.get()), True)
-        text = "{}: {}, {}".format(val, newobj[1], newobj[2])
-        self.objectlist.insert(len(self.room.objects), text)
-        self.room.objects.append(newobj)
-        self.drawroom()
+            self.enumerateobjects()
     
+    def enumerateobjects(self):
+        self.objectlist.delete(0, tk.END)
+        for i,x in enumerate(self.room.objects):
+            self.objectlist.insert(
+                i, "#{}: Layer {} at {}, {}: {}".format(
+                    i, x[1], x[2], x[3], x[0]
+                )
+            )
+
     def addarbitrary(self):
-        val = int(self.arbitraryentry.get())
-        if (val == ""):
+        if (self.arbitraryentry.get() == ""):
             return
-        newobj = (val, int(self.xentry.get()), int(self.yentry.get()), True)
-        text = "Arbitrary {}: {}, {}".format(val, newobj[1], newobj[2])
+        newobj = (self.arbitraryentry.get(), int(self.lentry.get()),
+                  int(self.xentry.get()), int(self.yentry.get()))
+        text = "#{}: Layer {} at {}, {}: {}".format(
+            str(len(self.room.objects)),
+            newobj[1], newobj[2], newobj[3], newobj[0]
+            )
         self.objectlist.insert(len(self.room.objects), text)
         self.room.objects.append(newobj)
         self.drawroom()
@@ -388,6 +347,23 @@ class Application(tk.Frame):
         self.objectlist.delete(todel[0])
         self.room.objects.pop(todel[0])
         self.drawroom()
+    
+    def editobj(self):
+        toedit = self.objectlist.curselection()
+        if len(toedit) == 0:
+            # Nothing to edit
+            return
+        editobj = self.room.objects.pop(toedit[0])
+        self.objectlist.delete(toedit[0])
+        self.drawroom()
+        self.arbitraryentry.delete(0, tk.END)
+        self.arbitraryentry.insert(0, editobj[0])
+        self.xentry.delete(0, tk.END)
+        self.xentry.insert(0, str(editobj[2]))
+        self.yentry.delete(0, tk.END)
+        self.yentry.insert(0, str(editobj[3]))
+        self.lentry.delete(0, tk.END)
+        self.lentry.insert(0, str(editobj[1]))
 
     def setlayer(self, x):
         self.layer = x
@@ -454,7 +430,7 @@ class Room:
                                     tile)
                     i = i+1
             i = 0
-            
+
         return image
 
     def draw(self, layer, image=None, top=0, left=0):

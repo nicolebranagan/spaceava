@@ -4,7 +4,7 @@ class Game {
     this.stage = new Game.stage(worldfile.rooms[0]);
     this.player = new Game.object.player(this, new Point(0,0));
     this.turns = 0;
-    this.enemies = [new Game.object.shooter(this, new Point(4,5), Dir.Down, Game.object.shooter.Type.STATIONARY)]; // Generate from Game.stage most likely
+    this.enemies = this.stage.getEnemies(this);
     this.mode = Game.Mode.PLAYER;
     }
     update() {
@@ -93,6 +93,7 @@ Game.TileType = {
 
 Game.stage = class {
     constructor(room) {
+        this.source = room;
         this.width = room.width;
         this.height = room.height;
         this.layers = room.tiles.length;
@@ -181,6 +182,16 @@ Game.stage = class {
                 }
             }
         return out;
+    }
+    getEnemies(parent) {
+        var enemyList = [];
+        this.source.objects.forEach(function(e) {
+            var enemy = eval(e[0]);
+            enemy.layer = e[1];
+            enemy.initialize(parent, new Point(e[2], e[3]))
+            enemyList.push(enemy)
+        });
+        return enemyList;
     }
     // Draws the base layer at the center, centered on a given coordinate
     drawBase(ctx,pt) {
