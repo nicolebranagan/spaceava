@@ -234,13 +234,20 @@ Array.prototype.compare = function(array2) {
 // Text-drawing functions
 
 function drawText(ctx, x, y, text) {
+    var oldx = x;
     for (var i = 0; i < text.length; i++) {
         var num;
-        if (typeof text == "string")
+        if (typeof text == "string") {
             num = text.charCodeAt(i);
-        else
+            if (num == 10) {
+                y = y + 8;
+                x = oldx;
+                continue;
+            }
+        } else
             num = text[i];
-        ctx.drawImage(gfx.font, 8 * num, 0, 8, 8, x + (i * 8), y, 8, 8);
+        x = x + 8;
+        ctx.drawImage(gfx.font, 8 * num, 0, 8, 8, x, y, 8, 8);
     }
 }
 

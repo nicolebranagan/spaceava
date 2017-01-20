@@ -71,6 +71,10 @@ var gfx = {
         this.objects.src = "./images/objects.png";
         this.tiles = new Image();
         this.tiles.src = "./images/tiles.png";
+        this.faces = new Image();
+        this.faces.src = "./images/faces.png"
+        this.bg = [new Image()];
+        this.bg[0].src = "./images/bg1.png";
     }
 }
 gfx.initialize();
