@@ -2,6 +2,7 @@ import math
 import json
 import tkinter as tk
 import subprocess
+import random
 from tkinter import filedialog
 from PIL import ImageTk, Image, ImageDraw
 from enum import Enum
@@ -18,19 +19,14 @@ TileType = {
 
 TypeTile = {v: k for k, v in TileType.items()}
 
-TileColor = {
-    0 : "#000000",
-    1 : "#BC88A0",
-    2 : "#16AE49",
-    3 : "#3048DE",
-    4 : "#99EE59",
-    5 : "#CCEEDD",
-    6 : "#8899EE",
-    7 : "#99EE88",
-    8 : "#22EEFF",
-    9 : "#670000",
-    -1 : "#FFFFFF",
-}
+# Seed the RNG
+random.seed(9)
+def getcolor():
+    return random.randint(0,255)
+
+
+TileColor = {x: '#%02X%02X%02X' % (getcolor(),getcolor(),getcolor())
+             for x in range(0, 256)}
 
 class Application(tk.Frame):
     def __init__(self, master=None):

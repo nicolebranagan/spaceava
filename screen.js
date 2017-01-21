@@ -247,13 +247,14 @@ ControlsScreen.prototype = {
     }
 };
 
+// TODO: Combine with LogoScreen
 var LoadingScreen = function() {
     this.timer = 0;
     gfx.initialize();
 };
 LoadingScreen.prototype = {
     draw: function(ctx) {
-        drawCenteredText(ctx, 8*8, "Loading...");
+        drawCenteredText(ctx, 10*8, "Loading...");
     },
 
     update: function(ctx) {
@@ -268,8 +269,9 @@ LoadingScreen.prototype = {
                 this.timer++;
         } else if (this.timer > 3) {
             this.timer++;
-            if (this.timer == 150)
-                runner = new TitleScreen();
+            if (this.timer == 150) {
+                runner = new Dialogue(Script.opening, function() {runner = new TitleScreen();});
+            }
         }
     }
 }

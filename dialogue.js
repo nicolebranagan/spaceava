@@ -17,8 +17,7 @@ class Dialogue {
         this.blinkTimer++;
         if (this.blinkTimer == 80)
             this.blinkTimer = 0;
-        if (Controls.Enter || Controls.Shoot) {
-            Controls.Enter = false;
+        if (Controls.Shoot) {
             Controls.Shoot = false;
             if (this.talkTimer == -1) {
                 if (this.position == (this.script.length - 1))
@@ -26,6 +25,10 @@ class Dialogue {
                 else
                     this.next();
             }
+        } else if (Controls.Enter) {
+            // You can always skip dialog
+            Controls.Enter = false;
+            this.returner();
         }
         if (this.talkTimer > -1)
             this.talkTimer--;
@@ -44,7 +47,7 @@ class Dialogue {
         if (this.talkTimer != -1) {
             string = string.slice(0, string.length - this.talkTimer);
         }
-        drawText(ctx, 16, 88, string);
+        drawText(ctx, 24, 88, string);
     }
     next() {
         var newpos = this.position + 1;
@@ -64,7 +67,7 @@ class Dialogue {
         var newscript = script.slice();
         for (var i = 0; i < script.length; i++) {
             var newtext = [];
-            var words = script[i][2].split(" ");
+            var words = script[i][2].split(' ');
             var str = "";
             for(var j=0; j < words.length; j++) {
                 var word = words[j];
@@ -72,12 +75,25 @@ class Dialogue {
                     newtext.push(str);
                     str = word + " ";
                 } else {
-                    str = str + word + " ";
+                    if (word[word.length-1] == '\n') {
+                        newtext.push(str+word.slice(0, word.length-1));
+                        str = "";
+                    } else
+                        str = str + word + " ";
                 }
             }
             newtext.push(str);
             while (script[i][0] !== -1 && newtext.length < 4) {
                 newtext.push("");
+            }
+            if (script[i][3] == Dialogue.textStyle.CENTERED) {
+                for (var j = 0; j < newtext.length; j++) {
+                    var text = newtext[j];
+                    var pad = Math.floor(((width - text.length) / 2));
+                    for (var k = 0; k < pad; k++)
+                        text = " " + text;
+                    newtext[j] = text;
+                }
             }
 
             newscript[i] = [script[i][0], script[i][1], newtext.join('\n')];
@@ -85,6 +101,11 @@ class Dialogue {
         return newscript
     }
     
+}
+
+Dialogue.textStyle = {
+    NONE: 0,
+    CENTERED: 1,
 }
 
 Dialogue.Background = class {
@@ -101,19 +122,4 @@ Dialogue.Background = class {
     }
 }
 
-var TestConversation = {
-    bg: new Dialogue.Background(
-        function (ctx) {
-            ctx.drawImage(gfx.bg[0], 0, 0, this.width, this.height, 32, 16, this.width, this.height);
-            if (this.timer < 120) {
-                ctx.drawImage(gfx.bg[0], this.width, 0, 32*3, 32*2, 32+64+8, 24, 32*3, 32*2);
-            }
-        }
-    ),
-    script: [
-        [1, 0, "Ava got up in the morning and said wow, what a great day!"],
-        [4, 0, "AVA: Wow! What a great day!"],
-        [1, 0, "But then an alien came."],
-        [1, 8, "ALIEN: I am an alien."]
-    ]
-}
+

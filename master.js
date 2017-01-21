@@ -240,19 +240,19 @@ function drawText(ctx, x, y, text) {
         if (typeof text == "string") {
             num = text.charCodeAt(i);
             if (num == 10) {
-                y = y + 8;
+                y = y + 16;
                 x = oldx;
                 continue;
             }
         } else
             num = text[i];
-        x = x + 8;
         ctx.drawImage(gfx.font, 8 * num, 0, 8, 8, x, y, 8, 8);
+        x = x + 8;
     }
 }
 
 function drawCenteredText(ctx, y, text) {
-    var x = Math.floor(80 - (8*(text.length/2)));
+    var x = Math.floor((gamecanvas.width - (8*(text.length)))/2);
     drawText(ctx, x, y, text);
 }
 

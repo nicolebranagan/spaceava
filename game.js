@@ -101,24 +101,6 @@ Game.stage = class {
         this.registeredPoints = [];
         this.key = worldfile.key;
 
-        /*for (var i = 0; i < this.layers; i++) {
-            this.tileMap.push([]);
-            for (var j = 0; j < (this.width*this.height); j++)
-                this.tileMap[i].push(i == 0 ? 2 : 0);
-        }
-        this.tileMap[0][40] = 2;
-        this.tileMap[0][15] = 0;
-        this.tileMap[0][16] = 0;
-        this.tileMap[0][25] = 0;
-        this.tileMap[0][26] = 0;
-        this.tileMap[0][36] = 0;
-        this.tileMap[0][37] = 0;
-        this.tileMap[0][27] = 0;
-        this.tileMap[1][31] = 1;
-        this.tileMap[1][41] = 3;
-        this.tileMap[2][31] = 3;
-        this.tileMap[2][21] = 7;*/
-
         this.buffer = document.createElement('canvas');
         this.buffer.height = (this.width+this.height)*4+8;
         this.buffer.width = (this.width+this.height)*8+8;
