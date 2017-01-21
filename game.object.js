@@ -296,3 +296,45 @@ Game.object.bullet = class extends Game.object {
             this.parent.player.hurt(this);
     }
 }
+
+Game.object.stationary = class extends Game.object {
+    constructor() {
+        super();
+        this.facing = Dir.Down;
+        this.frameMax = 1;
+    }
+
+    initialize(parent, pt) {
+        super.initialize(parent, pt);
+    }
+
+    update(mode) {
+        if (mode !== Game.Mode.ENEMY) {
+            this.ready = true;
+            return;
+        } else {
+            this.cycle();
+        }
+    }
+
+    cycle() {
+        if (this.point.equals(this.parent.player.point) && this.layer === this.parent.player.layer) {
+            this.action();
+        }
+        this.ready = true;
+    }
+}
+
+Game.object.winObject = class extends Game.object.stationary {
+    constructor(polarity) {
+        super();
+        this.polarity = polarity;
+        this.tile = 255 - (polarity ? 0 : 1);
+        this.winner = true;
+    }
+
+    action() {
+        // TODO: Something
+        this.parent.player.hurt();
+    }
+}
