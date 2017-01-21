@@ -242,7 +242,7 @@ ControlsScreen.prototype = {
     update: function(ctx) {
         if (Controls.Enter) {
             Controls.Enter = false;
-            runner = new Game();
+            new Governor();
         }
     }
 };

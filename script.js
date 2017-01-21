@@ -21,5 +21,15 @@ var Script = {
             [1, 9, "???: Well, those flashing lights can't be good."],
             [2, 8, "AVA: Huh..."],
         ]
+    },
+    scene1: {
+        bg: new Dialogue.Background(
+            function (ctx) {
+                ctx.drawImage(gfx.bg[0], 0, 0, this.width, this.height, 32, 16, this.width, this.height);
+            }
+        ),
+        script: [
+            [9, 0, "*wink*"]
+        ]
     }
 }

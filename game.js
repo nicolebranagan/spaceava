@@ -1,7 +1,8 @@
 'use strict';
 class Game {
-    constructor() {
-    this.stage = new Game.stage(worldfile.rooms[0]);
+    constructor(stage, winfunc) {
+    this.winfunc = winfunc;
+    this.stage = new Game.stage(worldfile.rooms[stage]);
     this.player = new Game.object.player(this, new Point(0,0));
     this.turns = 0;
     this.enemies = this.stage.getEnemies(this);
