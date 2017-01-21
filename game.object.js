@@ -107,6 +107,7 @@ Game.object.player = class extends Game.object {
     constructor(parent, point) {
         super();
         super.initialize(parent, point);
+        this.frame = 1;
     }
     update(mode) {
         super.update(mode);
@@ -309,6 +310,7 @@ Game.object.stationary = class extends Game.object {
     }
 
     update(mode) {
+        super.update(mode);
         if (mode !== Game.Mode.ENEMY) {
             this.ready = true;
             return;
@@ -329,7 +331,9 @@ Game.object.winObject = class extends Game.object.stationary {
     constructor(polarity) {
         super();
         this.polarity = polarity;
-        this.tile = 255 - (polarity ? 0 : 1);
+        this.tile = 251 - (polarity ? 0 : 5);
+        this.frameMax = 5;
+        this.timerMax = 4;
         this.winner = true;
     }
 

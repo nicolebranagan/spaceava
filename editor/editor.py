@@ -267,7 +267,7 @@ class Application(tk.Frame):
             self.layerspin.delete(0, "end")
             self.layerspin.insert(0, 0)
             self.spinner.delete(0,"end")
-            self.spinner.insert(0,self.room.area)
+            self.spinner.insert(0,self.room.music)
             self.drawroom()
             self.enumerateobjects()
             self.statusbar.config(

@@ -12,6 +12,7 @@ class Dialogue {
 
         this.next();
     }
+
     update () {
         this.convo.bg.update();
         this.blinkTimer++;
@@ -24,6 +25,8 @@ class Dialogue {
                     this.returner();
                 else
                     this.next();
+            } else {
+                this.talkTimer = -1;
             }
         } else if (Controls.Enter) {
             // You can always skip dialog
@@ -33,6 +36,7 @@ class Dialogue {
         if (this.talkTimer > -1)
             this.talkTimer--;
     }
+
     draw(ctx) {
         this.convo.bg.draw(ctx);
         if (this.chara1 > 0)

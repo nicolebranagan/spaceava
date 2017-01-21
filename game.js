@@ -6,9 +6,29 @@ class Game {
     this.player = new Game.object.player(this, new Point(0,0));
     this.turns = 0;
     this.enemies = this.stage.getEnemies(this);
-    this.mode = Game.Mode.PLAYER;
+    this.mode = Game.Mode.STARTUP;
+    this.startTimer = 0;
+    this.startString = "Singularity " + stage.toString();
     }
     update() {
+        if (this.mode == Game.Mode.STARTUP) {
+            this.startTimer++;
+            if (this.startTimer == 225)
+                this.mode = Game.Mode.PLAYER
+            else
+                return;
+        } else if (this.mode == Game.Mode.PAUSED) {
+            if (Controls.Enter) {
+                Controls.Enter = false;
+                this.mode = Game.Mode.PLAYER;
+            }
+        }
+
+        if (this.mode == Game.Mode.PLAYER && Controls.Enter) {
+            Controls.Enter = false;
+            this.mode = Game.Mode.PAUSED;
+        }
+
         // Check if mode should be changed
         var changeMode = true;
         if (!this.player.ready) {
@@ -46,41 +66,62 @@ class Game {
             });
     }
     draw(ctx) {
+        var drawStage = true;
+        var drawSprites = true;
+        if (this.mode === Game.Mode.STARTUP) {
+            drawStage = (this.startTimer > 75);
+            drawSprites = (this.startTimer > 150)
+        } else if (this.mode === Game.Mode.PAUSED) {
+            drawSprites = false;
+        }
+
         if (__debug) {
             drawText(ctx, 0, 8, "M"+this.mode.toString());
             drawText(ctx, 0, 16, "T"+this.turns.toString());
         }
-        var drawPt = new Point(this.player.point).multiply(8).add(this.player.offset);
-        this.stage.drawBase(ctx, drawPt, i);
-        var drawables = [];
-        for (var i = 0; i < this.stage.layers; i++) {
-            if (i !== 0)
-                drawables = drawables.concat(this.stage.getDrawables(i, drawPt));
-            for (var j = 0; j < this.enemies.length; j++) {
-                var e = this.enemies[j];
-                if (e.layer == i)
-                    drawables.push(e.draw(drawPt));
+        if (drawStage) {
+            var drawPt = new Point(this.player.point).multiply(8).add(this.player.offset);
+            this.stage.drawBase(ctx, drawPt, i);
+            var drawables = [];
+            for (var i = 0; i < this.stage.layers; i++) {
+                if (i !== 0)
+                    drawables = drawables.concat(this.stage.getDrawables(i, drawPt));
+                for (var j = 0; j < this.enemies.length; j++) {
+                    if (!drawSprites)
+                        break;
+                    var e = this.enemies[j];
+                    if (e.layer == i)
+                        drawables.push(e.draw(drawPt));
+                }
+                if (i == this.player.layer && drawSprites)
+                    drawables.push(this.player.draw(drawPt));
             }
-            if (i == this.player.layer)
-                drawables.push(this.player.draw(drawPt));
+            drawables.sort(function(a,b) {
+                return a.position.x - b.position.x;
+            });
+            drawables.sort(function(a,b) {
+                return a.position.y - b.position.y;
+            });
+            drawables.forEach(function (e) {e.draw(ctx);});
         }
-        drawables.sort(function(a,b) {
-            return a.position.x - b.position.x;
-        });
-        drawables.sort(function(a,b) {
-            return a.position.y - b.position.y;
-        });
-        drawables.forEach(function (e) {e.draw(ctx);});
+
+        if (this.mode == Game.Mode.STARTUP && Math.floor(this.startTimer / 20) % 2 == 0) {
+            drawCenteredText(ctx, 80, this.startString);            
+        } else if (this.mode == Game.Mode.PAUSED) {
+            drawCenteredText(ctx, 80, "Paused")
+        }
     }
 }
 
 Game.center = new Point(gamecanvas.width / 2, gamecanvas.height / 2);
 Game.Mode = {
-    PAUSED: -1,
     PLAYER: 0,
     PLAYER_ANIM: 1,
     ENEMY: 2,
-    ENEMY_ANIM: 3
+    ENEMY_ANIM: 3,
+
+    PAUSED: -1,
+    STARTUP: -100,
 }
 Game.TileType = {
     EMPTY: 0,
