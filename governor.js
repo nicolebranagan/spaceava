@@ -5,6 +5,7 @@ class Governor {
         this.step();
     }
     step() {
+        this.position++;
         // Test code; shouldn't make it into the final version
         if (__debug) {
             if (this.position == Governor.tickerTape.length) {
@@ -13,7 +14,6 @@ class Governor {
                 return;
             }
         }
-        this.position++;
         Governor.tickerTape[this.position](this);
     }
 }
