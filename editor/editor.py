@@ -91,20 +91,45 @@ class Application(tk.Frame):
         self.tilecanvas.bind("<Motion>", self.tilemove)
         scrolltilecanvas.config(command=self.tilecanvas.xview)
 
-        viewpanel = tk.Frame(self)
-        viewpanel.grid(row=3, column=1)
-        self.viewcanvas = tk.Canvas(viewpanel, width=10*32, height=10*32)
+        editpanel = tk.Frame(self)
+        editpanel.grid(row=3, column=1)
+
+        viewpanel = tk.Frame(editpanel)
+        viewpanel.grid(row=0, column=0)
+        viewxscroll = tk.Scrollbar(viewpanel, orient=tk.HORIZONTAL)
+        viewyscroll = tk.Scrollbar(viewpanel)
+        viewxscroll.grid(row=1, column=0, sticky=tk.W + tk.E)
+        viewyscroll.grid(row=0, column=1, sticky=tk.N + tk.S)
+        self.viewcanvas = tk.Canvas(
+            viewpanel, height=10*32, width=10*32,
+            scrollregion=(0, 0, 0, 0),
+            xscrollcommand=viewxscroll.set,
+            yscrollcommand=viewyscroll.set)
         self.viewcanvas.grid(row=0, column=0)
         self.viewcanvasimage = self.viewcanvas.create_image(0,0,anchor=tk.NW)
+        viewxscroll.config(command=self.viewcanvas.xview)
+        viewyscroll.config(command=self.viewcanvas.yview)
+
         self.viewcanvas.bind("<Button-1>", self.viewclick)
         self.viewcanvas.bind("<B1-Motion>", self.viewclick)
         self.viewcanvas.bind("<Motion>", self.viewmove)
         self.viewcanvas.bind("<Button-2>", self.cviewclick)
         self.viewcanvas.bind("<Button-3>", self.rviewclick)
 
-        self.rendercanvas = tk.Canvas(viewpanel, width=10*32, height=10*32)
-        self.rendercanvas.grid(row=0, column=1)
+        renderpanel = tk.Frame(editpanel)
+        renderpanel.grid(row=0, column=1)
+        renderxscroll = tk.Scrollbar(renderpanel, orient=tk.HORIZONTAL)
+        renderyscroll = tk.Scrollbar(renderpanel)
+        renderxscroll.grid(row=1, column=0, sticky=tk.W + tk.E)
+        renderyscroll.grid(row=0, column=1, sticky=tk.N + tk.S)
+        self.rendercanvas = tk.Canvas(
+            renderpanel, width=10*32, height=10*32,
+            xscrollcommand=renderxscroll.set,
+            yscrollcommand=renderyscroll.set)
+        self.rendercanvas.grid(row=0, column=0)
         self.rendercanvasimage = self.rendercanvas.create_image(0,0,anchor=tk.NW)
+        renderxscroll.config(command=self.rendercanvas.xview)
+        renderyscroll.config(command=self.rendercanvas.yview)
 
         self.objectview = []
 
@@ -148,6 +173,17 @@ class Application(tk.Frame):
         sidepanel = tk.Frame(self)
         sidepanel.grid(row=3, column=3)
 
+        levelpanel = tk.Frame(sidepanel, borderwidth=4, relief=tk.SUNKEN)
+        levelpanel.pack()
+        tk.Label(levelpanel, text="Level options").grid(row=0, column=0, columnspan=2)
+        tk.Label(levelpanel, text="Width:").grid(row=1, column=0)
+        self.levelwidth = tk.Spinbox(levelpanel, from_=5, to=100, width=3)
+        self.levelwidth.grid(row=1, column=1)
+        tk.Label(levelpanel, text="Height:").grid(row=2, column=0)
+        self.levelheight = tk.Spinbox(levelpanel, from_=5, to=100, width=3)
+        self.levelheight.grid(row=2, column=1)
+        tk.Button(levelpanel, text="Apply", command=self.changelevel).grid(row=3, column=0, columnspan=2)
+
         tilepanel = tk.Frame(sidepanel)
         tilepanel.pack()
         tk.Label(tilepanel, text="Current tile:").pack()
@@ -190,11 +226,17 @@ class Application(tk.Frame):
         self.roomimgTk = ImageTk.PhotoImage(self.roomimg)
         self.viewcanvas.itemconfig(self.viewcanvasimage,
                                    image=self.roomimgTk)
+        self.viewcanvas.config(
+            scrollregion=(0, 0, 
+                          self.roomimgTk.width(), self.roomimgTk.height()))
 
         self.renderimg = self.room.render()
         self.renderTk = ImageTk.PhotoImage(self.renderimg)
         self.rendercanvas.itemconfig(self.rendercanvasimage,
                                      image=self.renderTk)
+        self.rendercanvas.config(
+            scrollregion=(0, 0, 
+                          self.renderTk.width(), self.renderTk.height()))        
 
         [self.viewcanvas.delete(x) for x in self.objectview]
         i = 0
@@ -206,10 +248,23 @@ class Application(tk.Frame):
                                         text=str(i),
                                         font=('Helvetica', -16)))
             i = i + 1
-
         self.lentry.delete(0, tk.END)
         self.lentry.insert(0, str(self.layer))
-        self.lentry.grid(row=2, column=1)
+
+        self.levelwidth.delete(0, tk.END)
+        self.levelwidth.insert(0, str(self.room.width))
+        
+        self.levelheight.delete(0, tk.END)
+        self.levelheight.insert(0, str(self.room.height))
+
+    
+    def changelevel(self):
+        width = int(self.levelwidth.get())
+        height = int(self.levelheight.get())
+        self.room.resize(width, height)
+        self.statusbar.config(
+            text="Resized room to {}x{}".format(str(width), str(height)))
+        self.drawroom()
 
     def tileclick(self, event):
         x = math.floor(self.tilecanvas.canvasx(event.x) / 32)
@@ -260,7 +315,6 @@ class Application(tk.Frame):
         if relative:
             i = self.currenti + i
 
-
         if (i >= 0 and i < 16):
             self.currenti = i
             self.room = self.roomset.getroom(self.currenti)
@@ -304,7 +358,7 @@ class Application(tk.Frame):
             with open(filen, "r") as fileo:
                 header = fileo.readline()
                 if header != "var worldfile = \n":
-                    print("Not a proper worldfile")
+                    self.statusbar.config(text="Not a proper worldfile!")
                     return
                 data = fileo.readline()
                 self.roomset.load(json.loads(data))
@@ -406,6 +460,18 @@ class Room:
         if x >= self.width or y >= self.height or x < 0 or y < 0:
             return 0
         return self.tiles[l][x + y*self.width]
+
+    def resize(self, w, h):
+        newtiles = [([0 for x in range(0, w*h)]) for x in range(0, len(self.tiles))]
+        for z in range(0, len(self.tiles)):
+            i = 0
+            for y in range(0, h):
+                for x in range(0, w):
+                    newtiles[z][i] = self.get(z, x, y)
+                    i = i + 1
+        self.width = w
+        self.height = h
+        self.tiles = newtiles
 
     def setarea(self, x):
         self.music = x
