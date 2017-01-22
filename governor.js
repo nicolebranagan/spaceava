@@ -1,12 +1,20 @@
 // The governor is the repository of state
 class Governor {
     constructor() {
-        this.position = 0;
+        this.position = -1;
         this.step();
     }
     step() {
-        Governor.tickerTape[this.position](this);
+        // Test code; shouldn't make it into the final version
+        if (__debug) {
+            if (this.position == Governor.tickerTape.length) {
+                console.log("Ran out of tape!")
+                runner = new TitleScreen();
+                return;
+            }
+        }
         this.position++;
+        Governor.tickerTape[this.position](this);
     }
 }
 

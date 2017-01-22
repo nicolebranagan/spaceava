@@ -1,14 +1,22 @@
 'use strict';
 class Game {
     constructor(stage, winfunc) {
-    this.winfunc = winfunc;
-    this.stage = new Game.stage(worldfile.rooms[stage]);
-    this.player = new Game.object.player(this, new Point(0,0));
-    this.turns = 0;
-    this.enemies = this.stage.getEnemies(this);
-    this.mode = Game.Mode.STARTUP;
-    this.startTimer = 0;
-    this.startString = "Singularity " + stage.toString();
+        this.winfunc = winfunc;
+        this.level = stage;
+        this.stage = new Game.stage(worldfile.rooms[stage]);
+        this.player = new Game.object.player(this, new Point(0,0));
+        this.turns = 0;
+        this.enemies = this.stage.getEnemies(this);
+        this.mode = Game.Mode.STARTUP;
+        this.startTimer = 0;
+        this.startString = "Singularity " + stage.toString();
+
+        this.winCount = 0;
+        for (var i = 0; i < this.enemies.length; i++) {
+            if (this.enemies[i].need)
+                this.winCount++;
+        }
+        this.winGot = 0;
     }
     update() {
         if (this.mode == Game.Mode.STARTUP) {
@@ -21,6 +29,18 @@ class Game {
             if (Controls.Enter) {
                 Controls.Enter = false;
                 this.mode = Game.Mode.PLAYER;
+            } else
+                return;
+        } else if (this.mode == Game.Mode.DIE_ANIM) {
+            this.deathTimer++;
+            if (this.deathTimer == 150) {
+                runner = new Game(this.level, this.winfunc);
+            }
+            //return;
+        } else if (this.mode == Game.Mode.WIN_ANIM) {
+            this.winTimer++;
+            if (this.winTimer == 150) {
+                this.winfunc();
             }
         }
 
@@ -68,10 +88,12 @@ class Game {
     draw(ctx) {
         var drawStage = true;
         var drawSprites = true;
+        var drawPlayer = true;
         if (this.mode === Game.Mode.STARTUP) {
             drawStage = (this.startTimer > 75);
             drawSprites = (this.startTimer > 150)
-        } else if (this.mode === Game.Mode.PAUSED) {
+        } else if (this.mode === Game.Mode.PAUSED || this.mode === Game.Mode.DIE_ANIM || 
+                   this.mode === Game.Mode.WIN_ANIM) {
             drawSprites = false;
         }
 
@@ -93,7 +115,7 @@ class Game {
                     if (e.layer == i)
                         drawables.push(e.draw(drawPt));
                 }
-                if (i == this.player.layer && drawSprites)
+                if (i == this.player.layer && drawPlayer)
                     drawables.push(this.player.draw(drawPt));
             }
             drawables.sort(function(a,b) {
@@ -111,9 +133,24 @@ class Game {
             drawCenteredText(ctx, 80, "Paused")
         }
     }
+    hurt() {
+        this.deathTimer = 0;
+        this.mode = Game.Mode.DIE_ANIM;
+        this.player.hurt();
+    }
+    win() {
+        this.winGot++;
+        if (this.winGot == this.winCount) {
+            this.mode = Game.Mode.WIN_ANIM;
+            this.player.mode = Game.object.player.Mode.WIN_ANIM;
+            this.winTimer = 0;
+        }
+    }
 }
 
+// Static members
 Game.center = new Point(gamecanvas.width / 2, gamecanvas.height / 2);
+
 Game.Mode = {
     PLAYER: 0,
     PLAYER_ANIM: 1,
@@ -121,8 +158,11 @@ Game.Mode = {
     ENEMY_ANIM: 3,
 
     PAUSED: -1,
-    STARTUP: -100,
+    STARTUP: -2,
+    DIE_ANIM: -3,
+    WIN_ANIM: -4,
 }
+
 Game.TileType = {
     EMPTY: 0,
     SOLID: 1,
@@ -131,6 +171,11 @@ Game.TileType = {
     SLOPE_UP: 3,
     SLOPE_LEFT: 4,
     SLOPE_RIGHT: 5,
+}
+
+Game.nullDrawable = {
+    position: Position.null,
+    draw: function(ctx) { return; }
 }
 
 Game.stage = class {

@@ -30,8 +30,8 @@ Game.object = class {
                     this.frame++;
                 else
                     this.frame--;
-                if (this.frame == this.frameMax) {
-                    this.frame = this.frame - 2;
+                if (this.frame >= this.frameMax) {
+                    this.frame = this.frameMax - 2;
                     this.up = false;
                 } else if (this.frame == -1) {
                     this.frame = this.frame + 2;
@@ -101,6 +101,20 @@ Game.object = class {
         }
         return drawable;
     }
+    draw_frames(ctr, frames) {
+        var drawable = {};
+        var base = this;
+        var iso_pt = new Point(ctr.x, ctr.y).getIsometric();
+        ctr = new Point(Game.center).subtract(iso_pt);
+        var iso_c = new Point((this.point.x-this.layer)*8+this.offset.x-this.offset.layer, (this.point.y-this.layer)*8+this.offset.y-this.offset.layer).getIsometric();
+        iso_c.add(ctr);
+        drawable.coord = iso_c.subtract(new Point(8, 8));
+        drawable.position = new Position(this.point.x, this.point.y, this.layer);
+        drawable.draw = function(ctx) {
+            ctx.drawImage(gfx.objects, (frames[base.frame])*16 + base.tile*16, 0, 16, 16, iso_c.x, iso_c.y, 16, 16);
+        }
+        return drawable;
+    }
 }
 
 Game.object.player = class extends Game.object {
@@ -108,6 +122,10 @@ Game.object.player = class extends Game.object {
         super();
         super.initialize(parent, point);
         this.frame = 1;
+
+        this.winAnim = [1, 12];
+        this.dieAnim = [1, 13, 14];
+        this.mode = Game.object.player.Mode.ACTIVE;
     }
     update(mode) {
         super.update(mode);
@@ -121,6 +139,26 @@ Game.object.player = class extends Game.object {
                 this.animate();
         } else if (mode == Game.Mode.ENEMY || mode == Game.Mode.ENEMY_ANIM) {
             this.ready = true;
+        }
+        if (this.mode == Game.object.player.Mode.DEATH_ANIM) {
+            if (this.frame == 3)
+                this.mode = Game.object.player.Mode.NOT_DRAWN;
+        }
+    }
+    draw(ctx) {
+        if (this.mode == Game.object.player.Mode.ACTIVE) {
+            return super.draw(ctx);
+        } else if (this.mode == Game.object.player.Mode.DEATH_ANIM) {
+            return super.draw_frames(ctx, this.dieAnim);
+        } else if (this.mode == Game.object.player.Mode.WIN_ANIM) {
+            this.frameMax = 2;
+            this.timerMax = 20;
+            return super.draw_frames(ctx, this.winAnim);
+        } else if (this.mode == Game.object.player.Mode.DIE_ANIM) {
+            this.timerMax = 40;
+            return super.draw_frames(ctx, this.dieAnim);
+        } else if (this.mode == Game.object.player.Mode.NOT_DRAWN) {
+            return Game.nullDrawable;
         }
     }
     cycle() {
@@ -184,9 +222,18 @@ Game.object.player = class extends Game.object {
         }
     }
     hurt(hurter) {
-        // TODO: Something better than this;
-        this.point = new Point(0,0);
+        this.mode = Game.object.player.Mode.DEATH_ANIM;
+        this.frame = 0;
+        this.frameMax = 4;
     }
+
+}
+
+Game.object.player.Mode = {
+    ACTIVE: 0,
+    DEATH_ANIM: 1,
+    WIN_ANIM: 2,
+    NOT_DRAWN: 3,
 }
 
 Game.object.enemy = class extends Game.object {
@@ -294,7 +341,7 @@ Game.object.bullet = class extends Game.object {
             this.doomed = true;
         this.ready = true;
         if ((test.equals(this.parent.player.point) || (this.point.equals(this.parent.player.point))) && this.layer == this.parent.player.layer)
-            this.parent.player.hurt(this);
+            this.parent.hurt(this);
     }
 }
 
@@ -334,11 +381,11 @@ Game.object.winObject = class extends Game.object.stationary {
         this.tile = 251 - (polarity ? 0 : 5);
         this.frameMax = 5;
         this.timerMax = 4;
-        this.winner = true;
+        this.need = true; // Need this to win
     }
 
     action() {
-        // TODO: Something
-        this.parent.player.hurt();
+        this.parent.win();
+        this.active = false;
     }
 }

@@ -205,6 +205,8 @@ class Position{
     }
 }
 
+Position.null = new Position(0, 0, 0);
+
 var Dir = {
     Down: 0,
     Up: 1,
