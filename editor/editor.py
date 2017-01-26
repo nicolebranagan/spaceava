@@ -445,6 +445,7 @@ class Room:
         self.music = 0
         self.tiles = [[0 for x in range(0,self.width*self.height)]]
         self.objects = []
+        self.startpoint = [0,0,0]
 
     def checklayer(self, l):
         if l >= len(self.tiles):
@@ -514,13 +515,15 @@ class Room:
         return {"width": self.width, "height": self.height,
                 "tiles": self.tiles,
                 "objects": self.objects,
-                "music": self.music}
+                "music": self.music,
+                "startpoint": self.startpoint}
 
     @staticmethod
     def load(loaded, tileset):
         self = Room(tileset, loaded["width"], loaded["height"])
         self.tiles = loaded["tiles"]
         self.objects = loaded["objects"]
+        self.startpoint = loaded["startpoint"]
         return self
 
 class RoomList:

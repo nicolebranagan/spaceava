@@ -4,7 +4,9 @@ class Game {
         this.winfunc = winfunc;
         this.level = stage;
         this.stage = new Game.stage(worldfile.rooms[stage]);
-        this.player = new Game.object.player(this, new Point(0,0));
+        var start = worldfile.rooms[stage].startpoint;
+        this.player = new Game.object.player(this, new Point(start[1],start[2]));
+        this.player.layer = start[0];
         this.turns = 0;
         this.enemies = this.stage.getEnemies(this);
         this.mode = Game.Mode.STARTUP;
@@ -92,6 +94,7 @@ class Game {
         if (this.mode === Game.Mode.STARTUP) {
             drawStage = (this.startTimer > 75);
             drawSprites = (this.startTimer > 150)
+            drawPlayer = false;
         } else if (this.mode === Game.Mode.PAUSED || this.mode === Game.Mode.DIE_ANIM || 
                    this.mode === Game.Mode.WIN_ANIM) {
             drawSprites = false;
@@ -187,6 +190,7 @@ Game.stage = class {
         this.tileMap = room.tiles;
         this.registeredPoints = [];
         this.key = worldfile.key;
+        this.code = 0;
 
         this.buffer = document.createElement('canvas');
         this.buffer.height = (this.width+this.height)*4+8;
@@ -194,13 +198,25 @@ Game.stage = class {
         this.renderLayer(this.buffer.getContext('2d'), 0);
     }
     register(pt, layer, type) {
+        var code = ++this.code;
         this.registeredPoints.push(
             {
                 pt: pt,
                 layer: layer,
-                type: type
+                type: type,
+                code: code,
             }
         );
+        return code;
+    }
+    unregister(code) {
+        for (var i = 0; i < this.registeredPoints.length; i++) {
+            var pt = this.registeredPoints[i];
+            if (pt.code === code) {
+                this.registeredPoints.splice(i, 1);
+                break;
+            }
+        }
     }
     getTile(pt,layer) {
         if (pt.x < 0 || pt.x >= this.width || pt.y < 0 || pt.y >= this.height)

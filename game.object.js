@@ -25,7 +25,7 @@ Game.object = class {
         this.timer--;
         if (this.timer == 0) {
             this.timer = this.timerMax;
-            if (this.frameMax !== 1) {
+            if (this.frameMax > 1) {
                 if (this.up)
                     this.frame++;
                 else
@@ -115,6 +115,9 @@ Game.object = class {
         }
         return drawable;
     }
+    interact(interactor) {
+        return;
+    }
 }
 
 Game.object.player = class extends Game.object {
@@ -189,10 +192,26 @@ Game.object.player = class extends Game.object {
                 test.x--;
             else if (this.facing == Dir.Right)
                 test.x++;
+            
+            var interact = false;
+            for (var i = 0; i < this.parent.enemies.length; i++) {
+                var e = this.parent.enemies[i];
+                if (e.point.equals(test) && e.layer == (this.layer + this.dy)) {
+                    interact = true;
+                    this.moving = e.interact(this);
+                }
+            }
+
+            if (interact) {
+                this.ready = this.moving;
+                return;
+            }
+            
             var onTile = this.parent.stage.getTileType(this.point, this.layer);
             var testTile = this.parent.stage.getTileType(test,this.layer);
             var upTile = this.parent.stage.getTileType(test,this.layer+1);
             var downTile = this.parent.stage.getTileType(test, this.layer-1);
+
             if (testTile == Game.TileType.SOLID && upTile == Game.TileType.EMPTY) {
                 this.moving = true;
             } else if ((upTile == Game.TileType.SLOPE_UP && this.facing == Dir.Up)
@@ -240,8 +259,6 @@ Game.object.enemy = class extends Game.object {
     constructor() {
         super(null);
     }
-
-
 }
 
 Game.object.shooter = class extends Game.object {
@@ -253,7 +270,6 @@ Game.object.shooter = class extends Game.object {
         this.movetime = 0;
         this.type = type;
         this.moving = false;
-        
     }
     initialize(parent, point) {
         super.initialize(parent, point);
@@ -340,8 +356,14 @@ Game.object.bullet = class extends Game.object {
         if (!this.doomed && (test.x >= this.parent.stage.width || test.y >= this.parent.stage.height || test.x < 0 || test.y < 0))
             this.doomed = true;
         this.ready = true;
-        if ((test.equals(this.parent.player.point) || (this.point.equals(this.parent.player.point))) && this.layer == this.parent.player.layer)
+        if ((test.equals(this.parent.player.point)) && (this.layer == this.parent.player.layer))
             this.parent.hurt(this);
+    }
+
+    interact(interactor) {
+        if (interactor === this.parent.player)
+            this.parent.hurt(this);
+        return true;
     }
 }
 
@@ -350,6 +372,7 @@ Game.object.stationary = class extends Game.object {
         super();
         this.facing = Dir.Down;
         this.frameMax = 1;
+        this.collected = false;
     }
 
     initialize(parent, pt) {
@@ -358,19 +381,19 @@ Game.object.stationary = class extends Game.object {
 
     update(mode) {
         super.update(mode);
-        if (mode !== Game.Mode.ENEMY) {
-            this.ready = true;
-            return;
-        } else {
-            this.cycle();
+        this.ready = true;
+        if (this.collected && mode == Game.Mode.PLAYER_ANIM && this.parent.player.ready) {
+            this.active = false;
         }
     }
 
-    cycle() {
-        if (this.point.equals(this.parent.player.point) && this.layer === this.parent.player.layer) {
+    interact(interactor) {
+        if (interactor === this.parent.player) {
             this.action();
+            return true;
+        } else {
+            return false;
         }
-        this.ready = true;
     }
 }
 
@@ -386,6 +409,65 @@ Game.object.winObject = class extends Game.object.stationary {
 
     action() {
         this.parent.win();
-        this.active = false;
+        this.collected = true;
+    }
+}
+
+Game.object.block = class extends Game.object {
+    constructor() {
+        super();
+        this.facing = Dir.Down;
+        this.frameMax = 0;
+        this.moving = false;
+        this.code = -1;
+        this.tile = 245;
+        this.offset.layer = -2;
+    }
+
+    initialize(parent, pt) {
+        super.initialize(parent, pt);
+    }
+
+    update(mode) {
+        super.update(mode);
+        if (this.code == -1 && (this.mode == Game.Mode.PLAYER || mode == Game.Mode.ENEMY)) {
+            this.code = this.parent.stage.register(this.point, this.layer+1, Game.TileType.SOLID);
+        }
+        if (this.moving == true && (mode == Game.Mode.PLAYER_ANIM || mode == Game.Mode.ENEMY_ANIM)) {
+            this.animate();
+            this.offset.layer = -2;
+        } else
+            this.ready = true;
+    }
+
+    interact(interactor) {
+        this.facing = interactor.facing;
+        var test = new Point(this.point);
+        if (this.facing == Dir.Up)
+            test.y--;
+        else if (this.facing == Dir.Down)
+            test.y++;
+        else if (this.facing == Dir.Left)
+            test.x--;
+        else if (this.facing == Dir.Right)
+            test.x++;
+        var onTile = this.parent.stage.getTileType(this.point, this.layer);
+        var testTile = this.parent.stage.getTileType(test,this.layer);
+        var upTile = this.parent.stage.getTileType(test,this.layer+1);
+        var downTile = this.parent.stage.getTileType(test, this.layer-1);
+        if (testTile == Game.TileType.SOLID && upTile == Game.TileType.EMPTY) {
+            this.moving = true;
+        }
+        if (this.moving) {
+            for (var i = 0; i < this.parent.enemies.length; i++) {
+                var e = this.parent.enemies[i];
+                if (e.point.equals(test) && e.layer == (this.layer + this.dy)) {
+                    this.moving = e.interact(this);
+                }
+            }
+            this.parent.stage.unregister(this.code);
+            this.code = -1;
+        }
+        return this.moving;
     }
 }
