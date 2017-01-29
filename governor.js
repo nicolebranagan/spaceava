@@ -1,7 +1,10 @@
 // The governor is the repository of state
 class Governor {
-    constructor() {
-        this.position = -1;
+    constructor(pos) {
+        if (!pos)
+            this.position = -1;
+        else
+            this.position = pos - 1;
         this.step();
     }
     step() {

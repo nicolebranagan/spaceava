@@ -276,6 +276,57 @@ LoadingScreen.prototype = {
     }
 }
 
+class LevelSelect {
+    constructor() {
+        this.posx = 0;
+        this.posy = 0;
+        this.width = (256 / 8) - 2; // Number of 8x8 tiles;
+        this.perline = Math.floor(this.width / 3); 
+    }
+    update() {
+        if (Controls.Left) {
+            Controls.Left = false;
+            if (this.posx > 0)
+                this.posx--;
+        } else if (Controls.Right) {
+            Controls.Right = false;
+            if (this.posx < (this.perline))
+                this.posx++;
+        } else if (Controls.Up) {
+            Controls.Up = false;
+            if (this.posy > 0)
+                this.posy--;
+        } else if (Controls.Down) {
+            Controls.Down = false;
+            this.posy++
+        } else if (Controls.Enter || Controls.Shoot) {
+            Controls.Enter = false;
+            Controls.Shoot = false;
+            var pos = this.posx + (this.posy*this.perline);
+            if (pos < Governor.tickerTape.length) {
+                new Governor(pos);
+            }
+        }
+
+    }
+    draw(ctx) {
+        drawCenteredText(ctx, 8, "Space Ava");
+        drawCenteredText(ctx, 16, "Level Select");
+        var x = 0;
+        var y = 24;
+        drawText(ctx, this.posx*24 + 8, this.posy*16 + 8 + 24, [25]);
+        for (var i = 0; i < Governor.tickerTape.length; i++) {
+            if (i % this.perline == 0) {
+                x = 8;
+                y += 16;
+            } else {
+                x += 3*8;
+            }
+            drawText(ctx, x, y, Governor.tickerTape[i][0]);
+        }
+    }
+}
+
 /*var LoadFileScreen = function(last) {
     this.last = last;
     var block = function(e) {e.preventDefault(); e.stopPropagation();}
