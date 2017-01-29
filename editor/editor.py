@@ -524,6 +524,7 @@ class Room:
         self.tiles = loaded["tiles"]
         self.objects = loaded["objects"]
         self.startpoint = loaded["startpoint"]
+        print(loaded["startpoint"])
         return self
 
 class RoomList:

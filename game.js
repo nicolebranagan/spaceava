@@ -193,8 +193,8 @@ Game.stage = class {
         this.code = 0;
 
         this.buffer = document.createElement('canvas');
-        this.buffer.height = (this.width+this.height)*4+8;
-        this.buffer.width = (this.width+this.height)*8+8;
+        this.buffer.height = (2+this.width+this.height)*4+16;
+        this.buffer.width = (2+this.width+this.height)*8+16;
         this.renderLayer(this.buffer.getContext('2d'), 0);
     }
     register(pt, layer, type) {

@@ -14,11 +14,12 @@ class Governor {
                 return;
             }
         }
-        Governor.tickerTape[this.position](this);
+        Governor.tickerTape[this.position][1](this);
     }
 }
 
 Governor.tickerTape = [
-    function(gov) {runner = new Dialogue(Script.scene1, function() {gov.step();})},
-    function(gov) {runner = new Game(0, function() {gov.step();})},
+    ["D1", function(gov) {runner = new Dialogue(Script.scene1, function() {gov.step();})}],
+    ["01", function(gov) {runner = new Game(0, function() {gov.step();})}],
+    ["D2", function(gov) {runner = new Dialogue(Script.scene2, function() {gov.step();})}],
 ]

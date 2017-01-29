@@ -262,9 +262,10 @@ Game.object.enemy = class extends Game.object {
 }
 
 Game.object.shooter = class extends Game.object {
-    constructor(facing, type) {
+    constructor(facing, type, frequency) {
         super();
         this.facing = facing;
+        this.frequency = frequency;
         this.frameMax = 1;
         this.tile = 16;
         this.movetime = 0;
@@ -289,9 +290,9 @@ Game.object.shooter = class extends Game.object {
     }
     cycle() {
         this.movetime++;
-        if (this.movetime == 3)
+        if (this.movetime == this.frequency)
             this.movetime = 0;
-        if (this.movetime == 1)
+        if (this.movetime == Math.floor(this.frequency/2))
             this.parent.enemies.push(new Game.object.bullet(this.parent, new Point(this.point), this.facing));
         if (this.type == Game.object.shooter.Type.SPINNER) {
             if (this.movetime == 0) {
