@@ -14,13 +14,15 @@ class TitleScreen {
 
             } else if (this.selection == 2) {
                 runner = new OptionsScreen();
+            } else if (this.selection == 3) {
+                runner = new LevelSelect();
             }
         } else if (Controls.Up) {
             if (this.selection != 0)
                 this.selection--;
             Controls.Up = false;
         }   else if (Controls.Down) {
-            if (this.selection != 2)
+            if (this.selection != 3)
                 this.selection++;
             Controls.Down = false;
         }
@@ -32,8 +34,9 @@ class TitleScreen {
         drawText(ctx, 8*8, 10*8, "New Game");
         drawText(ctx, 8*8, 12*8, "Continue");
         drawText(ctx, 8*8, 14*8, "Options");
+        drawText(ctx, 8*8, 16*8, "Level Select")
         drawText(ctx, 6*8, (10 + (this.selection*2))*8, [26]);
-        drawText(ctx, 1*8, 16*8, "(c) 2017 Nicole");
+        drawText(ctx, 1*8, 18*8, "(c) 2017 Nicole");
     }
 };
 

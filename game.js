@@ -70,8 +70,10 @@ class Game {
                 this.mode = Game.Mode.ENEMY
             else if (this.mode == Game.Mode.ENEMY)
                 this.mode = Game.Mode.ENEMY_ANIM
-            else if (this.mode == Game.Mode.ENEMY_ANIM)
+            else if (this.mode == Game.Mode.ENEMY_ANIM) {
                 this.mode = Game.Mode.PLAYER
+                this.turns++;
+            }
 
             this.player.ready = false;
             this.enemies.forEach((e) => e.ready = false);
@@ -196,6 +198,9 @@ Game.stage = class {
         this.buffer.height = (2+this.width+this.height)*4+16;
         this.buffer.width = (2+this.width+this.height)*8+16;
         this.renderLayer(this.buffer.getContext('2d'), 0);
+    }
+    getSize() {
+        return [this.buffer.width, (this.buffer.height + 8*this.layers)]
     }
     register(pt, layer, type) {
         var code = ++this.code;

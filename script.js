@@ -66,11 +66,11 @@ var Script = {
                 [1, 10, "LILY: Well that's easy. It's a black hole, time is proportional to the observer. Time only moves when the observer does."],
                 [1, 11, "AVA: Is that how it works?"],
                 [1, 9, "LILY: Sure, why not."],
-                [1, 8, "AVA: Uh-huh...\nAnyway, number 2. Why are people shooting at me? I just want to help my friends!"],
+                [1, 8, "AVA: Uh-huh...\nAnyway, Number 2. Why are people shooting at me? I just want to help my friends!"],
                 [1, 11, "LILY: About that..."],
-                [6, 12, "..."],
-                [6, 12, "..."],
-                [6, 9, "LILY: Oops time for another level tell you later!"]
+                [1, 10, "LILY: Not all of us in the black hole are so friendly, unfortunately... There are a lot of us who don't like outsiders."],
+                [3, 10, "AVA: But I'm in need! Shouldn't they be more helpful?"],
+                [6, 11, "LILY: Your Amalgamation must be a wonderful place, if that's how you think the world works.."]
         ]
     }
 }

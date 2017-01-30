@@ -1,3 +1,4 @@
+'use strict';
 // The governor is the repository of state
 class Governor {
     constructor(pos) {
@@ -9,8 +10,8 @@ class Governor {
     }
     step() {
         this.position++;
-        // Test code; shouldn't make it into the final version
         if (__debug) {
+            // Test code; shouldn't make it into the final version
             if (this.position == Governor.tickerTape.length) {
                 console.log("Ran out of tape!")
                 runner = new TitleScreen();
