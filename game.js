@@ -107,7 +107,7 @@ class Game {
             drawText(ctx, 0, 16, "T"+this.turns.toString());
         }
         if (drawStage) {
-            var drawPt = new Point(this.player.point).multiply(8).add(this.player.offset);
+            var drawPt = new Point(this.player.point).multiply(8).add(this.player.offset).getIsometric();
             this.stage.drawBase(ctx, drawPt, i);
             var drawables = [];
             for (var i = 0; i < this.stage.layers; i++) {
@@ -199,8 +199,8 @@ Game.stage = class {
         this.buffer.width = (2+this.width+this.height)*8+16;
         this.renderLayer(this.buffer.getContext('2d'), 0);
     }
-    getSize() {
-        return [this.buffer.width, (this.buffer.height + 8*this.layers)]
+    getWidth() {
+        return this.buffer.width;
     }
     register(pt, layer, type) {
         var code = ++this.code;
@@ -261,7 +261,7 @@ Game.stage = class {
                     drawable.coord = new Point((i-layer)*8, (j-layer)*8).getIsometric();
                     drawable.position = new Position(i, j, layer);
                     if (ctrpt) {
-                        var iso_pt = new Point(ctrpt.x, ctrpt.y).getIsometric();
+                        var iso_pt = new Point(ctrpt.x, ctrpt.y);
                         var ctr_x = -iso_pt.x + Game.center.x - 8;
                         var ctr_y = -iso_pt.y + Game.center.y + 2;
                         drawable.coord.add(new Point(ctr_x, ctr_y));
@@ -285,7 +285,7 @@ Game.stage = class {
     }
     // Draws the base layer at the center, centered on a given coordinate
     drawBase(ctx,pt) {
-        var iso_pt = new Point(pt.x, pt.y).getIsometric();
+        var iso_pt = new Point(pt.x, pt.y);
         var ctr_x = -iso_pt.x + Game.center.x - ((this.width+this.height)*4) - 8;
         var ctr_y = -iso_pt.y + Game.center.y + 2;
         ctx.drawImage(this.buffer,ctr_x,ctr_y);

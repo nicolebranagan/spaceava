@@ -90,7 +90,7 @@ Game.object = class {
     draw(ctr) {
         var drawable = {};
         var base = this;
-        var iso_pt = new Point(ctr.x, ctr.y).getIsometric();
+        var iso_pt = new Point(ctr.x, ctr.y);
         ctr = new Point(Game.center).subtract(iso_pt);
         var iso_c = new Point((this.point.x-this.layer)*8+this.offset.x-this.offset.layer, (this.point.y-this.layer)*8+this.offset.y-this.offset.layer).getIsometric();
         iso_c.add(ctr);
@@ -104,7 +104,7 @@ Game.object = class {
     draw_frames(ctr, frames) {
         var drawable = {};
         var base = this;
-        var iso_pt = new Point(ctr.x, ctr.y).getIsometric();
+        var iso_pt = new Point(ctr.x, ctr.y);
         ctr = new Point(Game.center).subtract(iso_pt);
         var iso_c = new Point((this.point.x-this.layer)*8+this.offset.x-this.offset.layer, (this.point.y-this.layer)*8+this.offset.y-this.offset.layer).getIsometric();
         iso_c.add(ctr);
