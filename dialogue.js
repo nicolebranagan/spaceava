@@ -2,8 +2,7 @@ class Dialogue {
     constructor(convo, returner) {
         this.convo = convo;
         this.returner = returner;
-        this.chara1 = 0;
-        this.chara2 = 0;
+        this.chara = [];
         this.blinkTimer = 0;
         this.position = -1;
         this.script = Dialogue.parseScript(28, convo.script);
@@ -39,10 +38,14 @@ class Dialogue {
 
     draw(ctx) {
         this.convo.bg.draw(ctx);
-        if (this.chara1 > 0)
+        /*if (this.chara1 > 0)
             ctx.drawImage(gfx.faces, 32 * this.chara1, 0, 32, 40, 64, 40, 32, 40);
         if (this.chara2 > 0)
-            ctx.drawImage(gfx.faces, 32 * this.chara2, 0, 32, 40, 160, 40, 32, 40);
+            ctx.drawImage(gfx.faces, 32 * this.chara2, 0, 32, 40, 160, 40, 32, 40);*/
+        for (var i = 0; i < this.chara.length; i++) {
+            var char = this.chara[i];
+            ctx.drawImage(gfx.faces, 32*char[0], 0, 32, 40, 64 + 8*char[1], 40, 32, 40)
+        }
         if (this.blinkTimer > 40 && this.talkTimer == -1) {
             var point = (this.position == (this.script.length - 1) ? 22 : 31);
             ctx.drawImage(gfx.font, point*8, 0, 8, 8, 256-16, 192-16, 8, 8);
@@ -60,10 +63,9 @@ class Dialogue {
             return;
         }
         this.position = newpos;
-        this.string = this.script[this.position][2];
-        this.chara1 = this.script[this.position][0];
-        this.chara2 = this.script[this.position][1];
-        this.talkTimer = this.script[this.position][2].length;
+        this.string = this.script[this.position][1];
+        this.chara = this.script[this.position][0];
+        this.talkTimer = this.script[this.position][1].length;
         return;
     }
     // Static methods
@@ -71,7 +73,7 @@ class Dialogue {
         var newscript = script.slice();
         for (var i = 0; i < script.length; i++) {
             var newtext = [];
-            var words = script[i][2].split(' ');
+            var words = script[i][1].split(' ');
             var str = "";
             for(var j=0; j < words.length; j++) {
                 var word = words[j];
@@ -90,7 +92,7 @@ class Dialogue {
             while (script[i][0] !== -1 && newtext.length < 4) {
                 newtext.push("");
             }
-            if (script[i][3] == Dialogue.textStyle.CENTERED) {
+            if (script[i][2] == Dialogue.textStyle.CENTERED) {
                 for (var j = 0; j < newtext.length; j++) {
                     var text = newtext[j];
                     var pad = Math.floor(((width - text.length) / 2));
@@ -100,7 +102,7 @@ class Dialogue {
                 }
             }
 
-            newscript[i] = [script[i][0], script[i][1], newtext.join('\n')];
+            newscript[i] = [script[i][0], newtext.join('\n')];
         }
         return newscript
     }
