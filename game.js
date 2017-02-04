@@ -12,6 +12,7 @@ class Game {
         this.mode = Game.Mode.STARTUP;
         this.startTimer = 0;
         this.startString = "Singularity " + (stage+1).toString();
+        this.willDie = false;
 
         this.winCount = 0;
         for (var i = 0; i < this.enemies.length; i++) {
@@ -66,12 +67,24 @@ class Game {
         if (changeMode) {
             if (this.mode == Game.Mode.PLAYER)
                 this.mode = Game.Mode.PLAYER_ANIM
-            else if (this.mode == Game.Mode.PLAYER_ANIM)
+            else if (this.mode == Game.Mode.PLAYER_ANIM){
+                if (this.winGot == this.winCount) {
+                    this.mode = Game.Mode.WIN_ANIM;
+                    this.player.mode = Game.object.player.Mode.WIN_ANIM;
+                    this.winTimer = 0;
+                    return;
+                }
                 this.mode = Game.Mode.ENEMY
-            else if (this.mode == Game.Mode.ENEMY)
+            } else if (this.mode == Game.Mode.ENEMY)
                 this.mode = Game.Mode.ENEMY_ANIM
             else if (this.mode == Game.Mode.ENEMY_ANIM) {
-                this.mode = Game.Mode.PLAYER
+                if (this.willDie) {
+                    this.deathTimer = 0;
+                    this.mode = Game.Mode.DIE_ANIM;
+                    this.player.hurt();
+                    this.deathTimer = 0;
+                } else
+                    this.mode = Game.Mode.PLAYER
                 this.turns++;
             }
 
@@ -124,6 +137,8 @@ class Game {
             for (var i = 0; i < this.stage.layers; i++) {
                 if (i !== 0)
                     drawables = drawables.concat(this.stage.getDrawables(i, drawPt));
+                if (i == this.player.layer && drawPlayer)
+                    drawables.push(this.player.draw(drawPt));
                 for (var j = 0; j < this.enemies.length; j++) {
                     if (!drawSprites)
                         break;
@@ -131,8 +146,6 @@ class Game {
                     if (e.layer == i)
                         drawables.push(e.draw(drawPt));
                 }
-                if (i == this.player.layer && drawPlayer)
-                    drawables.push(this.player.draw(drawPt));
             }
             drawables.sort(function(a,b) {
                 return a.position.x - b.position.x;
@@ -150,17 +163,10 @@ class Game {
         }
     }
     hurt() {
-        this.deathTimer = 0;
-        this.mode = Game.Mode.DIE_ANIM;
-        this.player.hurt();
+        this.willDie = true;
     }
     win() {
         this.winGot++;
-        if (this.winGot == this.winCount) {
-            this.mode = Game.Mode.WIN_ANIM;
-            this.player.mode = Game.object.player.Mode.WIN_ANIM;
-            this.winTimer = 0;
-        }
     }
 }
 

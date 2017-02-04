@@ -154,6 +154,8 @@ Game.object.player = class extends Game.object {
         } else if (this.mode == Game.object.player.Mode.DEATH_ANIM) {
             return super.draw_frames(ctx, this.dieAnim);
         } else if (this.mode == Game.object.player.Mode.WIN_ANIM) {
+            if (this.frame >= this.frameMax)
+                this.frame = 1;
             this.frameMax = 2;
             this.timerMax = 20;
             return super.draw_frames(ctx, this.winAnim);
