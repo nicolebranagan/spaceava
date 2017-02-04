@@ -445,6 +445,7 @@ class Room:
         self.music = 0
         self.tiles = [[0 for x in range(0,self.width*self.height)]]
         self.objects = []
+        self.properties = []
         self.startpoint = [0,0,0]
 
     def checklayer(self, l):
@@ -516,7 +517,8 @@ class Room:
                 "tiles": self.tiles,
                 "objects": self.objects,
                 "music": self.music,
-                "startpoint": self.startpoint}
+                "startpoint": self.startpoint,
+                "properties": self.properties}
 
     @staticmethod
     def load(loaded, tileset):
@@ -524,6 +526,7 @@ class Room:
         self.tiles = loaded["tiles"]
         self.objects = loaded["objects"]
         self.startpoint = loaded["startpoint"]
+        self.properties = loaded["properties"]
         print(loaded["startpoint"])
         return self
 

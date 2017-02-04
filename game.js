@@ -90,6 +90,10 @@ class Game {
             });
     }
     draw(ctx) {
+        for (var i = 0; i < (256/16)+1; i++)
+            for (var j = 0; j < (192/16); j++) {
+                ctx.drawImage(gfx.tiles, 255*16, 0, 16, 16, i*16-j, j*16, 16, 16);
+            }
         var drawStage = true;
         var drawSprites = true;
         var drawPlayer = true;
@@ -107,7 +111,14 @@ class Game {
             drawText(ctx, 0, 16, "T"+this.turns.toString());
         }
         if (drawStage) {
-            var drawPt = new Point(this.player.point).multiply(8).add(this.player.offset).getIsometric();
+            var drawPt = new Point(this.player.point).multiply(8).add(this.player.offset);
+            if (this.stage.centered)
+                drawPt = this.stage.center;
+            else if (this.stage.centerx)
+                drawPt = new Point(this.stage.center.x, drawPt.y);
+            else if (this.stage.centery)
+                drawPt = new Point(drawPt.x, this.stage.center.y)
+            drawPt = drawPt.getIsometric();
             this.stage.drawBase(ctx, drawPt, i);
             var drawables = [];
             for (var i = 0; i < this.stage.layers; i++) {
@@ -194,10 +205,28 @@ Game.stage = class {
         this.key = worldfile.key;
         this.code = 0;
 
+        this.centered = false;
+        this.centerx = false;
+        this.centery = false;
+        for (var i = 0; i < room.properties; i++) {
+            switch (room.properties[i]) {
+                case Game.stage.Properties.CENTERED:
+                    this.centered = true;
+                    break;
+                case Game.stage.Properties.CENTER_X:
+                    this.centerx = true;
+                    break;
+                case Game.stage.Properties.CENTER_Y:
+                    this.centery = true;
+                    break;
+            }
+        }
+
         this.buffer = document.createElement('canvas');
         this.buffer.height = (2+this.width+this.height)*4+16;
         this.buffer.width = (2+this.width+this.height)*8+16;
         this.renderLayer(this.buffer.getContext('2d'), 0);
+        this.center = new Point(this.width * 4, this.height * 4);
     }
     getWidth() {
         return this.buffer.width;
@@ -291,4 +320,10 @@ Game.stage = class {
         ctx.drawImage(this.buffer,ctr_x,ctr_y);
         //return new Point(Game.center).subtract(iso_pt);
     }
+}
+
+Game.stage.Properties = {
+    CENTERED: 1,
+    CENTER_X: 2,
+    CENTER_Y: 3,
 }

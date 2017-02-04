@@ -290,7 +290,6 @@ Game.object.shooter = class extends Game.object {
     }
     cycle() {
         this.movetime++;
-        console.log(this.movetime, this.movetime == Math.floor(this.frequency/2))
         if (this.movetime == this.frequency)
             this.movetime = 0;
         if (this.movetime == Math.floor(this.frequency/2))

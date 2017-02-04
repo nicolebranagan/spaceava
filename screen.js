@@ -273,6 +273,10 @@ LoadingScreen.prototype = {
         } else if (this.timer > 3) {
             this.timer++;
             if (this.timer == 150) {
+                if (__debug) {
+                    runner = new LevelSelect();
+                    return;
+                }
                 runner = new Dialogue(Script.opening, function() {runner = new TitleScreen();});
             }
         }
@@ -293,7 +297,7 @@ class LevelSelect {
                 this.posx--;
         } else if (Controls.Right) {
             Controls.Right = false;
-            if (this.posx < (this.perline))
+            if (this.posx < (this.perline-1))
                 this.posx++;
         } else if (Controls.Up) {
             Controls.Up = false;
@@ -308,6 +312,8 @@ class LevelSelect {
             var pos = this.posx + (this.posy*this.perline);
             if (pos < Governor.tickerTape.length) {
                 new Governor(pos);
+            } else {
+                console.log(pos);
             }
         }
 
