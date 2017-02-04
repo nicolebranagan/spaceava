@@ -11,7 +11,7 @@ class Game {
         this.enemies = this.stage.getEnemies(this);
         this.mode = Game.Mode.STARTUP;
         this.startTimer = 0;
-        this.startString = "Singularity " + stage.toString();
+        this.startString = "Singularity " + (stage+1).toString();
 
         this.winCount = 0;
         for (var i = 0; i < this.enemies.length; i++) {
