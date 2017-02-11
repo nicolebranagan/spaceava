@@ -31,6 +31,10 @@ def process(designation):
     filen = designation + "bg1.png"
     pixelgrid2.changepage(1)
     pixelgrid2.getTkStrip(8, block=False).write(filen)
+
+    # Title (bg1.png)
+    filen = designation + "title.png"
+    pixelgrid3.getTkStrip(24, block=False).write(filen)
     
 tk.Tk() # Initialize Tk system
 
@@ -41,5 +45,9 @@ with open("space-ava.terra", "r") as fileo:
 pixelgrid2 = PixelGrid([0,0,0])
 with open("space-faces.terra", "r") as fileo:
     pixelgrid2.load(json.load(fileo))
+
+pixelgrid3 = PixelGrid([0,0,0])
+with open("space-title.terra", "r") as fileo:
+    pixelgrid3.load(json.load(fileo))
 
 process("../")

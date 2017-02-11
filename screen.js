@@ -22,21 +22,18 @@ class TitleScreen {
                 this.selection--;
             Controls.Up = false;
         }   else if (Controls.Down) {
-            if (this.selection != 3)
+            if (this.selection != 2)
                 this.selection++;
             Controls.Down = false;
         }
     }
     draw(ctx) {
-        //ctx.drawImage(gfx.title, 0, 0);
-        drawCenteredText(ctx, 8*4, "Space Ava")
-        drawCenteredText(ctx, 8*5, "Beta Version")
-        drawText(ctx, 8*8, 10*8, "New Game");
-        drawText(ctx, 8*8, 12*8, "Continue");
-        drawText(ctx, 8*8, 14*8, "Options");
-        drawText(ctx, 8*8, 16*8, "Level Select")
-        drawText(ctx, 6*8, (10 + (this.selection*2))*8, [26]);
-        drawText(ctx, 1*8, 18*8, "(c) 2017 Nicole");
+        ctx.drawImage(gfx.title, 0, 0, 256, 192, 0, 0, 256, 192);
+        drawText(ctx, 12*8, 14*8, "New Game");
+        drawText(ctx, 12*8, 16*8, "Continue");
+        drawText(ctx, 12*8, 18*8, "Options");
+        drawText(ctx, 10*8, (14 + (this.selection*2))*8, [26]);
+        drawCenteredText(ctx, 21*8, "(c) 2017 Nicole Express");
     }
 };
 

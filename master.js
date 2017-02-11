@@ -195,6 +195,10 @@ class Point {
     equals(pt) {
         return (this.x == pt.x && this.y == pt.y)
     }
+    round() {
+        this.x = Math.floor(this.x);
+        this.y = Math.floor(this.y);
+    }
 }
 
 class Position{ 

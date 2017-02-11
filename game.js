@@ -72,9 +72,13 @@ class Game {
                     this.mode = Game.Mode.WIN_ANIM;
                     this.player.mode = Game.object.player.Mode.WIN_ANIM;
                     this.winTimer = 0;
-                    return;
-                }
-                this.mode = Game.Mode.ENEMY
+                } else if (this.willDie) {
+                    this.deathTimer = 0;
+                    this.mode = Game.Mode.DIE_ANIM;
+                    this.player.hurt();
+                    this.deathTimer = 0;
+                } else
+                    this.mode = Game.Mode.ENEMY
             } else if (this.mode == Game.Mode.ENEMY)
                 this.mode = Game.Mode.ENEMY_ANIM
             else if (this.mode == Game.Mode.ENEMY_ANIM) {

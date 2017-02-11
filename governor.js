@@ -27,4 +27,5 @@ Governor.tickerTape = [
     ["01", function(gov) {runner = new Game(0, function() {gov.step();})}],
     ["D2", function(gov) {runner = new Dialogue(Script.scene2, function() {gov.step();})}],
     ["02", function(gov) {runner = new Game(1, function() {gov.step();})}],
+    ["03", function(gov) {runner = new Game(2, function() {gov.step();})}]
 ]

@@ -95,6 +95,7 @@ Game.object = class {
         var iso_c = new Point((this.point.x-this.layer)*8+this.offset.x-this.offset.layer, (this.point.y-this.layer)*8+this.offset.y-this.offset.layer).getIsometric();
         iso_c.add(ctr);
         drawable.coord = iso_c.subtract(new Point(8, 8));
+        iso_c.round();
         drawable.position = new Position(this.point.x, this.point.y, this.layer);
         drawable.draw = function(ctx) {
             ctx.drawImage(gfx.objects, (base.facing*base.frameMax + base.frame)*16 + base.tile*16, 0, 16, 16, iso_c.x, iso_c.y, 16, 16);
@@ -367,6 +368,79 @@ Game.object.bullet = class extends Game.object {
     interact(interactor) {
         if (interactor === this.parent.player)
             this.parent.hurt(this);
+        return true;
+    }
+}
+
+Game.object.snake = class extends Game.object {
+    constructor(facing) {
+        super();
+        this.facing = facing;
+        this.frameMax = 2;
+        this.tile = 20;
+    }
+
+    initialize(parent, pt) {
+        super.initialize(parent, pt);
+    }
+
+    update(mode) {
+        super.update(mode);
+        if (this.ready)
+            return;
+        if (mode == Game.Mode.PLAYER || mode == Game.Mode.PLAYER_ANIM) {
+            this.ready = true;
+        } else if (mode == Game.Mode.ENEMY) {
+            this.cycle();
+        } else if (mode == Game.Mode.ENEMY_ANIM) {
+            this.animate();
+        }
+    }
+
+    draw(ctr) {
+        this.offset.layer -= 2;
+        this.offset.x -= 1;
+        var drawable = super.draw(ctr);
+        this.offset.layer += 2; 
+        this.offset.x += 1;
+        return drawable;
+    }
+
+    cycle() {
+        var test = new Point(this.point);
+        if (this.facing == Dir.Up)
+            test.y--;
+        else if (this.facing == Dir.Down)
+            test.y++;
+        else if (this.facing == Dir.Left)
+            test.x--;
+        else if (this.facing == Dir.Right)
+            test.x++;
+        var testTile = this.parent.stage.getTileType(test,this.layer+1);
+        var downTile = this.parent.stage.getTileType(test,this.layer);
+        if (testTile === Game.TileType.EMPTY && downTile === Game.TileType.SOLID) {
+            if ((test.equals(this.parent.player.point)) && (this.layer == this.parent.player.layer))
+                this.parent.hurt(this);
+            this.moving = true;
+            this.ready = true;
+        }
+        else {
+            if (this.facing == Dir.Up)
+                this.facing = Dir.Down;
+            else if (this.facing == Dir.Down)
+                this.facing = Dir.Up;
+            else if (this.facing == Dir.Left)
+                this.facing = Dir.Right;
+            else if (this.facing == Dir.Right)
+                this.facing = Dir.Left;
+            this.cycle();
+        }
+    }
+
+    interact(interactor) {
+        if (interactor === this.parent.player) {
+            this.parent.hurt(this);
+        }
         return true;
     }
 }

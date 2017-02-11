@@ -75,6 +75,8 @@ var gfx = {
         this.faces.src = "./images/faces.png"
         this.bg = [new Image()];
         this.bg[0].src = "./images/bg1.png";
+        this.title = new Image();
+        this.title.src = "./images/title.png";
     }
 }
 gfx.initialize();
