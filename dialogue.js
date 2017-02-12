@@ -44,7 +44,7 @@ class Dialogue {
             ctx.drawImage(gfx.faces, 32 * this.chara2, 0, 32, 40, 160, 40, 32, 40);*/
         for (var i = 0; i < this.chara.length; i++) {
             var char = this.chara[i];
-            ctx.drawImage(gfx.faces, 32*char[0], 0, 32, 40, 64 + 8*char[1], 40, 32, 40)
+            ctx.drawImage(gfx.faces, 32*char[0], 0, 32, 40, 32 + 8*char[1], 40, 32, 40)
         }
         if (this.blinkTimer > 40 && this.talkTimer == -1) {
             var point = (this.position == (this.script.length - 1) ? 22 : 31);
