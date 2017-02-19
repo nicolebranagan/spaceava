@@ -9,6 +9,7 @@ var Script = {
             }
         ),
         script: [
+            function() {music.playMusic("prelude");},
             [[], "SPACE YEAR 99\n \n Starship Zip", Dialogue.textStyle.CENTERED],
             [[[4,4]], "AVA: Wow! What a great day! Nothing could go wrong today!"],
             [[[1,4], [8,16]], "???: Hey there."],
@@ -37,10 +38,12 @@ var Script = {
             }
         ),
         script: [
+            function() {music.playMusic("prelude");},
             [[[1,4], [10,16]], "AVA: So if this is the inside of a black hole, then what are you doing here?"],
             [[[1,4], [10,16]], "LILY: I live here. Obviously."],
             [[[2,4], [10,16]], "AVA: You live inside a black hole? Is that possible?\n ???: Don't judge."],
             [[[1,4], [11,16]], "AVA: Wait... there was a whole crew on my ship. Like at least ten people. Maybe more."],
+            function() {music.playMusic("steady");},
             [[[3,4], [10,16]], "LILY: I saw a bunch of people leaving! But you won't last long inside the black hole, there's too much quantum for your types."],
             [[[3,4], [10,16]], "AVA: What?! I have to save them!"],
             [[[3,4], [11,16]], "LILY: You'd never make it through all the quantum..."],
@@ -59,6 +62,7 @@ var Script = {
             }
         ),
         script: [
+            function() {music.playMusic("steady");},
             [[[4,0], [8,4]], "LILY: Great job! I knew you'd be fine against the quantum!"],
             [[[1,0], [8,4]], "AVA: Yeah, yeah, Lilith, I have some questions here. Specifically, two."],
             [[[1,0], [10,4]], "LILY: Fine, fine. I have to admit--"],

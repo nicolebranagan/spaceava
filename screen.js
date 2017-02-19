@@ -3,6 +3,7 @@
 class TitleScreen {
     constructor() {
         this.selection = 0;
+        music.playMusic("title");
     }
     update() {
         if (Controls.Enter || Controls.Shoot) {

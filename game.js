@@ -20,13 +20,15 @@ class Game {
                 this.winCount++;
         }
         this.winGot = 0;
+        music.playMusic("");
     }
     update() {
         if (this.mode == Game.Mode.STARTUP) {
             this.startTimer++;
-            if (this.startTimer == 225)
+            if (this.startTimer == 225) {
                 this.mode = Game.Mode.PLAYER
-            else
+                music.playMusic("spaceless");
+            } else
                 return;
         } else if (this.mode == Game.Mode.PAUSED) {
             if (Controls.Enter) {
@@ -77,6 +79,7 @@ class Game {
                     this.mode = Game.Mode.DIE_ANIM;
                     this.player.hurt();
                     this.deathTimer = 0;
+                    music.playMusic("");
                 } else
                     this.mode = Game.Mode.ENEMY
             } else if (this.mode == Game.Mode.ENEMY)
@@ -87,6 +90,7 @@ class Game {
                     this.mode = Game.Mode.DIE_ANIM;
                     this.player.hurt();
                     this.deathTimer = 0;
+                    music.playMusic("");
                 } else
                     this.mode = Game.Mode.PLAYER
                 this.turns++;

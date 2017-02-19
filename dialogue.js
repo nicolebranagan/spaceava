@@ -63,15 +63,23 @@ class Dialogue {
             return;
         }
         this.position = newpos;
-        this.string = this.script[this.position][1];
-        this.chara = this.script[this.position][0];
-        this.talkTimer = this.script[this.position][1].length;
-        return;
+        if (typeof this.script[this.position] == "function") {
+            this.script[this.position]();
+            this.next();
+        } else {
+            this.string = this.script[this.position][1];
+            this.chara = this.script[this.position][0];
+            this.talkTimer = this.script[this.position][1].length;
+        }
     }
     // Static methods
     static parseScript(width, script) {
         var newscript = script.slice();
         for (var i = 0; i < script.length; i++) {
+            if (typeof script[i] == "function") {
+                newscript[i] = script[i];
+                continue;
+            }
             var newtext = [];
             var words = script[i][1].split(' ');
             var str = "";
@@ -111,7 +119,7 @@ class Dialogue {
 
 Dialogue.textStyle = {
     NONE: 0,
-    CENTERED: 1,
+    CENTERED: 1
 }
 
 Dialogue.Background = class {
