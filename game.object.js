@@ -196,20 +196,6 @@ Game.object.player = class extends Game.object {
             else if (this.facing == Dir.Right)
                 test.x++;
             
-            var interact = false;
-            for (var i = 0; i < this.parent.enemies.length; i++) {
-                var e = this.parent.enemies[i];
-                if (e.point.equals(test) && e.layer == (this.layer + this.dy)) {
-                    interact = true;
-                    this.moving = e.interact(this);
-                }
-            }
-
-            if (interact) {
-                this.ready = this.moving;
-                return;
-            }
-            
             var onTile = this.parent.stage.getTileType(this.point, this.layer);
             var testTile = this.parent.stage.getTileType(test,this.layer);
             var upTile = this.parent.stage.getTileType(test,this.layer+1);
@@ -240,6 +226,21 @@ Game.object.player = class extends Game.object {
             }
             if (this.dy > 0)
                 this.offset.layer = -this.dy*8;
+
+            var interact = false;
+            for (var i = 0; i < this.parent.enemies.length; i++) {
+                var e = this.parent.enemies[i];
+                if (e.point.equals(test) && e.layer == (this.layer + this.dy)) {
+                    interact = true;
+                    this.moving = e.interact(this);
+                }
+            }
+
+            if (interact) {
+                this.ready = this.moving;
+                return;
+            }
+            
             this.ready = this.moving;
         }
     }
@@ -295,8 +296,10 @@ Game.object.shooter = class extends Game.object {
         this.movetime++;
         if (this.movetime == this.frequency)
             this.movetime = 0;
-        if (this.movetime == Math.floor(this.frequency/2))
+        if (this.movetime == Math.floor(this.frequency/2)) {
             this.parent.enemies.push(new Game.object.bullet(this.parent, new Point(this.point), this.layer, this.facing));
+            music.queueSound('boom');
+        }
         if (this.type == Game.object.shooter.Type.SPINNER) {
             if (this.movetime == 0) {
                 if (this.facing == Dir.Up)
@@ -451,6 +454,7 @@ Game.object.stationary = class extends Game.object {
         this.facing = Dir.Down;
         this.frameMax = 1;
         this.collected = false;
+        this.playSound = true;
     }
 
     initialize(parent, pt) {
@@ -462,6 +466,8 @@ Game.object.stationary = class extends Game.object {
         this.ready = true;
         if (this.collected && mode == Game.Mode.PLAYER_ANIM && this.parent.player.ready) {
             this.active = false;
+            if (this.playSound)
+                music.playSound("get");
         }
     }
 
@@ -486,7 +492,7 @@ Game.object.winObject = class extends Game.object.stationary {
     }
 
     action() {
-        this.parent.win();
+        this.playSound = !(this.parent.win());
         this.collected = true;
     }
 }

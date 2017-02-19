@@ -21,6 +21,7 @@ class Game {
         }
         this.winGot = 0;
         music.playMusic("");
+        music.clearQueue();
     }
     update() {
         if (this.mode == Game.Mode.STARTUP) {
@@ -67,6 +68,7 @@ class Game {
             }
         }
         if (changeMode) {
+            music.playQueue();
             if (this.mode == Game.Mode.PLAYER)
                 this.mode = Game.Mode.PLAYER_ANIM
             else if (this.mode == Game.Mode.PLAYER_ANIM){
@@ -74,12 +76,14 @@ class Game {
                     this.mode = Game.Mode.WIN_ANIM;
                     this.player.mode = Game.object.player.Mode.WIN_ANIM;
                     this.winTimer = 0;
+                    music.playMusic("power");
                 } else if (this.willDie) {
                     this.deathTimer = 0;
                     this.mode = Game.Mode.DIE_ANIM;
                     this.player.hurt();
                     this.deathTimer = 0;
                     music.playMusic("");
+                    music.playSound("die");
                 } else
                     this.mode = Game.Mode.ENEMY
             } else if (this.mode == Game.Mode.ENEMY)
@@ -91,6 +95,7 @@ class Game {
                     this.player.hurt();
                     this.deathTimer = 0;
                     music.playMusic("");
+                    music.playSound("die");
                 } else
                     this.mode = Game.Mode.PLAYER
                 this.turns++;
@@ -175,6 +180,7 @@ class Game {
     }
     win() {
         this.winGot++;
+        return (this.winGot === this.winCount)
     }
 }
 

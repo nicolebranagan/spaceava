@@ -1,12 +1,12 @@
 var music = {
-    sounds: [],
-    music: ["prelude", "spaceless", "steady", "title"],
+    sounds: ["die", "get", "boom"],
+    music: ["prelude", "spaceless", "steady", "title", "power"],
     data: {},
     initialize: function() {
         for (var i = 0; i < this.sounds.length; i++) {
             var sound = new Howl({
-                urls: ["./sound/" + this.sounds[i] + ".wav"],
-                volume: 0.9,
+                src: ["./music/sfx_" + this.sounds[i] + ".wav"],
+                volume: 0.6,
                 autoplay: false,
                 loop: false
             });
@@ -14,7 +14,7 @@ var music = {
         }
         for (var i = 0; i < this.music.length; i++) {
             var music = new Howl({
-                urls: ["./music/" + this.music[i] + ".ogg"],
+                src: ["./music/" + this.music[i] + ".ogg"],
                 volume: 0.6,
                 autoplay: false,
                 loop: true
@@ -30,6 +30,26 @@ var music = {
         if (soundEnabled) {
             this.data[sound].play();
         }
+    },
+    soundqueue: [],
+    queueSound: function(sound, unique) {
+        if (unique && this.soundqueue.indexOf(sound) !== -1)
+            return;
+        this.soundqueue.push(sound);
+    },
+    playQueue: function() {
+        if (this.soundqueue.length == 0)
+            return;
+        else {
+            var snd = this.data[this.soundqueue.shift()];
+            snd.once('end', function() {
+                music.playQueue();
+            })
+            snd.play();
+        }
+    },
+    clearQueue: function() {
+        this.soundqueue = [];
     },
     playMusic: function(music) {
         if (music === "" || !music) {
