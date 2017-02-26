@@ -1,6 +1,6 @@
 var music = {
     sounds: ["die", "get", "boom"],
-    music: ["prelude", "spaceless", "steady", "title", "power"],
+    music: ["prelude", "title", "steady", "spaceless", "power", "chime"],
     data: {},
     initialize: function() {
         for (var i = 0; i < this.sounds.length; i++) {

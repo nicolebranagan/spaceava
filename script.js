@@ -76,5 +76,27 @@ var Script = {
             [[[3,0], [10,4]], "AVA: But I'm in need! Shouldn't they be more helpful?"],
             [[[6,0], [11,4]], "LILY: Your Amalgamation must be a wonderful place, if that's how you think the world works.."]
         ]
+    },
+    scene3: {
+        bg: new Dialogue.Background(
+            function(ctx) {
+                ctx.drawImage(gfx.bg[0], 256, 0, this.width, this.height, 32, 16, this.width, this.height);
+            }
+        ),
+        script: [
+            function() {music.playMusic("steady");},
+            [[[4,0], [8,4]], "AVA: Gee Lilith, this is actually going really well!"],
+            [[[4,0], [11,4]], "LILY: Don't get cocky..."],
+            [[[4,0], [10,4]], "AVA: What could possibly go wrong?"],
+            function() {music.playMusic("chime");},
+            [[[3,0], [11,4], [16, 19]], "MAN: Halt in the name of Quantum!"],
+            [[[6,0], [12,4], [16, 19]], "LILY: Oh brother..."],
+            [[[6,0], [11,4], [16, 19]], "AVA: Wait a second..."],
+            [[[3,0], [12,4], [16, 19]], "AVA: Quantum's a group?!"],
+            [[[3,0], [14,4], [17, 19]], "MAN: Of course it is! And we rule this black hole!"],
+            [[[6,0], [12,4], [16, 19]], "MAN: I don't know why you're hanging with this outsider, Lilith, but I'll take care of this little problem..."],
+            [[[3,0], [14,4], [16, 19]], "MAN: Just like I took care of the last one!"],
+            [[[3,0], [12,4], [17, 19]], "MAN: Praise Quantum! Shut up and calculate!"]
+        ]
     }
 }

@@ -3,7 +3,7 @@
 var gamecanvas = document.getElementById('gamecanvas');
 var gamecontrols = document.getElementById('gamecontrols');
 var runner = new LoadingScreen();
-var __debug = window.location.hash == "#debug";
+var __debug = false;
 
 function Loop() {
     setTimeout(Loop, 1000 / 60); // 60 fps

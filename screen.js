@@ -38,111 +38,36 @@ class TitleScreen {
     }
 };
 
-/*var LogoScreen = {
-    timer: 0,
-    draw: function(ctx) {
-        ctx.drawImage(Logo, 0*64, 0*64, 160, 144, 0, 0, 160, 144);
-        this.sprite.draw(ctx);
-    },
-    update: function() {
-        this.sprite.update();
-        this.timer++;
-        if (this.timer > 320) {
-            runner = new TextScreen(openingText, function() {runner = new TitleScreen()}, true);
-        }
-        if (this.timer == 110 || this.timer == 186)
-            music.playSound("whistle");
-        if (Controls.Enter || Controls.Shoot) {
-            Controls.Shoot = false;
-            Controls.Enter = false;
-            runner = new TextScreen(openingText, function() {runner = new TitleScreen()}, true);
-        };
-    },
-    sprite: {
-        frame: 0,
-        frameTimer: 0,
-        y: 64,
-        x: 0,
-        draw: function(ctx, jump) {
-            var jump = this.y < 48;
-            var drawx = this.x - 8;
-            var drawy = this.y - 15;
-            var offset = this.frame;
-            ctx.drawImage(Logo, offset * 16, 144, 16, 16, drawx, drawy, 16, 16);
-        },
-        update: function() {
-            if (LogoScreen.timer % 2 == 0)
-                this.x = this.x + 1;
-            this.frameTimer++;
-            if (this.frameTimer == 20) {
-                this.frameTimer = 0;
-                this.frame = ((this.frame + 1) % 2);
-            };
-        }
+class OptionsScreen {
+    constructor() {
+        this.music = music.music.concat(music.sounds);
+        this.selection = 7;
+        this.currentmusic = 0;
+        this.locations = [4*8, 5*8, 6*8, 8*8, 9*8, 11*8, 13*8, 16*8];
+        music.playMusic("");
     }
-};
 
-var TextScreen = function(text, run, can_skip) {
-    this.text = text;
-    this.run = run;
-    this.can_skip = can_skip;
-};
-
-TextScreen.prototype = {
-    timer: 0,
-    draw: function(ctx) {
-        var cycles = Math.floor(this.timer / 6) - (144);
-        for (var i = 0; i < this.text.length; i++) {
-            drawCenteredText(ctx, i*16 - cycles, this.text[i]);
-        }
-    },
-    update: function() {
-        this.timer++;
-        if (this.can_skip && (Controls.Enter || Controls.Shoot)) {
-            Controls.Enter = false;
-            Controls.Shoot = false;
-            this.run();
-        }
-        if (this.timer > (144*3 + (this.text.length) * 128)) {
-            this.run();
-        }
-    },
-};*/
-
-var OptionsScreen = function() {
-    this.music = ["No", "music"];
-    music.playMusic("");
-};
-
-OptionsScreen.prototype = {
-    selection: 7,
-    currentmusic: 0,
-    currentpalette: 0,
-    locations: [4*8, 5*8, 6*8, 8*8, 9*8, 11*8, 13*8, 16*8],
-    saveFailed: false,
-    
-    draw: function(ctx) {
+    draw(ctx) {
         //ctx.drawImage(gfx.objects, 0, 0, 16, 16, 16, 16, 16, 16);
         //ctx.drawImage(gfx.blocks, 14*16, 0, 16, 16, 144 - 16, 16, 16, 16);
         drawCenteredText(ctx, 1*8, "Space Ava");
         drawCenteredText(ctx, 2*8, "Options");
         
         drawText(ctx, 3*8, 4*8, saveEnabled ? "Do save game" : "Do not save game")
-        drawText(ctx, 3*8, 5*8, this.saveFailed ? "No save data" : "Save to file");
-        drawText(ctx, 3*8, 6*8, "Load from file");
+        /*drawText(ctx, 3*8, 5*8, this.saveFailed ? "No save data" : "Save to file");
+        drawText(ctx, 3*8, 6*8, "Load from file");*/
 
         drawText(ctx, 3*8, 8*8, musicEnabled ? "Music enabled" : "Music disabled");
         drawText(ctx, 3*8, 9*8, soundEnabled ? "Sound enabled" : "Sound disabled");
-        drawText(ctx, 3*8, 11*8, "Palette " + this.currentpalette.toString());
+        //drawText(ctx, 3*8, 11*8, "Palette " + this.currentpalette.toString());
         drawText(ctx, 3*8, 13*8, "Sound test");
         drawText(ctx, 5*8, 14*8, this.music[this.currentmusic]);
         
         drawText(ctx, 3*8, 16*8, "Return       v0")
         
         drawText(ctx, 1*8, this.locations[this.selection], [26]);
-    },
-    
-    update: function() {
+    }
+    update() {
         if (Controls.Enter || Controls.Shoot) {
             Controls.Enter = false;
             Controls.Shoot = false;
@@ -173,7 +98,7 @@ OptionsScreen.prototype = {
                 soundEnabled = !soundEnabled;
             } else if (this.selection == 5) {
                 // Change palette
-                gfx.adapt(this.currentpalette);
+                //gfx.adapt(this.currentpalette);
             } else if (this.selection == 6) {
                 // Sound test
                 music.playMusic(this.
@@ -196,12 +121,12 @@ OptionsScreen.prototype = {
         if (this.selection == 5) {
             if (Controls.Left) {
                 Controls.Left = false;
-                if (this.currentpalette != 0)
-                    this.currentpalette--;
+                //if (this.currentpalette != 0)
+                //    this.currentpalette--;
             } else if (Controls.Right) {
                 Controls.Right = false;
-                if (this.currentpalette != (gfx.backgrounds.length - 1))
-                    this.currentpalette++;
+                //if (this.currentpalette != (gfx.backgrounds.length - 1))
+                //    this.currentpalette++;
             }
         }
         
@@ -216,7 +141,7 @@ OptionsScreen.prototype = {
                     this.currentmusic++;
             }
         }
-    },
+    }
 };
 
 var ControlsScreen = function() {
@@ -271,11 +196,26 @@ LoadingScreen.prototype = {
         } else if (this.timer > 3) {
             this.timer++;
             if (this.timer == 150) {
-                if (__debug) {
-                    runner = new LevelSelect();
-                    return;
-                }
-                runner = new Dialogue(Script.opening, function() {runner = new TitleScreen();});
+                try {
+                    var hash = window.location.hash.substring(1)
+                    if (hash.length > 0) {
+                        if (hash.substring(1, 6) == "debug" || hash == "debug") {
+                            __debug = true;
+                        }
+                        let hashint = parseInt(hash);
+                        if (!isNaN(hashint)) {
+                            new Governor(hashint);
+                        } else {
+                            if (__debug) {
+                                runner = new LevelSelect();
+                                return;
+                            }
+                        }
+                    }
+                } catch (e) {}
+                // If nothing else happened, then just start the game as usual
+                if (runner === this)
+                    runner = new Dialogue(Script.opening, function() {runner = new TitleScreen();});
             }
         }
     }
@@ -287,6 +227,8 @@ class LevelSelect {
         this.posy = 0;
         this.width = (256 / 8) - 2; // Number of 8x8 tiles;
         this.perline = Math.floor(this.width / 3); 
+
+        music.playMusic("steady");
     }
     update() {
         if (Controls.Left) {
@@ -334,88 +276,3 @@ class LevelSelect {
     }
 }
 
-/*var LoadFileScreen = function(last) {
-    this.last = last;
-    var block = function(e) {e.preventDefault(); e.stopPropagation();}
-    window.ondragover = block;
-    window.ondrop = (ev) => {ev.preventDefault(); ev.stopPropagation(); this.drop(ev);}
-};
-
-LoadFileScreen.prototype = {
-    state: 0,
-    draw: function(ctx) {
-        if (this.state == 0) {
-            drawCenteredText(ctx, 2*8, "Drop save file here");
-            ctx.drawImage(gfx.blocks, 16*(13), 0, 16, 16, 8*9, 8*7, 16, 16);
-        } else if (this.state == 1) {
-            drawCenteredText(ctx, 2*8, "Loading...");
-            ctx.drawImage(gfx.blocks, 16*(13+5*16), 0, 16, 16, 8*9, 8*7, 16, 16);
-        } else if (this.state == 2) {
-            drawCenteredText(ctx, 2*8, "Save file loaded!");
-            ctx.drawImage(gfx.blocks, 16*(14+4*16), 0, 16, 16, 8*9, 8*7, 16, 16);
-        } else if (this.state == -1) {
-            drawCenteredText(ctx, 2*8, "Can't open file");
-            ctx.drawImage(gfx.objects, 16*15, 0, 16, 16, 8*9, 8*7, 16, 16);
-        } else if (this.state == -2) {
-            drawCenteredText(ctx, 2*8, "File is invalid");
-            ctx.drawImage(gfx.objects, 16*14, 0, 16, 16, 8*9, 8*7, 16, 16);
-        }
-        drawCenteredText(ctx, 14*8, "Press any key")
-        drawCenteredText(ctx, 15*8, "to exit")
-    },
-    update: function(ctx) {
-        if (Controls.Enter || Controls.Up || Controls.Down || Controls.Left || Controls.Right || Controls.Shoot || Controls.Reset) {
-            Controls.Enter = false;
-            Controls.Up = false;
-            Controls.Down = false;
-            Controls.Left = false;
-            Controls.Right = false;
-            Controls.Shoot = false;
-            Controls.Reset = false;
-            this.exit();
-        }
-    },
-    drop: function(ev) {
-        this.state = 1;
-        window.ondrop = null;
-        window.ondragover = null;
-        try {
-            var file = ev.dataTransfer.files[0];
-            var reader = new FileReader();
-            reader.onload = (e) => {
-                if (e.target.readyState != 2) return;
-                if (e.target.error) {
-                    this.state = -1;
-                    music.playSound("die");
-                    return;
-                }
-                this.read(e.target.result);
-            }
-            reader.readAsText(file);
-        } catch(e) {
-            this.state = -1;
-            music.playSound("die");
-            return;
-        }   
-    },
-    read: function(data) {
-        var objstring = atob(data);
-        if (!objstring.includes("aspect")) {
-            // stupid check
-            this.state = -2;
-            return;
-        }
-        try {
-            JSON.parse(objstring);
-            localStorage.setItem('saved', objstring);
-            this.state = 2;
-        } catch(e) {
-            this.state = -2;
-        };
-    },
-    exit: function() {
-        window.ondrop = null;
-        window.ondragover = null;
-        runner = this.last;
-    }
-};*/

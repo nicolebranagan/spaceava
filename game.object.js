@@ -240,7 +240,6 @@ Game.object.player = class extends Game.object {
                 this.ready = this.moving;
                 return;
             }
-            
             this.ready = this.moving;
         }
     }
@@ -298,7 +297,7 @@ Game.object.shooter = class extends Game.object {
             this.movetime = 0;
         if (this.movetime == Math.floor(this.frequency/2)) {
             this.parent.enemies.push(new Game.object.bullet(this.parent, new Point(this.point), this.layer, this.facing));
-            music.queueSound('boom');
+            music.queueSound('boom', true);
         }
         if (this.type == Game.object.shooter.Type.SPINNER) {
             if (this.movetime == 0) {
