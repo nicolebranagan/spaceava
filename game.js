@@ -4,6 +4,8 @@ class Game {
         this.winfunc = winfunc;
         this.level = stage;
         this.stage = new Game.stage(worldfile.rooms[stage]);
+        this.music = worldfile.rooms[stage].music;
+        this.bg = worldfile.rooms[stage].bg;
         var start = worldfile.rooms[stage].startpoint;
         this.player = new Game.object.player(this, new Point(start[1],start[2]));
         this.player.layer = start[0];
@@ -28,7 +30,7 @@ class Game {
             this.startTimer++;
             if (this.startTimer == 225) {
                 this.mode = Game.Mode.PLAYER
-                music.playMusic("spaceless");
+                music.playMusic(this.music);
             } else
                 return;
         } else if (this.mode == Game.Mode.PAUSED) {
@@ -118,7 +120,7 @@ class Game {
     draw(ctx) {
         for (var i = 0; i < (256/16)+1; i++)
             for (var j = 0; j < (192/16); j++) {
-                ctx.drawImage(gfx.tiles, 255*16, 0, 16, 16, i*16-j, j*16, 16, 16);
+                ctx.drawImage(gfx.tiles, (255-this.bg)*16, 0, 16, 16, i*16-j, j*16, 16, 16);
             }
         var drawStage = true;
         var drawSprites = true;

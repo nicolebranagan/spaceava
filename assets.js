@@ -1,6 +1,6 @@
 var music = {
     sounds: ["die", "get", "boom"],
-    music: ["prelude", "title", "steady", "spaceless", "power", "chime"],
+    music: ["prelude", "title", "steady", "spaceless", "power", "chime", "jungle"],
     data: {},
     initialize: function() {
         for (var i = 0; i < this.sounds.length; i++) {
@@ -52,6 +52,8 @@ var music = {
         this.soundqueue = [];
     },
     playMusic: function(music) {
+        if (!isNaN(music))
+            music = this.music[music];
         if (music === "" || !music) {
             if (this.currentSong) {
                 this.currentSong.stop();

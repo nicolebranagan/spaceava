@@ -49,6 +49,7 @@ class Application(tk.Frame):
         self.currenti = 0
         self.room = self.roomset.getroom(0)
         self.layer = 0
+        self.moveset(0, False)
 
         self.drawroom()
 
@@ -206,7 +207,17 @@ class Application(tk.Frame):
         self.layerspin.delete(0, "end")
         self.layerspin.insert(0,0)
         self.layerspin.grid(row=0, column=1)
-                
+
+        bgpanel = tk.Frame(sidepanel)
+        bgpanel.pack()
+        tk.Label(bgpanel, text="BG: ").grid(row=0, column=0)
+        self.bgspinner = tk.Spinbox(bgpanel, from_=0, to=99, width=3,
+                             command=lambda *x: 
+                             self.room.setbg(int(self.bgspinner.get())))
+        self.bgspinner.delete(0, "end")
+        self.bgspinner.insert(0,0)
+        self.bgspinner.grid(row=0, column=1)
+        
         musicpanel = tk.Frame(sidepanel)
         musicpanel.pack()
         tk.Label(musicpanel, text="Music: ").grid(row=0, column=0)
@@ -317,11 +328,14 @@ class Application(tk.Frame):
 
         if (i >= 0 and i < 16):
             self.currenti = i
+            self.layer = 0
             self.room = self.roomset.getroom(self.currenti)
             self.layerspin.delete(0, "end")
             self.layerspin.insert(0, 0)
             self.spinner.delete(0,"end")
             self.spinner.insert(0,self.room.music)
+            self.bgspinner.delete(0, "end")
+            self.bgspinner.insert(0,self.room.bg)
             self.drawroom()
             self.enumerateobjects()
             self.statusbar.config(
@@ -364,6 +378,7 @@ class Application(tk.Frame):
                 self.roomset.load(json.loads(data))
             # self.drawgrid(0,0)
             self.currenti = 0
+            self.moveset(0)
             self.room = self.roomset.getroom(0)
             self.drawroom()
             self.enumerateobjects()
@@ -443,6 +458,7 @@ class Room:
         self.height = height
         self.tileset = tileset
         self.music = 0
+        self.bg = 0
         self.tiles = [[0 for x in range(0,self.width*self.height)]]
         self.objects = []
         self.properties = []
@@ -477,6 +493,9 @@ class Room:
 
     def setarea(self, x):
         self.music = x
+    
+    def setbg(self, x):
+        self.bg = x
     
     def render(self, top=0, left=0):
         image = Image.new(
@@ -516,18 +535,19 @@ class Room:
         return {"width": self.width, "height": self.height,
                 "tiles": self.tiles,
                 "objects": self.objects,
-                "music": self.music,
+                "music": self.music, "bg": self.music,
                 "startpoint": self.startpoint,
                 "properties": self.properties}
 
     @staticmethod
     def load(loaded, tileset):
         self = Room(tileset, loaded["width"], loaded["height"])
+        self.music = loaded["music"]
+        self.bg = loaded["bg"]
         self.tiles = loaded["tiles"]
         self.objects = loaded["objects"]
         self.startpoint = loaded["startpoint"]
         self.properties = loaded["properties"]
-        print(loaded["startpoint"])
         return self
 
 class RoomList:
