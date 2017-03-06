@@ -535,7 +535,7 @@ class Room:
         return {"width": self.width, "height": self.height,
                 "tiles": self.tiles,
                 "objects": self.objects,
-                "music": self.music, "bg": self.music,
+                "music": self.music, "bg": self.bg,
                 "startpoint": self.startpoint,
                 "properties": self.properties}
 

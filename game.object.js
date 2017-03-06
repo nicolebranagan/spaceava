@@ -442,8 +442,9 @@ Game.object.snake = class extends Game.object {
     interact(interactor) {
         if (interactor === this.parent.player) {
             this.parent.hurt(this);
+            return true;
         }
-        return true;
+        return false;
     }
 }
 
@@ -552,5 +553,165 @@ Game.object.block = class extends Game.object {
             this.code = -1;
         }
         return this.moving;
+    }
+}
+
+Game.object.boss1 = class extends Game.object {
+    constructor() {
+        super();
+        this.facing = Dir.Down;
+        this.frameMax = 3;
+        this.tile = 48+16;
+        this.need = true; // You need to beat this, specifically
+        this.hp = 2;
+        this.timerMax = 20;
+        this.flicker = false;
+    }
+
+    initialize(parent, pt) {
+        super.initialize(parent, pt);
+    }
+
+    update(mode) {
+        super.update(mode);
+
+        if (this.ready)
+            return;
+        if (mode == Game.Mode.PLAYER || mode == Game.Mode.PLAYER_ANIM) {
+            this.ready = true;
+            this.stall = false;
+        } else if (mode == Game.Mode.ENEMY) {
+            this.cycle();
+        } else if (mode == Game.Mode.ENEMY_ANIM) {
+            if (this.moving)
+                this.animate();
+            else
+                this.ready = true;
+            if (this.ready && this.stall) {
+                for (var i = 0; i < this.parent.enemies.length; i++) {
+                    var e = this.parent.enemies[i];
+                    if (e === this)
+                        continue;
+                    if (!e.ready) {
+                        // Wait for everyone to be ready
+                        this.ready = false;
+                        break;
+                    }
+                }
+                if (this.ready)
+                    this.checkoverlap();
+            }
+        }
+    }
+
+    draw(ctr) {
+        if (this.hp > 0 && !this.flicker || (this.timer < 5 || this.timer > 14))
+            return super.draw(ctr);
+        else
+            return Game.nullDrawable;
+    }
+
+    cycle() {
+        if (this.flicker) {
+            this.flicker = false;
+            this.ready = true;
+            return;
+        }
+        var player = this.parent.player.point;
+        var delx = player.x - this.point.x;
+        var dely = player.y - this.point.y;
+
+        var tryx = new Point(this.point);
+        var tryy = new Point(this.point);
+        var facingx; var facingy;
+
+        if (delx >= 0) {
+            tryx.x = tryx.x + 1;
+            facingx = Dir.Right;
+        } else {
+            tryx.x = tryx.x - 1;
+            facingx = Dir.Left;
+        }
+
+        if (dely >= 0) {
+            tryy.y = tryy.y + 1;
+            facingy = Dir.Down;
+        } else {
+            tryy.y = tryy.y - 1;
+            facingy = Dir.Up;
+        }
+
+        var try1; var try2; var backface;
+        if (Math.abs(delx) > Math.abs(dely)) {
+            try1 = tryx;
+            try2 = tryy;
+            this.facing = facingx;
+            backface = facingy;
+        } else {
+            try1 = tryy;
+            try2 = tryx;
+            this.facing = facingy;
+            backface = facingx;
+        }
+
+        var test;
+        var testTile = this.parent.stage.getTileType(try1,this.layer+1);
+        var downTile = this.parent.stage.getTileType(try1,this.layer);
+        if (testTile === Game.TileType.EMPTY && downTile === Game.TileType.SOLID) {
+            if ((try1.equals(this.parent.player.point)) && (this.layer == this.parent.player.layer))
+                this.parent.hurt(this);
+            test = try1;
+            this.moving = true;
+            this.ready = true;
+        } else {
+            testTile = this.parent.stage.getTileType(try2, this.layer+1);
+            downTile = this.parent.stage.getTileType(try2, this.layer);
+            if (testTile === Game.TileType.EMPTY && downTile === Game.TileType.SOLID) {
+                if ((try2.equals(this.parent.player.point)) && (this.layer == this.parent.player.layer))
+                    this.parent.hurt(this);
+                test = try2;
+                this.moving = true;
+                this.ready = true; 
+                this.facing = backface;               
+            } else
+                this.moving = false;
+        }
+
+        var interact = false;
+        for (var i = 0; i < this.parent.enemies.length; i++) {
+            var e = this.parent.enemies[i];
+            if (e.point.equals(test) && e.layer == (this.layer)) {
+                interact = true;
+                this.moving = e.interact(this);
+            }
+        }
+
+        this.ready = true;
+        this.stall = true;
+    }
+
+    checkoverlap() {
+        for (var i = 0; i < this.parent.enemies.length; i++) {
+            var e = this.parent.enemies[i];
+            if (e === this)
+                continue;
+            if (this.point.equals(e.point)) {
+                this.flicker = true;
+                this.hp--;
+                this.tile = 48;
+                if (this.hp <= 0)
+                    this.parent.win();
+                e.active = false;
+            }
+        }
+        this.ready = true;
+        this.stall = false;
+    }
+
+    interact(interactor) {
+        if (interactor == this.parent.player) {
+            this.parent.hurt();
+            return true;
+        }
     }
 }

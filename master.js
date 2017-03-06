@@ -12,7 +12,6 @@ function Loop() {
     runner.update();
     runner.draw(ctx);
     if (__debug) {
-        ctx.clearRect(0, 0, 8*3, 8);
         drawText(ctx, 0, 0, Math.floor(checkFPS()).toString());
     };
 };

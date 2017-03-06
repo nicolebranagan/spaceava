@@ -42,7 +42,7 @@ var Script = {
             [[[1,4], [10,16]], "AVA: So if this is the inside of a black hole, then what are you doing here?"],
             [[[1,4], [10,16]], "LILY: I live here. Obviously."],
             [[[2,4], [10,16]], "AVA: You live inside a black hole? Is that possible?\n ???: Don't judge."],
-            [[[1,4], [11,16]], "AVA: Wait... there was a whole crew on my ship. Like at least ten people. Maybe more."],
+            [[[1,4], [11,16]], "AVA: Wait... there was a whole crew on my ship. Like at least three people. Maybe more."],
             function() {music.playMusic("steady");},
             [[[3,4], [10,16]], "LILY: I saw a bunch of people leaving! But you won't last long inside the black hole, there's too much quantum for your types."],
             [[[3,4], [10,16]], "AVA: What?! I have to save them!"],
@@ -91,12 +91,35 @@ var Script = {
             function() {music.playMusic("chime");},
             [[[3,0], [11,4], [16, 19]], "MAN: Halt in the name of Quantum!"],
             [[[6,0], [12,4], [16, 19]], "LILY: Oh brother..."],
-            [[[6,0], [11,4], [16, 19]], "AVA: Wait a second..."],
+            [[[1,0], [11,4], [16, 19]], "AVA: Wait a second..."],
             [[[3,0], [12,4], [16, 19]], "AVA: Quantum's a group?!"],
             [[[3,0], [14,4], [17, 19]], "MAN: Of course it is! And we rule this black hole!"],
             [[[6,0], [12,4], [16, 19]], "MAN: I don't know why you're hanging with this outsider, Lilith, but I'll take care of this little problem..."],
-            [[[3,0], [14,4], [16, 19]], "MAN: Just like I took care of the last one!"],
-            [[[3,0], [12,4], [17, 19]], "MAN: Praise Quantum! Shut up and calculate!"]
+            [[[3,0], [13,4], [16, 19]], "MAN: Just like I took care of the last one!"],
+            [[[6,0], [12,4], [17, 19]], "MAN: Praise Quantum! Shut up and calculate!"]
+        ]
+    },
+    scene4: {
+        bg: new Dialogue.Background(
+            function(ctx) {
+                ctx.drawImage(gfx.bg[0], 256, 0, this.width, this.height, 32, 16, this.width, this.height);
+            }
+        ),
+        script: [
+            function() {music.playMusic("chime");},
+            [[[5, 0], [8, 4], [16, 19]], "AVA: We did it! And by we I mostly mean I!"],
+            [[[2, 0], [12, 4], [18, 19]], "MAN: Quantum may have lost today... but we live on to fight tomorrow!"],
+            function() {music.playMusic("steady");},
+            [[[1, 0], [8, 4]], "AVA: Glad that's done with... But, Lilith, what about that person he was talking about? I bet they were one of my friends..."],
+            [[[1, 0], [14, 4]], "LILY: As a rule, Quantum doesn't kill people... it's a long story, but I'm sure your friend is around here somewhere."],
+            function() {music.playMusic("spaceless")},
+            [[[5, 0], [8, 4], [24, 18]], "???: It is I, Ava. Lieutenant Nelehu, Chief Engineer."],
+            [[[3, 0], [11, 4], [24, 18]], "AVA: Nelehu! Are you okay? Did they hurt you!"],
+            [[[1, 0], [11, 4], [25, 18]], "NELEHU: Shh. I am communing with the ship..."],
+            [[[1, 0], [12, 4], [25, 18]], "NELEHU: She is hurt. You have taken bad care of the ship. I will rectify this."],
+            function() {music.playMusic("steady");},
+            [[[2, 0], [12, 4]], "AVA: I never really see her outside the engine bay, you see..."],
+            [[[4, 0], [10, 4]], "LILY: You guys are weird."]
         ]
     }
 }
