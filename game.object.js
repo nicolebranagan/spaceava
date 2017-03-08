@@ -699,6 +699,7 @@ Game.object.boss1 = class extends Game.object {
                 this.flicker = true;
                 this.hp--;
                 this.tile = 48;
+                music.playSound("crash");
                 if (this.hp <= 0)
                     this.parent.win();
                 e.active = false;
@@ -710,7 +711,8 @@ Game.object.boss1 = class extends Game.object {
 
     interact(interactor) {
         if (interactor == this.parent.player) {
-            this.parent.hurt();
+            if (this.hp > 0)
+                this.parent.hurt();
             return true;
         }
     }
