@@ -1,4 +1,17 @@
 var Script = { 
+    tickerTape: [
+    ["D0", function(gov) {runner = new Dialogue(Script.scene1, function() {gov.step();})}],
+    ["01", function(gov) {runner = new Game(0, function() {gov.step();})}],
+    ["D1", function(gov) {runner = new Dialogue(Script.scene2, function() {gov.step();})}],
+    ["02", function(gov) {runner = new Game(1, function() {gov.step();})}],
+    ["03", function(gov) {runner = new Game(2, function() {gov.step();})}],
+    ["D2", function(gov) {runner = new Dialogue(Script.scene3, function() {gov.step();})}],
+    ["04", function(gov) {runner = new Game(3, function() {gov.step();})}],
+    ["D3", function(gov) {runner = new Dialogue(Script.scene4, function() {gov.step();})}],
+    ["05", function(gov) {runner = new Game(4, function() {gov.step();})}],
+    ["D4", function(gov) {runner = new Dialogue(Script.scene5, function() {gov.step();})}]
+    ],
+
     opening: {
         bg: new Dialogue.Background(
             function (ctx) {
@@ -120,6 +133,21 @@ var Script = {
             function() {music.playMusic("steady");},
             [[[2, 0], [12, 4]], "AVA: I never really see them outside the engine bay, you see..."],
             [[[4, 0], [10, 4]], "LILY: You guys are weird."]
+        ]
+    },
+    scene5: {
+        bg: new Dialogue.Background(
+            function(ctx) {
+                ctx.drawImage(gfx.bg[0], 512, 0, this.width, this.height, 32, 16, this.width, this.height);
+            }
+        ),
+        script: [
+            function() {music.playMusic("jungle")},
+            [[[2, 0], [8,4]], "AVA: Lilith, I'm concerned. This doesn't look like the inside of a black hole at all?"],
+            [[[1, 0], [9,4]], "LILY: What did you expect the inside of a black hole to look like?"],
+            [[[3, 0], [9,4]], "AVA: Whoa..."],
+            [[[4, 0], [12,4]], "LILY: If you look up and see the event horizon, then you know you're still stuck in here."],
+            [[[2, 0], [13,4]], "AVA: So that's what that is..."]
         ]
     }
 }

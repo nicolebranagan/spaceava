@@ -12,7 +12,7 @@ class Governor {
         this.position++;
         if (__debug) {
             // Test code; shouldn't make it into the final version
-            if (this.position == Governor.tickerTape.length) {
+            if (this.position == Script.tickerTape.length) {
                 console.log("Ran out of tape!")
                 runner = new TitleScreen();
                 return;
@@ -21,18 +21,6 @@ class Governor {
         try {
             window.location.hash = this.position.toString() + (__debug ? "debug" : "");
         } catch (e) { /* We don't care if it fails */ }
-        Governor.tickerTape[this.position][1](this);
+        Script.tickerTape[this.position][1](this);
     }
 }
-
-Governor.tickerTape = [
-    ["D0", function(gov) {runner = new Dialogue(Script.scene1, function() {gov.step();})}],
-    ["01", function(gov) {runner = new Game(0, function() {gov.step();})}],
-    ["D1", function(gov) {runner = new Dialogue(Script.scene2, function() {gov.step();})}],
-    ["02", function(gov) {runner = new Game(1, function() {gov.step();})}],
-    ["03", function(gov) {runner = new Game(2, function() {gov.step();})}],
-    ["D2", function(gov) {runner = new Dialogue(Script.scene3, function() {gov.step();})}],
-    ["04", function(gov) {runner = new Game(3, function() {gov.step();})}],
-    ["D3", function(gov) {runner = new Dialogue(Script.scene4, function() {gov.step();})}],
-    ["05", function(gov) {runner = new Game(4, function() {gov.step();})}],
-]

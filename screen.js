@@ -235,10 +235,14 @@ class LevelSelect {
             Controls.Left = false;
             if (this.posx > 0)
                 this.posx--;
+            else
+                this.posx = this.perline-1;
         } else if (Controls.Right) {
             Controls.Right = false;
             if (this.posx < (this.perline-1))
                 this.posx++;
+            else
+                this.posx = 0;
         } else if (Controls.Up) {
             Controls.Up = false;
             if (this.posy > 0)
@@ -250,7 +254,7 @@ class LevelSelect {
             Controls.Enter = false;
             Controls.Shoot = false;
             var pos = this.posx + (this.posy*this.perline);
-            if (pos < Governor.tickerTape.length) {
+            if (pos < Script.tickerTape.length) {
                 new Governor(pos);
             } else {
                 console.log(pos);
@@ -264,14 +268,14 @@ class LevelSelect {
         var x = 0;
         var y = 24;
         drawText(ctx, this.posx*24 + 8, this.posy*16 + 8 + 24, [25]);
-        for (var i = 0; i < Governor.tickerTape.length; i++) {
+        for (var i = 0; i < Script.tickerTape.length; i++) {
             if (i % this.perline == 0) {
                 x = 8;
                 y += 16;
             } else {
                 x += 3*8;
             }
-            drawText(ctx, x, y, Governor.tickerTape[i][0]);
+            drawText(ctx, x, y, Script.tickerTape[i][0]);
         }
     }
 }
