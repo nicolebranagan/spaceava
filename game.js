@@ -120,7 +120,7 @@ class Game {
     draw(ctx) {
         for (var i = 0; i < (256/16)+1; i++)
             for (var j = 0; j < (192/16); j++) {
-                ctx.drawImage(gfx.tiles, (255-this.bg)*16, 0, 16, 16, i*16-j, j*16, 16, 16);
+                ctx.drawImage(gfx.tiles, (254-this.bg)*16, 0, 16, 16, i*16-j, j*16, 16, 16);
             }
         var drawStage = true;
         var drawSprites = true;
@@ -141,12 +141,13 @@ class Game {
         if (drawStage) {
             var drawPt = new Point(this.player.point).multiply(8).add(this.player.offset);
             if (this.stage.centered)
-                drawPt = this.stage.center;
+                drawPt = new Point(this.stage.center);
             else if (this.stage.centerx)
                 drawPt = new Point(this.stage.center.x, drawPt.y);
             else if (this.stage.centery)
                 drawPt = new Point(drawPt.x, this.stage.center.y)
             drawPt = drawPt.getIsometric();
+            drawPt.y = drawPt.y - 8;
             this.stage.drawBase(ctx, drawPt, i);
             var drawables = [];
             for (var i = 0; i < this.stage.layers; i++) {
@@ -175,6 +176,9 @@ class Game {
             drawCenteredText(ctx, 80, this.startString);            
         } else if (this.mode == Game.Mode.PAUSED) {
             drawCenteredText(ctx, 80, "Paused")
+        }
+        for (var j = 0; j < (256/16); j++) {
+            ctx.drawImage(gfx.tiles, (255)*16, 0, 16, 16, j*16, 0, 16, 16);
         }
     }
     hurt() {

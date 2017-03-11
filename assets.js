@@ -1,5 +1,5 @@
 var music = {
-    sounds: ["die", "get", "boom", "crash"],
+    sounds: ["die", "get", "boom", "crash", "shove"],
     music: ["prelude", "title", "steady", "spaceless", "power", "chime", "bossy", "jungle"],
     data: {},
     initialize: function() {

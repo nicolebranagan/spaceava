@@ -506,6 +506,7 @@ Game.object.block = class extends Game.object {
         this.code = -1;
         this.tile = 245;
         this.offset.layer = -2;
+        this.mobile = true;
     }
 
     initialize(parent, pt) {
@@ -552,6 +553,8 @@ Game.object.block = class extends Game.object {
             this.parent.stage.unregister(this.code);
             this.code = -1;
         }
+        if (this.moving)
+            music.playSound('shove');
         return this.moving;
     }
 }
