@@ -85,7 +85,10 @@ class Game {
                     this.player.hurt();
                     this.deathTimer = 0;
                     music.playMusic("");
-                    music.playSound("die");
+                    if (!this.dieMusic)
+                        music.playSound("die");
+                    else
+                        music.playMusic(this.dieMusic);
                 } else
                     this.mode = Game.Mode.ENEMY
             } else if (this.mode == Game.Mode.ENEMY)
@@ -97,7 +100,10 @@ class Game {
                     this.player.hurt();
                     this.deathTimer = 0;
                     music.playMusic("");
-                    music.playSound("die");
+                    if (!this.dieMusic)
+                        music.playSound("die");
+                    else
+                        music.playMusic(this.dieMusic);
                 } else
                     this.mode = Game.Mode.PLAYER
                 this.turns++;
@@ -181,8 +187,10 @@ class Game {
             ctx.drawImage(gfx.tiles, (255)*16, 0, 16, 16, j*16, 0, 16, 16);
         }
     }
-    hurt() {
+    hurt(hurter, mus) {
         this.willDie = true;
+        if (mus)
+            this.dieMusic = mus;
     }
     win() {
         this.winGot++;

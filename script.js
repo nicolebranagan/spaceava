@@ -10,7 +10,8 @@ var Script = {
     ["D3", function(gov) {runner = new Dialogue(Script.scene4, function() {gov.step();})}],
     ["05", function(gov) {runner = new Game(4, function() {gov.step();})}],
     ["D4", function(gov) {runner = new Dialogue(Script.scene5, function() {gov.step();})}],
-    ["06", function(gov) {runner = new Game(5, function() {gov.step();})}]
+    ["06", function(gov) {runner = new Game(5, function() {gov.step();})}],
+    ["07", function(gov) {runner = new Game(6, function() {gov.step();})}]
     ],
 
     opening: {

@@ -456,6 +456,140 @@ Game.object.snake = class extends Game.object {
     }
 }
 
+Game.object.portal = class extends Game.object {
+    constructor(facing) {
+        super();
+        this.facing = facing;
+        this.frequency = 4;
+        this.frameMax = 1;
+        this.tile = 28;
+        this.movetime = 0;
+        this.moving = false;
+        this.doomed = false;
+    }
+    initialize(parent, point) {
+        super.initialize(parent, point);
+    }
+    update(mode) {
+        super.update(mode);
+        if (this.ready)
+            return;
+        if (mode == Game.Mode.PLAYER || mode == Game.Mode.PLAYER_ANIM) {
+            this.ready = true;
+        } else if (mode == Game.Mode.ENEMY) {
+            this.cycle();
+        } else if (mode == Game.Mode.ENEMY_ANIM) {
+            this.ready = true;
+        }
+    }
+    cycle() {
+        this.movetime++;
+        if (this.movetime == this.frequency)
+            this.movetime = 0;
+        if (this.movetime == Math.floor(this.frequency/2)) {
+            var ghost = new Game.object.ghost(this.facing);
+            ghost.initialize(this.parent, new Point(this.point));
+            ghost.layer = this.layer;
+            this.parent.enemies.push(ghost);
+            music.queueSound('ghost', true);
+        }
+        this.ready = true;
+    }
+
+    interact(interactor) {
+        if (interactor === this.parent.player) {
+            this.parent.hurt(this, 'power');
+            return true;
+        }
+        return false;
+    }
+}
+
+Game.object.ghost = class extends Game.object {
+    constructor(facing) {
+        super();
+        this.facing = facing;
+        this.frameMax = 2;
+        this.tile = 36;
+        this.doomed = false;
+    }
+
+    initialize(parent, pt) {
+        super.initialize(parent, pt);
+    }
+
+    update(mode) {
+        super.update(mode);
+        if (this.ready)
+            return;
+        if (mode == Game.Mode.PLAYER || mode == Game.Mode.PLAYER_ANIM) {
+            this.ready = true;
+        } else if (mode == Game.Mode.ENEMY) {
+            this.cycle();
+        } else if (mode == Game.Mode.ENEMY_ANIM) {
+            if (this.moving)
+                this.animate();
+            else
+                this.ready = true;
+            if (this.animFrame == 4 && this.doomed)
+                this.active = false;
+        }
+    }
+
+    draw(ctr) {
+        var drawable = super.draw(ctr);
+        if (this.flicker % (this.life+2) !== 0)
+            return drawable;
+        else
+            return Game.nullDrawable;
+    }
+
+    cycle(recur) {
+        var test = new Point(this.point);
+        if (this.facing == Dir.Up)
+            test.y--;
+        else if (this.facing == Dir.Down)
+            test.y++;
+        else if (this.facing == Dir.Left)
+            test.x--;
+        else if (this.facing == Dir.Right)
+            test.x++;
+        var testTile = this.parent.stage.getTileType(test,this.layer+1);
+        var downTile = this.parent.stage.getTileType(test,this.layer);
+        if (testTile === Game.TileType.EMPTY) {
+            if ((test.equals(this.parent.player.point)) && (this.layer == this.parent.player.layer))
+                this.parent.hurt(this);
+            this.moving = true;
+            this.ready = true;
+        } else {
+            if (!recur) {
+                if (this.facing == Dir.Up)
+                    this.facing = Dir.Right;
+                else if (this.facing == Dir.Down)
+                    this.facing = Dir.Left;
+                else if (this.facing == Dir.Left)
+                    this.facing = Dir.Up;
+                else if (this.facing == Dir.Right)
+                    this.facing = Dir.Down;
+                this.cycle(true);
+            } else {
+                this.ready = true;
+                this.moving = false;
+            }
+        }
+        if ((test.x >= this.parent.stage.width || test.y >= this.parent.stage.height || test.x < 0 || test.y < 0))
+            this.doomed = true;
+    }
+
+    interact(interactor) {
+        if (interactor === this.parent.player) {
+            this.parent.hurt(this);
+            return true;
+        }
+        return false;
+    }
+}
+
 Game.object.stationary = class extends Game.object {
     constructor() {
         super();
@@ -504,6 +638,8 @@ Game.object.winObject = class extends Game.object.stationary {
         this.collected = true;
     }
 }
+
+
 
 Game.object.block = class extends Game.object {
     constructor() {
