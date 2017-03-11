@@ -129,6 +129,7 @@ Game.object.player = class extends Game.object {
 
         this.winAnim = [1, 12];
         this.dieAnim = [1, 13, 14];
+        this.ghostDie = [1, 1, 44, 45, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46];
         this.mode = Game.object.player.Mode.ACTIVE;
     }
     update(mode) {
@@ -145,7 +146,7 @@ Game.object.player = class extends Game.object {
             this.ready = true;
         }
         if (this.mode == Game.object.player.Mode.DEATH_ANIM) {
-            if (this.frame == 3)
+            if (this.frame == this.dieAnim.length)
                 this.mode = Game.object.player.Mode.NOT_DRAWN;
         }
     }
@@ -246,7 +247,7 @@ Game.object.player = class extends Game.object {
     hurt(hurter) {
         this.mode = Game.object.player.Mode.DEATH_ANIM;
         this.frame = 0;
-        this.frameMax = 4;
+        this.frameMax = 100;
     }
 
 }
@@ -557,8 +558,10 @@ Game.object.ghost = class extends Game.object {
         var testTile = this.parent.stage.getTileType(test,this.layer+1);
         var downTile = this.parent.stage.getTileType(test,this.layer);
         if (testTile === Game.TileType.EMPTY) {
-            if ((test.equals(this.parent.player.point)) && (this.layer == this.parent.player.layer))
+            if ((test.equals(this.parent.player.point)) && (this.layer == this.parent.player.layer)) {
                 this.parent.hurt(this);
+                this.parent.player.dieAnim = this.parent.player.ghostDie;
+            }
             this.moving = true;
             this.ready = true;
         } else {
@@ -584,6 +587,7 @@ Game.object.ghost = class extends Game.object {
     interact(interactor) {
         if (interactor === this.parent.player) {
             this.parent.hurt(this);
+            this.parent.player.dieAnim = this.parent.player.ghostDie;
             return true;
         }
         return false;
