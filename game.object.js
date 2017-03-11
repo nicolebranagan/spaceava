@@ -395,7 +395,10 @@ Game.object.snake = class extends Game.object {
         } else if (mode == Game.Mode.ENEMY) {
             this.cycle();
         } else if (mode == Game.Mode.ENEMY_ANIM) {
-            this.animate();
+            if (this.moving)
+                this.animate();
+            else
+                this.ready = true;
         }
     }
 
@@ -408,7 +411,7 @@ Game.object.snake = class extends Game.object {
         return drawable;
     }
 
-    cycle() {
+    cycle(recur) {
         var test = new Point(this.point);
         if (this.facing == Dir.Up)
             test.y--;
@@ -435,7 +438,12 @@ Game.object.snake = class extends Game.object {
                 this.facing = Dir.Right;
             else if (this.facing == Dir.Right)
                 this.facing = Dir.Left;
-            this.cycle();
+            if (!recur)
+                this.cycle(true);
+            else {
+                this.ready = true;
+                this.moving = false;
+            }
         }
     }
 
