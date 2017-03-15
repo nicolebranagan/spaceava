@@ -112,7 +112,7 @@ Game.object = class {
         drawable.coord = iso_c.subtract(new Point(8, 8));
         drawable.position = new Position(this.point.x, this.point.y, this.layer);
         drawable.draw = function(ctx) {
-            ctx.drawImage(gfx.objects, (frames[base.frame])*16 + base.tile*16, 0, 16, 16, iso_c.x, iso_c.y, 16, 16);
+            ctx.drawImage(gfx.objects, (frames[base.frame])*16, 0, 16, 16, iso_c.x, iso_c.y, 16, 16);
         }
         return drawable;
     }
@@ -458,15 +458,19 @@ Game.object.snake = class extends Game.object {
 }
 
 Game.object.portal = class extends Game.object {
-    constructor(facing) {
+    constructor(facing, frequency) {
         super();
         this.facing = facing;
-        this.frequency = 4;
+        if (!frequency) frequency = 4;
+        this.frequency = frequency;
         this.frameMax = 1;
         this.tile = 28;
         this.movetime = 0;
         this.moving = false;
         this.doomed = false;
+
+        this.dieUD = [29, 60, 61, 62, 63];
+        this.dieLR = [31, 76, 77, 78, 79];
     }
     initialize(parent, point) {
         super.initialize(parent, point);
@@ -480,7 +484,28 @@ Game.object.portal = class extends Game.object {
         } else if (mode == Game.Mode.ENEMY) {
             this.cycle();
         } else if (mode == Game.Mode.ENEMY_ANIM) {
-            this.ready = true;
+            if (this.doomed) {
+                if (this.frameMax == 1) {
+                    this.frameMax = 6;
+                    if (this.facing == Dir.Down || this.facing == Dir.Up)
+                        this.anim = this.dieUD;
+                    else
+                        this.anim = this.dieLR;
+                } else {
+                    if (this.frame == 5) {
+                        this.active = false;
+                        this.ready = true;
+                    }
+                }
+            } else
+                this.ready = true;
+        }
+    }
+    draw(ctr) {
+        if (this.doomed && this.frameMax !== 1) {
+            return super.draw_frames(ctr, this.anim);
+        } else {
+            return super.draw(ctr);
         }
     }
     cycle() {
@@ -488,11 +513,26 @@ Game.object.portal = class extends Game.object {
         if (this.movetime == this.frequency)
             this.movetime = 0;
         if (this.movetime == Math.floor(this.frequency/2)) {
-            var ghost = new Game.object.ghost(this.facing);
-            ghost.initialize(this.parent, new Point(this.point));
-            ghost.layer = this.layer;
-            this.parent.enemies.push(ghost);
-            music.queueSound('ghost', true);
+        var test = new Point(this.point);
+            if (this.facing == Dir.Up)
+                test.y--;
+            else if (this.facing == Dir.Down)
+                test.y++;
+            else if (this.facing == Dir.Left)
+                test.x--;
+            else if (this.facing == Dir.Right)
+                test.x++;
+            var testTile = this.parent.stage.getTileType(test,this.layer+1);
+            if (testTile == Game.TileType.EMPTY) {
+                var ghost = new Game.object.ghost(this.facing);
+                ghost.initialize(this.parent, new Point(this.point));
+                ghost.layer = this.layer;
+                this.parent.enemies.push(ghost);
+                music.queueSound('ghost', true);
+            } else {
+                music.queueSound('boom', false);
+                this.doomed = true;
+            }
         }
         this.ready = true;
     }

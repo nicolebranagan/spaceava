@@ -557,7 +557,7 @@ class RoomList:
         self.key = [0] * len(tileset)
 
     def getroom(self, i):
-        if len(self.rooms) >= i:
+        if len(self.rooms) <= i:
             self.rooms.append(Room(self.tileset))
         return self.rooms[i]
 

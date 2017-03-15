@@ -11,7 +11,8 @@ var Script = {
     ["05", function(gov) {runner = new Game(4, function() {gov.step();})}],
     ["D4", function(gov) {runner = new Dialogue(Script.scene5, function() {gov.step();})}],
     ["06", function(gov) {runner = new Game(5, function() {gov.step();})}],
-    ["07", function(gov) {runner = new Game(6, function() {gov.step();})}]
+    ["07", function(gov) {runner = new Game(6, function() {gov.step();})}],
+    ["D5", function(gov) {runner = new Dialogue(Script.scene6, function() {gov.step();})}]
     ],
 
     opening: {
@@ -150,6 +151,25 @@ var Script = {
             [[[3, 0], [9,4]], "AVA: Whoa..."],
             [[[4, 0], [12,4]], "LILY: If you look up and see the event horizon, then you know you're still stuck in here."],
             [[[2, 0], [13,4]], "AVA: So that's what that is..."]
+        ]
+    },
+    scene6: {
+        bg: new Dialogue.Background(
+            function(ctx) {
+                ctx.drawImage(gfx.bg[0], 512, 0, this.width, this.height, 32, 16, this.width, this.height);
+            }
+        ),
+        script: [
+            function() {music.playMusic("jungle")},
+            [[[2, 0], [8, 4]], "AVA: I wonder how there's a breathable atmosphere in here; that's pretty lucky, isn't it?"],
+            [[[1, 0], [10, 4]], "LILY: Maybe it's best not to ask questions about that..."],
+            [[[2, 0], [12, 4]], "AVA: Don't you ever wonder about these things, living here?"],
+            function() {music.playMusic("chimier")},
+            [[[6, 0], [11, 4], [20, 19]], "???: Halt, outsider. And you too, traitor."],
+            [[[3, 0], [12, 4], [20, 19]], "AVA: Quantum again?!"],
+            [[[6, 0], [12, 4], [19, 19]], "GREEN: Indeed. It is I, George Green. And I shall specify the boundary conditions of your defeat!"],
+            [[[3, 0], [10, 4], [19, 19]], "LILY: Yeah, yeah, let's just get this over already."],
+            [[[6, 0], [10, 4], [19, 19]], "GREEN: So be it. Set the initial conditions now! Shut up and calculate!"]
         ]
     }
 }
