@@ -145,7 +145,7 @@ var Script = {
             }
         ),
         script: [
-            function() {music.playMusic("jungle")},
+            function() {music.playMusic("carousel")},
             [[[2, 0], [8,4]], "AVA: Lilith, I'm concerned. This doesn't look like the inside of a black hole at all?"],
             [[[1, 0], [9,4]], "LILY: What did you expect the inside of a black hole to look like?"],
             [[[3, 0], [9,4]], "AVA: Whoa..."],
@@ -160,7 +160,7 @@ var Script = {
             }
         ),
         script: [
-            function() {music.playMusic("jungle")},
+            function() {music.playMusic("carousel")},
             [[[2, 0], [8, 4]], "AVA: I wonder how there's a breathable atmosphere in here; that's pretty lucky, isn't it?"],
             [[[1, 0], [10, 4]], "LILY: Maybe it's best not to ask questions about that..."],
             [[[2, 0], [12, 4]], "AVA: Don't you ever wonder about these things, living here?"],
