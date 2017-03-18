@@ -357,7 +357,9 @@ class Application(tk.Frame):
             with open(filen, "w") as fileo:
                 fileo.seek(0)
                 fileo.write("var worldfile = \n"+
-                            json.dumps(self.roomset.dump(), indent=2)+"\n")
+                            json.dumps(
+                                self.roomset.dump(), indent=2, sort_keys=True
+                            )+"\n")
                 fileo.truncate()
 
     def open(self):
