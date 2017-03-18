@@ -357,7 +357,7 @@ class Application(tk.Frame):
             with open(filen, "w") as fileo:
                 fileo.seek(0)
                 fileo.write("var worldfile = \n"+
-                            json.dumps(self.roomset.dump())+"\n")
+                            json.dumps(self.roomset.dump(), indent=2)+"\n")
                 fileo.truncate()
 
     def open(self):
@@ -374,7 +374,7 @@ class Application(tk.Frame):
                 if header != "var worldfile = \n":
                     self.statusbar.config(text="Not a proper worldfile!")
                     return
-                data = fileo.readline()
+                data = fileo.read()
                 self.roomset.load(json.loads(data))
             # self.drawgrid(0,0)
             self.currenti = 0
