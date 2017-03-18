@@ -199,17 +199,12 @@ LoadingScreen.prototype = {
                 try {
                     var hash = window.location.hash.substring(1)
                     if (hash.length > 0) {
+                        let hashint = parseInt(hash);
                         if (hash.substring(1, 6) == "debug" || hash == "debug") {
                             __debug = true;
-                        }
-                        let hashint = parseInt(hash);
-                        if (!isNaN(hashint)) {
+                            runner = new LevelSelect();
+                        } else if (!isNaN(hashint)) {
                             new Governor(hashint);
-                        } else {
-                            if (__debug) {
-                                runner = new LevelSelect();
-                                return;
-                            }
                         }
                     }
                 } catch (e) {}
@@ -225,10 +220,11 @@ class LevelSelect {
     constructor() {
         this.posx = 0;
         this.posy = 0;
-        this.width = (256 / 8) - 2; // Number of 8x8 tiles;
-        this.perline = Math.floor(this.width / 3); 
+        this.perline = 7;
+        this.width = this.perline * 3;
+        this.rows = 3;
 
-        music.playMusic("steady");
+        music.playMusic("carousel");
     }
     update() {
         if (Controls.Left) {
@@ -247,17 +243,22 @@ class LevelSelect {
             Controls.Up = false;
             if (this.posy > 0)
                 this.posy--;
+            else
+                this.posy = this.rows - 1;
         } else if (Controls.Down) {
             Controls.Down = false;
-            this.posy++
+            if (this.posy < (this.rows-1))
+                this.posy++
+            else
+                this.posy = 0;
         } else if (Controls.Enter || Controls.Shoot) {
             Controls.Enter = false;
             Controls.Shoot = false;
             var pos = this.posx + (this.posy*this.perline);
             if (pos < Script.tickerTape.length) {
-                new Governor(pos);
+                new Governor(pos + 1);
             } else {
-                console.log(pos);
+                console.log(pos + 1);
             }
         }
 
@@ -267,10 +268,10 @@ class LevelSelect {
         drawCenteredText(ctx, 16, "Level Select");
         var x = 0;
         var y = 24;
-        drawText(ctx, this.posx*24 + 8, this.posy*16 + 8 + 24, [25]);
-        for (var i = 0; i < Script.tickerTape.length; i++) {
-            if (i % this.perline == 0) {
-                x = 8;
+        drawText(ctx, this.posx*24 + 48, this.posy*16 + 8 + 24, [25]);
+        for (var i = 1; i < Script.tickerTape.length; i++) {
+            if ((i-1) % this.perline == 0) {
+                x = 48;
                 y += 16;
             } else {
                 x += 3*8;

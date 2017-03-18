@@ -16,6 +16,7 @@ Game.object = class {
         this.offset = new Position(0,0,0);
         this.dy = 0;
         this.active = true;
+        this.flipupdown = true;
     }
     initialize(parent, point) {
         this.parent = parent;
@@ -32,7 +33,10 @@ Game.object = class {
                     this.frame--;
                 if (this.frame >= this.frameMax) {
                     this.frame = this.frameMax - 2;
-                    this.up = false;
+                    if (this.flipupdown)
+                        this.up = false;
+                    else
+                        this.frame = 0;
                 } else if (this.frame == -1) {
                     this.frame = this.frame + 2;
                     this.up = true;
@@ -672,7 +676,8 @@ Game.object.winObject = class extends Game.object.stationary {
         super();
         this.polarity = polarity;
         this.tile = 251 - (polarity ? 0 : 5);
-        this.frameMax = 5;
+        this.frameMax = 4;
+        this.flipupdown = false;
         this.timerMax = 4;
         this.need = true; // Need this to win
     }
