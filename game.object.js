@@ -17,6 +17,7 @@ Game.object = class {
         this.dy = 0;
         this.active = true;
         this.flipupdown = true;
+        this.visible = true;
     }
     initialize(parent, point) {
         this.parent = parent;
@@ -92,6 +93,8 @@ Game.object = class {
         }
     }
     draw(ctr) {
+        if (!this.visible)
+            return Game.nullDrawable;
         var drawable = {};
         var base = this;
         var iso_pt = new Point(ctr.x, ctr.y);
@@ -107,6 +110,8 @@ Game.object = class {
         return drawable;
     }
     draw_frames(ctr, frames) {
+        if (!this.visible)
+            return Game.nullDrawable;
         var drawable = {};
         var base = this;
         var iso_pt = new Point(ctr.x, ctr.y);
@@ -117,6 +122,22 @@ Game.object = class {
         drawable.position = new Position(this.point.x, this.point.y, this.layer);
         drawable.draw = function(ctx) {
             ctx.drawImage(gfx.objects, (frames[base.frame])*16, 0, 16, 16, iso_c.x, iso_c.y, 16, 16);
+        }
+        return drawable;
+    }
+    draw_frame(ctr, frame) {
+        if (!this.visible)
+            return Game.nullDrawable;
+        var drawable = {};
+        var base = this;
+        var iso_pt = new Point(ctr.x, ctr.y);
+        ctr = new Point(Game.center).subtract(iso_pt);
+        var iso_c = new Point((this.point.x-this.layer)*8+this.offset.x-this.offset.layer, (this.point.y-this.layer)*8+this.offset.y-this.offset.layer).getIsometric();
+        iso_c.add(ctr);
+        drawable.coord = iso_c.subtract(new Point(8, 8));
+        drawable.position = new Position(this.point.x, this.point.y, this.layer);
+        drawable.draw = function(ctx) {
+            ctx.drawImage(gfx.objects, frame*16, 0, 16, 16, iso_c.x, iso_c.y, 16, 16);
         }
         return drawable;
     }
@@ -663,8 +684,7 @@ Game.object.stationary = class extends Game.object {
 
     interact(interactor) {
         if (interactor === this.parent.player) {
-            this.action();
-            return true;
+            return this.action();
         } else {
             return false;
         }
@@ -685,6 +705,7 @@ Game.object.winObject = class extends Game.object.stationary {
     action() {
         this.playSound = !(this.parent.win());
         this.collected = true;
+        return true;
     }
 }
 
@@ -911,5 +932,157 @@ Game.object.boss1 = class extends Game.object {
                 this.parent.hurt();
             return true;
         }
+    }
+}
+
+Game.object.boss2 = class extends Game.object {
+    constructor() {
+        super();
+        this.timerMax = 45;
+        this.frameMax = 2;
+        this.frames = [88, 89];
+        this.need = true;
+        this.state = Game.object.boss2.State.START;
+        this.round = 0;
+        this.objects = [];
+        this.willStep = false;
+    }
+
+    update(mode) {
+        super.update(mode);
+        if (mode == Game.Mode.PLAYER) {
+            this.ready = true;
+        } else if (mode == Game.Mode.PLAYER_ANIM) {
+            this.ready = true;
+        } else if (mode == Game.Mode.ENEMY) {
+            if (!this.ready)
+                this.cycle();
+        } else if (mode == Game.Mode.ENEMY_ANIM) {
+            this.ready = true;
+        }
+    }
+
+    draw(ctr) {
+        return super.draw_frames(ctr, this.frames);
+    }
+
+    cycle() {
+        switch (this.state) {
+            case Game.object.boss2.State.START:
+                this.state = Game.object.boss2.State.DISPL;
+                music.queueSound("boom");
+                this.loadRound(this.round);
+            break;
+            case Game.object.boss2.State.DISPL:
+                this.state = Game.object.boss2.State.CYCLE;
+                this.hide();
+                this.visible = false;
+                music.queueSound("ghost");
+            break;
+            case Game.object.boss2.State.CYCLE:
+                if (this.willStep) {
+                    this.round++;
+                    this.willStep = false;
+                    this.state = Game.object.boss2.State.DISPL;
+                    this.parent.player.point = new Point(10, 10);
+                    this.loadRound(this.round);
+                    music.queueSound("boom");
+                    this.visible = true;
+                }
+            break;
+        }
+        this.ready = true;
+    }
+
+    loadRound(stage) {
+        this.annihilate();
+        switch (stage) {
+            case 0:
+                this.summon(new Game.object.boss2.orb(true, () => {this.step();}),
+                            new Point(7, 7));
+            break;
+            case 1:
+                this.summon(new Game.object.boss2.orb(false, () => {this.step();}),
+                            new Point(7, 7));
+                this.summon(new Game.object.block(),
+                            new Point(7, 6));
+                this.summon(new Game.object.block(),
+                            new Point(6, 7));
+
+                this.summon(new Game.object.boss2.solid(),
+                            new Point(8, 7));
+                this.summon(new Game.object.boss2.solid(),
+                            new Point(7, 8));
+            break;
+            case 2:
+                this.summon(new Game.object.boss2.orb(true, () => {this.step();}),
+                    new Point(7, 7));
+                this.summon(new Game.object.ghost(Dir.Down),
+                    new Point(8, 3));
+                this.summon(new Game.object.ghost(Dir.Right),
+                    new Point(3, 8));
+            break;
+            case 3:
+            break;
+
+        }
+    }
+
+    summon(obj, point) {
+        obj.initialize(this.parent, point);
+        obj.layer = 0;
+        this.parent.enemies.push(obj);
+        this.objects.push(obj);
+    }
+
+    annihilate() {
+        this.parent.enemies = [this];
+        this.parent.stage.registeredPoints = [];
+    }
+
+    hide() {
+        for (var i = 0; i < this.objects.length; i++) {
+            var e = this.objects[i];
+            e.visible = false;
+        }
+    }
+
+    step() {
+        this.willStep = true;
+        this.ready = false;
+    }
+}
+
+Game.object.boss2.State = {
+    START: 0,
+    DISPL: 1,
+    CYCLE: 2,
+}
+
+Game.object.boss2.orb = class extends Game.object.winObject {
+    constructor(polarity, winFunc) {
+        super(polarity);
+        this.need = false;
+        this.layer = 0;
+        this.winFunc = winFunc;
+    }
+
+    action() {
+        music.playSound("get");
+        this.winFunc();
+        this.active = false;
+        return true;
+    }
+}
+
+Game.object.boss2.solid = class extends Game.object.stationary {
+    constructor() {
+        super();
+        this.tile = 15;
+        this.offset.layer = -2;
+    }
+
+    action() {
+        return false;
     }
 }

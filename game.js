@@ -234,7 +234,10 @@ Game.stage = class {
         this.width = room.width;
         this.height = room.height;
         this.layers = room.tiles.length;
-        this.tileMap = room.tiles;
+        this.tileMap = room.tiles.slice();
+        for (var i = 0; i < this.layers; i++) {
+            this.tileMap[i] = this.tileMap[i].slice();
+        }
         this.registeredPoints = [];
         this.key = worldfile.key;
         this.code = 0;
@@ -285,6 +288,12 @@ Game.stage = class {
                 break;
             }
         }
+    }
+    set(pt, layer, tile) {
+        if (layer == 0)
+            return false;
+        this.tileMap[layer][this.width * pt.y + pt.x] = tile;
+        return true;
     }
     getTile(pt,layer) {
         if (pt.x < 0 || pt.x >= this.width || pt.y < 0 || pt.y >= this.height)
