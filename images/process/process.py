@@ -32,9 +32,14 @@ def process(designation):
     pixelgrid2.changepage(1)
     pixelgrid2.getTkStrip(8, block=False).write(filen)
 
-    # Title (bg1.png)
+    # Title (title.png)
     filen = designation + "title.png"
     pixelgrid3.getTkStrip(24, block=False).write(filen)
+
+    # Logo (logo.png)
+    filen = designation + "logo.png"
+    pixelgrid3.changepage(2)
+    pixelgrid3.getTkStrip(4, block=False).write(filen)
     
 tk.Tk() # Initialize Tk system
 

@@ -174,16 +174,28 @@ ControlsScreen.prototype = {
 };
 
 // TODO: Combine with LogoScreen
-var LoadingScreen = function() {
-    this.timer = 0;
-    gfx.initialize();
-};
-LoadingScreen.prototype = {
-    draw: function(ctx) {
-        drawCenteredText(ctx, 10*8, "Loading...");
-    },
+// Logo is 160x32
+class LoadingScreen {
+    constructor() {
+        this.timer = 0;
+        gfx.initialize();
 
-    update: function(ctx) {
+        this.loaded = false;
+        this.logo = new Image();
+        this.logo.src = "./images/logo.png"
+        this.logo.onload = () => {this.loaded = true};
+    }
+
+    draw(ctx) {
+        if (!this.loaded)
+            drawCenteredText(ctx, 10*8, "Loading...");
+        else {
+            ctx.drawImage(this.logo, 128-80, 8*8);
+            drawCenteredText(ctx, 12*8, "Loading...");
+        }
+    }
+
+    update(ctx) {
         if (this.timer < 2) 
             this.timer++;
         else if (this.timer == 2) {
@@ -192,10 +204,12 @@ LoadingScreen.prototype = {
         } else if (this.timer == 3) {
             // TODO: Actually check if loaded
             //if (Object.keys(music.data).length == 0)
+                //this.timer++;
+            if (music.isLoaded())
                 this.timer++;
         } else if (this.timer > 3) {
             this.timer++;
-            if (this.timer == 150) {
+            if (this.timer == 5) {
                 try {
                     var hash = window.location.hash.substring(1)
                     if (hash.length > 0) {

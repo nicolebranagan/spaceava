@@ -19,7 +19,8 @@ class Governor {
             }
         }
         try {
-            window.location.hash = this.position.toString() + (__debug ? "debug" : "");
+            if (!__debug)
+                window.location.hash = this.position.toString();
         } catch (e) { /* We don't care if it fails */ }
         Script.tickerTape[this.position][1](this);
     }

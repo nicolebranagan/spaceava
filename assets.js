@@ -2,6 +2,7 @@ var music = {
     sounds: ["die", "get", "boom", "crash", "shove", "ghost"],
     music: ["prelude", "title", "steady", "spaceless", "power", "chime", "bossy", "jungle", "carousel", "chimier"],
     data: {},
+    loaded: 0,
     initialize: function() {
         for (var i = 0; i < this.sounds.length; i++) {
             var sound = new Howl({
@@ -10,6 +11,7 @@ var music = {
                 autoplay: false,
                 loop: false
             });
+            sound.once('load', () => {this.loaded++})
             this.data[this.sounds[i]] = sound;
         }
         for (var i = 0; i < this.music.length; i++) {
@@ -19,10 +21,14 @@ var music = {
                 autoplay: false,
                 loop: true
             })
+            music.once('load', () => {this.loaded++})
             this.data[this.music[i]] = music;
         }
     },
     loaded: 0,
+    isLoaded: function() {
+        return (this.loaded == (this.sounds.length + this.music.length));
+    },
     callback: function() {},
     currentSong: null,
     paused: false,
