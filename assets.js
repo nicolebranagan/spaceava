@@ -96,15 +96,15 @@ var gfx = {
         this.font = new Image();
         this.font.src = "./images/font.png";
         this.objects = new Image();
-        this.objects.src = "./images/objects.png";
+        this.objects.src = "./images/objects.gif";
         this.tiles = new Image();
-        this.tiles.src = "./images/tiles.png";
+        this.tiles.src = "./images/tiles.gif";
         this.faces = new Image();
-        this.faces.src = "./images/faces.png"
+        this.faces.src = "./images/faces.gif"
         this.bg = [new Image()];
-        this.bg[0].src = "./images/bg1.png";
+        this.bg[0].src = "./images/bg1.gif";
         this.title = new Image();
-        this.title.src = "./images/title.png";
+        this.title.src = "./images/title.gif";
     }
 }
 gfx.initialize();

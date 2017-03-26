@@ -6,6 +6,7 @@
 import math
 import copy
 import tkinter as tk
+from PIL import Image, ImageTk
 
 class PixelGrid:
     def __init__(self, palette):

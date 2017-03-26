@@ -3,6 +3,7 @@
 class TitleScreen {
     constructor() {
         this.selection = 0;
+        this.count = 0;
         music.playMusic("title");
     }
     update() {
@@ -12,29 +13,41 @@ class TitleScreen {
                 // New Game
                 runner = new ControlsScreen();
             } else if (this.selection == 1) {
-
+                // Arcade Mode
+                runner = new Dialogue(Script.arcade, function() {new Governor(0, true)});
             } else if (this.selection == 2) {
-                runner = new OptionsScreen();
+                // Continue                
+                runner = new PasswordScreen();
             } else if (this.selection == 3) {
-                runner = new LevelSelect();
+                runner = new OptionsScreen();
             }
         } else if (Controls.Up) {
             if (this.selection != 0)
                 this.selection--;
             Controls.Up = false;
         }   else if (Controls.Down) {
-            if (this.selection != 2)
+            if (this.selection != 2 || (this.count == 9 && this.selection != 3))
                 this.selection++;
+            else {
+                this.count++;
+                if (this.count == 9)
+                    this.selection++;
+            }
             Controls.Down = false;
         }
     }
     draw(ctx) {
         ctx.drawImage(gfx.title, 0, 0, 256, 192, 0, 0, 256, 192);
         drawText(ctx, 12*8, 14*8, "New Game");
-        drawText(ctx, 12*8, 16*8, "Continue");
-        drawText(ctx, 12*8, 18*8, "Options");
+        drawText(ctx, 12*8, 16*8, "Arcade Mode");
+        drawText(ctx, 12*8, 18*8, "Continue");
         drawText(ctx, 10*8, (14 + (this.selection*2))*8, [26]);
-        drawCenteredText(ctx, 21*8, "(c) 2017 Nicole Express");
+        if (this.count !== 9) {
+            drawCenteredText(ctx, 21*8, "(c) 2017 Nicole Express");
+        } else {
+            drawText(ctx, 12*8, 20*8, "Options");
+            drawCenteredText(ctx, 22*8, "(c) 2017 Nicole Express");
+        }
     }
 };
 
@@ -53,7 +66,7 @@ class OptionsScreen {
         drawCenteredText(ctx, 1*8, "Space Ava");
         drawCenteredText(ctx, 2*8, "Options");
         
-        drawText(ctx, 3*8, 4*8, saveEnabled ? "Do save game" : "Do not save game")
+        drawText(ctx, 3*8, 4*8, "Level Select");
         /*drawText(ctx, 3*8, 5*8, this.saveFailed ? "No save data" : "Save to file");
         drawText(ctx, 3*8, 6*8, "Load from file");*/
 
@@ -72,8 +85,8 @@ class OptionsScreen {
             Controls.Enter = false;
             Controls.Shoot = false;
             if (this.selection == 0) {
-                // Disable saving
-                saveEnabled = !saveEnabled;
+                // Level selection
+                runner = new LevelSelect();
             } else if (this.selection == 1) {
                 // Save game to file
                 /*var data = "";
@@ -147,22 +160,30 @@ class OptionsScreen {
 var ControlsScreen = function() {
     music.playMusic("");
     this.timer = 0;
+    this.bg = Math.floor(Math.random() * 4)
 };
 
 ControlsScreen.prototype = {
     draw: function(ctx) {
+        for (var i = 0; i < (256/16)+1; i++)
+            for (var j = 0; j < (192/16); j++) {
+                ctx.drawImage(gfx.tiles, (254-this.bg)*16, 0, 16, 16, i*16-j, j*16, 16, 16);
+            }
         drawCenteredText(ctx, 2*8, "Controls");
-        drawText(ctx, 6*8, 4*8, "Arrow keys");
-        drawText(ctx, 6*8, 5*8, "or WASD");
-        drawText(ctx, 2*8, 7*8, "Shoot: Space");
-        drawText(ctx, 3*8, 8*8, "Talk: Space");
-        drawCenteredText(ctx, 9*8, "Reset: Backspace");
-        drawText(ctx, 2*8, 10*8, "Pause: Enter");
+        drawText(ctx, 19*8, 4*8 + 4, "Move Ava")
+        drawText(ctx, 5*8, 4*8, "Arrow keys");
+        drawText(ctx, 5*8, 5*8, "or WASD");
+        drawText(ctx, 5*8, 7*8, "Enter         Pause");
+        drawText(ctx, 5*8, 9*8, "Backspace     Reset")
 
-        drawCenteredText(ctx, 12*8, "For mobile,")
-        drawCenteredText(ctx, 13*8, "tap screen")
+        drawCenteredText(ctx, 13*8, "In Dialogue Mode");
+        drawText(ctx, 5*8, 15*8, "Space         Continue");
+        drawText(ctx, 5*8, 17*8, "Enter         Skip");
 
-        drawCenteredText(ctx, 15*8, "Press 'Pause'")
+        //drawCenteredText(ctx, 12*8, "For mobile,")
+        //drawCenteredText(ctx, 13*8, "tap screen")
+
+        drawCenteredText(ctx, 21*8, "Press 'Pause' to start")
     },
 
     update: function(ctx) {
@@ -173,8 +194,6 @@ ControlsScreen.prototype = {
     }
 };
 
-// TODO: Combine with LogoScreen
-// Logo is 160x32
 class LoadingScreen {
     constructor() {
         this.timer = 0;
@@ -202,9 +221,6 @@ class LoadingScreen {
             music.initialize();
             this.timer++;
         } else if (this.timer == 3) {
-            // TODO: Actually check if loaded
-            //if (Object.keys(music.data).length == 0)
-                //this.timer++;
             if (music.isLoaded())
                 this.timer++;
         } else if (this.timer > 3) {
@@ -222,7 +238,6 @@ class LoadingScreen {
                         }
                     }
                 } catch (e) {}
-                // If nothing else happened, then just start the game as usual
                 if (runner === this)
                     runner = new Dialogue(Script.opening, function() {runner = new TitleScreen();});
             }
@@ -270,6 +285,7 @@ class LevelSelect {
             Controls.Shoot = false;
             var pos = this.posx + (this.posy*this.perline);
             if (pos < Script.tickerTape.length) {
+                music.playMusic("");
                 new Governor(pos + 1);
             } else {
                 console.log(pos + 1);
@@ -295,3 +311,119 @@ class LevelSelect {
     }
 }
 
+class PasswordScreen {
+    constructor() {
+        this.posx = 0;
+        this.posy = 0;
+        this.letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789     O"
+        this.perline = 7;
+        this.width = this.perline * 2;
+        this.rows = Math.ceil(this.letters.length / this.perline);
+        this.triedPass = SaveGame.savedPass;
+        if (this.triedPass.length == 5) {
+            this.posy = this.rows - 1;
+            this.posx = this.perline - 1;
+        }
+        this.lastInvalid = false;
+
+        music.playMusic("steady");
+    }
+    update() {
+        if (Controls.Left) {
+            Controls.Left = false;
+            if (this.posx > 0)
+                this.posx--;
+            else
+                this.posx = this.perline-1;
+        } else if (Controls.Right) {
+            Controls.Right = false;
+            if (this.posx < (this.perline-1))
+                this.posx++;
+            else
+                this.posx = 0;
+        } else if (Controls.Up) {
+            Controls.Up = false;
+            if (this.posy > 0)
+                this.posy--;
+            else
+                this.posy = this.rows - 1;
+        } else if (Controls.Down) {
+            Controls.Down = false;
+            if (this.posy < (this.rows-1))
+                this.posy++
+            else
+                this.posy = 0;
+        } else if (Controls.Enter || Controls.Shoot) {
+            Controls.Enter = false;
+            Controls.Shoot = false;
+            var pos = this.posx + (this.posy*this.perline);
+            if (pos == this.letters.length - 1) {
+                this.submit();
+            } else {
+                if (this.triedPass.length < 5) {
+                    this.triedPass = this.triedPass + this.letters[pos];
+                    this.lastInvalid = false;
+                } else {
+                    music.playSound("boom");
+                }
+            }
+        } else if (Controls.Reset) {
+            if (this.triedPass.length > 1)
+                this.triedPass = this.triedPass.slice(0, -1);
+            else
+                this.triedPass = "";
+            Controls.Reset = false;
+        }
+
+    }
+    draw(ctx) {
+        drawCenteredText(ctx, 8, "Space Ava");
+        drawCenteredText(ctx, 24, this.lastInvalid? "Invalid password!" : "Enter your password");
+        var x = 0;
+        var y = 32;
+        drawText(ctx, this.posx*16 + 32, this.posy*16 + 8 + 32, [25]);
+        for (var i = 0; i < this.letters.length; i++) {
+            if ((i) % this.perline == 0) {
+                x = 32;
+                y += 16;
+            } else {
+                x += 2*8;
+            }
+            drawText(ctx, x, y, this.letters[i]);
+        }
+        drawText(ctx, x+8, y, "K");
+
+        var char = this.triedPass.length == 5 ? 254 : 25;
+        drawText(ctx, this.triedPass.length*8 + 180, 40, [char]);
+        var drawStrip = this.triedPass;
+        while (drawStrip.length < 5)
+            drawStrip = drawStrip + "_";
+        drawText(ctx, 180, 48, drawStrip);
+
+        drawCenteredText(ctx, 19*8, "Pause / Continue: Add character")
+        drawCenteredText(ctx, 20*8, "Reset: Backspace")
+        drawCenteredText(ctx, 22*8, "Choose 'OK' when complete")
+    }
+
+    submit() {
+        if (this.triedPass == "HELP") {
+            runner = new LevelSelect();
+            return;
+        }
+        if (this.triedPass.length < 5) {
+            music.playSound("boom");
+            this.posx = 0;
+            this.posy = 0;
+            return;
+        }
+        var attempt = SaveGame.tryPass(this.triedPass);
+        if (attempt == -1) {
+            if (!this.lastInvalid)
+                music.playSound("die");
+            this.lastInvalid = true;
+            this.triedPass = "";
+        } else {
+            SaveGame.getStage(attempt);
+        }
+    }
+}

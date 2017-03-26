@@ -16,6 +16,8 @@ class Game {
         this.startString = "Singularity " + (stage+1).toString();
         this.willDie = false;
 
+        SaveGame.savePass(stage);
+
         this.winCount = 0;
         for (var i = 0; i < this.enemies.length; i++) {
             if (this.enemies[i].need)
@@ -181,7 +183,9 @@ class Game {
         if (this.mode == Game.Mode.STARTUP && Math.floor(this.startTimer / 20) % 2 == 0) {
             drawCenteredText(ctx, 80, this.startString);            
         } else if (this.mode == Game.Mode.PAUSED) {
-            drawCenteredText(ctx, 80, "Paused")
+            drawCenteredText(ctx, 72, "Paused");
+            drawCenteredText(ctx, 88, "Password:");
+            drawCenteredText(ctx, 96, SaveGame.getPass(this.level));
         }
         for (var j = 0; j < (256/16); j++) {
             ctx.drawImage(gfx.tiles, (255)*16, 0, 16, 16, j*16, 0, 16, 16);

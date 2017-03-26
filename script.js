@@ -16,6 +16,22 @@ var Script = {
     ["08", function(gov) {runner = new Game(7, function() {gov.step();})}]
     ],
 
+    arcade: {
+        bg: new Dialogue.Background(
+            function (ctx) {
+                ctx.drawImage(gfx.bg[0], 0, 0, this.width, this.height, 32, 16, this.width, this.height);
+                ctx.drawImage(gfx.bg[0], 768, 0, 16*3, 16*2, 32+64+8, 24, 16*3, 16*2);
+            }
+        ),
+
+        script: [
+            [[[4, 2]], "Arcade Mode", Dialogue.textStyle.CENTERED],
+            [[[1, 2]], "In arcade mode, you will be unable to save your game. After completing each level, your turns will be compared to a par value."],
+            [[[3, 2]], "Additionally, dialogue settings will not be shown. You will automatically progress to the next singularity."],
+            [[[5, 2]], "Now that that's all set, let's begin!", Dialogue.textStyle.CENTERED]
+        ]
+    },
+
     opening: {
         bg: new Dialogue.Background(
             function (ctx) {
