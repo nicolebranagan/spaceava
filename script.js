@@ -21,13 +21,14 @@ var Script = {
             function (ctx) {
                 ctx.drawImage(gfx.bg[0], 0, 0, this.width, this.height, 32, 16, this.width, this.height);
                 ctx.drawImage(gfx.bg[0], 768, 0, 16*3, 16*2, 32+64+8, 24, 16*3, 16*2);
+                ctx.drawImage(gfx.bg[0], 240, 0, 16, 32, 192, 48, 16, 32);
             }
         ),
 
         script: [
             [[[4, 2]], "Arcade Mode", Dialogue.textStyle.CENTERED],
             [[[1, 2]], "In arcade mode, you will be unable to save your game. After completing each level, your turns will be compared to a par value."],
-            [[[3, 2]], "Additionally, dialogue settings will not be shown. You will automatically progress to the next singularity."],
+            [[[3, 2]], "Additionally, dialogue screens will not be shown. You will automatically progress to the next area."],
             [[[5, 2]], "Now that that's all set, let's begin!", Dialogue.textStyle.CENTERED]
         ]
     },

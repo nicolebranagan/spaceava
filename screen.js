@@ -201,7 +201,7 @@ class LoadingScreen {
 
         this.loaded = false;
         this.logo = new Image();
-        this.logo.src = "./images/logo.png"
+        this.logo.src = "./images/logo.gif"
         this.logo.onload = () => {this.loaded = true};
     }
 
