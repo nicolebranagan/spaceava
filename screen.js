@@ -400,7 +400,7 @@ class PasswordScreen {
             drawStrip = drawStrip + "_";
         drawText(ctx, 180, 48, drawStrip);
 
-        drawCenteredText(ctx, 19*8, "Pause / Continue: Add character")
+        drawCenteredText(ctx, 19*8, "Pause, Continue: Add character")
         drawCenteredText(ctx, 20*8, "Reset: Backspace")
         drawCenteredText(ctx, 22*8, "Choose 'OK' when complete")
     }

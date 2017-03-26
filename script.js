@@ -1,19 +1,19 @@
 var Script = { 
     tickerTape: [
     ["D0", function(gov) {runner = new Dialogue(Script.scene1, function() {gov.step();})}],
-    ["01", function(gov) {runner = new Game(0, function() {gov.step();})}],
+    ["01", function(gov) {runner = new Game(0, function() {gov.step();}, gov.arcade)}],
     ["D1", function(gov) {runner = new Dialogue(Script.scene2, function() {gov.step();})}],
-    ["02", function(gov) {runner = new Game(1, function() {gov.step();})}],
-    ["03", function(gov) {runner = new Game(2, function() {gov.step();})}],
+    ["02", function(gov) {runner = new Game(1, function() {gov.step();}, gov.arcade)}],
+    ["03", function(gov) {runner = new Game(2, function() {gov.step();}, gov.arcade)}],
     ["D2", function(gov) {runner = new Dialogue(Script.scene3, function() {gov.step();})}],
-    ["04", function(gov) {runner = new Game(3, function() {gov.step();})}],
+    ["04", function(gov) {runner = new Game(3, function() {gov.step();}, gov.arcade)}],
     ["D3", function(gov) {runner = new Dialogue(Script.scene4, function() {gov.step();})}],
-    ["05", function(gov) {runner = new Game(4, function() {gov.step();})}],
+    ["05", function(gov) {runner = new Game(4, function() {gov.step();}, gov.arcade)}],
     ["D4", function(gov) {runner = new Dialogue(Script.scene5, function() {gov.step();})}],
-    ["06", function(gov) {runner = new Game(5, function() {gov.step();})}],
-    ["07", function(gov) {runner = new Game(6, function() {gov.step();})}],
+    ["06", function(gov) {runner = new Game(5, function() {gov.step();}, gov.arcade)}],
+    ["07", function(gov) {runner = new Game(6, function() {gov.step();}, gov.arcade)}],
     ["D5", function(gov) {runner = new Dialogue(Script.scene6, function() {gov.step();})}],
-    ["08", function(gov) {runner = new Game(7, function() {gov.step();})}]
+    ["08", function(gov) {runner = new Game(7, function() {gov.step();}, gov.arcade)}],
     ],
 
     arcade: {
@@ -26,10 +26,13 @@ var Script = {
         ),
 
         script: [
-            [[[4, 2]], "Arcade Mode", Dialogue.textStyle.CENTERED],
+            function() {music.playMusic("carousel");},
+            [[[4, 2]], "About Arcade Mode", Dialogue.textStyle.CENTERED],
             [[[1, 2]], "In arcade mode, you will be unable to save your game. After completing each level, your turns will be compared to a par value."],
+            [[[39, 2]], "At the end, your results will be converted to a score, which can be used to show who is the best!"],
+            [[[6, 2]], "Well, the best at Space Ava, anyway. Don't get too full of yourself."],
             [[[3, 2]], "Additionally, dialogue screens will not be shown. You will automatically progress to the next area."],
-            [[[5, 2]], "Now that that's all set, let's begin!", Dialogue.textStyle.CENTERED]
+            [[], "Now that that's all set, let's begin!", Dialogue.textStyle.CENTERED]
         ]
     },
 

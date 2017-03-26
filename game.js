@@ -1,6 +1,6 @@
 'use strict';
 class Game {
-    constructor(stage, winfunc) {
+    constructor(stage, winfunc, arcade, turns, deaths) {
         this.winfunc = winfunc;
         this.level = stage;
         this.stage = new Game.stage(worldfile.rooms[stage]);
@@ -9,14 +9,17 @@ class Game {
         var start = worldfile.rooms[stage].startpoint;
         this.player = new Game.object.player(this, new Point(start[1],start[2]));
         this.player.layer = start[0];
-        this.turns = 0;
+        this.turns = turns ? turns : 0;
         this.enemies = this.stage.getEnemies(this);
         this.mode = Game.Mode.STARTUP;
         this.startTimer = 0;
         this.startString = "Singularity " + (stage+1).toString();
         this.willDie = false;
+        this.arcade = arcade;
+        this.deaths = deaths ? deaths : 0;
 
-        SaveGame.savePass(stage);
+        if (!this.arcade)
+            SaveGame.savePass(stage);
 
         this.winCount = 0;
         for (var i = 0; i < this.enemies.length; i++) {
@@ -38,16 +41,20 @@ class Game {
         } else if (this.mode == Game.Mode.PAUSED) {
             if (Controls.Enter) {
                 Controls.Enter = false;
+                music.pauseMusic();
                 this.mode = Game.Mode.PLAYER;
             } else
                 return;
         } else if (this.mode == Game.Mode.DIE_ANIM) {
             this.deathTimer++;
             if (this.deathTimer == 150) {
-                runner = new Game(this.level, this.winfunc);
+                runner = new Game(this.level, this.winfunc, this.arcade, this.turns, this.deaths + 1);
             }
             //return;
         } else if (this.mode == Game.Mode.WIN_ANIM) {
+            if (this.arcade) {
+                runner = new Game.resultsScreen(this);
+            }
             this.winTimer++;
             if (this.winTimer == 150) {
                 this.winfunc();
@@ -56,6 +63,7 @@ class Game {
 
         if (this.mode == Game.Mode.PLAYER && Controls.Enter) {
             Controls.Enter = false;
+            music.pauseMusic();
             this.mode = Game.Mode.PAUSED;
         }
 
@@ -158,10 +166,10 @@ class Game {
             drawPt.y = drawPt.y - 8;
             this.stage.drawBase(ctx, drawPt, i);
             var drawables = [];
-            for (var i = 0; i < this.stage.layers; i++) {
-                if (i !== 0)
+            for (var i = 0; i <= this.stage.layers; i++) {
+                if (i !== 0 && i !== this.stage.layers)
                     drawables = drawables.concat(this.stage.getDrawables(i, drawPt));
-                if (i == this.player.layer && drawPlayer)
+                if (i == this.player.layer+1 && drawPlayer)
                     drawables.push(this.player.draw(drawPt));
                 for (var j = 0; j < this.enemies.length; j++) {
                     if (!drawSprites)
@@ -184,8 +192,10 @@ class Game {
             drawCenteredText(ctx, 80, this.startString);            
         } else if (this.mode == Game.Mode.PAUSED) {
             drawCenteredText(ctx, 72, "Paused");
-            drawCenteredText(ctx, 88, "Password:");
-            drawCenteredText(ctx, 96, SaveGame.getPass(this.level));
+            if (!this.arcade) {
+                drawCenteredText(ctx, 88, "Password:");
+                drawCenteredText(ctx, 96, SaveGame.getPass(this.level));
+            }
         }
         for (var j = 0; j < (256/16); j++) {
             ctx.drawImage(gfx.tiles, (255)*16, 0, 16, 16, j*16, 0, 16, 16);
@@ -373,4 +383,67 @@ Game.stage.Properties = {
     CENTERED: 1,
     CENTER_X: 2,
     CENTER_Y: 3,
+}
+
+Game.resultsScreen = class {
+    constructor(parent) {
+        this.parent = parent;
+        this.mode = Game.resultsScreen.State.OPEN_BOX;
+        
+        this.timer = 0;
+        // These are rectangular radiuses, not heights
+        this.boxw = 0;
+        this.boxh = 0;
+    }
+
+    draw(ctx) {
+        this.parent.draw(ctx);
+        ctx.fillRect(Game.center.x - this.boxw, Game.center.y - this.boxh, 2 * this.boxw, 2 * this.boxh); 
+        if (this.mode == Game.resultsScreen.State.DISPLAY) {
+            drawCenteredText(ctx, 8*8, "Results #" + (this.parent.level + 1).toString());
+            drawText(ctx, 11*8, 10*8, "Turns: " + this.parent.turns.toString());
+            drawText(ctx, 11*8, 11*8, "Par: ");          
+            drawText(ctx, 11*8, 13*8, "Deaths: " + this.parent.deaths.toString());
+            drawCenteredText(ctx, 15*8, "Press 'Pause'")
+        }
+    }
+
+    update() {
+        switch (this.mode) {
+            case Game.resultsScreen.State.OPEN_BOX:
+                this.open_box();
+            break;
+            case Game.resultsScreen.State.DISPLAY:
+                this.cycle();
+            break;
+        }
+    }
+
+    open_box() {
+        var goalh = 5*8;
+        var goalw = 8*8;
+
+        if (this.boxh != goalh) {
+            this.boxh++;
+        }
+        if (this.boxw != goalw) {
+            this.boxw++;
+        }
+
+        if (this.boxh == goalh && this.boxw == goalw) {
+            this.mode = Game.resultsScreen.State.DISPLAY;
+        }
+    }
+
+    cycle() {
+        if (Controls.Enter) {
+            this.parent.winfunc();
+        }
+    }
+
+}
+
+Game.resultsScreen.State = {
+    OPEN_BOX: 1,
+    DISPLAY: 2,
 }
