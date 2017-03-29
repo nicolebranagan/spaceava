@@ -14,6 +14,8 @@ var Script = {
     ["07", function(gov) {runner = new Game(6, function() {gov.step();}, gov.arcade)}],
     ["D5", function(gov) {runner = new Dialogue(Script.scene6, function() {gov.step();})}],
     ["08", function(gov) {runner = new Game(7, function() {gov.step();}, gov.arcade)}],
+    ["D6", function(gov) {runner = new Dialogue(Script.scene7, function() {gov.step();})}],
+    ["09", function(gov) {runner = new Game(8, function() {gov.step();}, gov.arcade)}],
     ],
 
     arcade: {
@@ -27,11 +29,11 @@ var Script = {
 
         script: [
             function() {music.playMusic("carousel");},
-            [[[4, 2]], "About Arcade Mode", Dialogue.textStyle.CENTERED],
-            [[[1, 2]], "In arcade mode, you will be unable to save your game. After completing each level, your turns will be compared to a par value."],
-            [[[39, 2]], "At the end, your results will be converted to a score, which can be used to show who is the best!"],
-            [[[6, 2]], "Well, the best at Space Ava, anyway. Don't get too full of yourself."],
-            [[[3, 2]], "Additionally, dialogue screens will not be shown. You will automatically progress to the next area."],
+            [[[4, 4]], "About Arcade Mode", Dialogue.textStyle.CENTERED],
+            [[[1, 4]], "In arcade mode, you will be unable to save your game. After completing each level, your turns will be compared to a par value."],
+            [[[Math.random() > 0.5 ? 39 : 38, 4]], "At the end, your results will be converted to a score, which can be used to show who is the best!"],
+            [[[6, 4]], "Well, the best at Space Ava, anyway. Don't get too full of yourself."],
+            [[[3, 4]], "Additionally, dialogue screens will not be shown. You will automatically progress to the next area."],
             [[], "Now that that's all set, let's begin!", Dialogue.textStyle.CENTERED]
         ]
     },
@@ -52,8 +54,8 @@ var Script = {
             [[[1,4], [8,16]], "???: Hey there."],
             [[[3,4], [8,16]], "AVA: An intruder! State your name, criminal!"],
             [[[3,4], [10,16]], "???: Well that's not very friendly. For all you know I was here to help you."],
-            [[[6,4], [10,16]], "AVA: I am Captain Ava Marie St.Janet Crispin VII, and this is a starship of the Amalgamation of Worlds! I know you're not supposed to be in my quarters!"],
-            [[[6,4], [11,16]], "???: And you can call me Lily, Ms. the Seventh. And honestly, I just wanted to loot the place; I thought you were all dead."],
+            [[[6,4], [12,16]], "AVA: I am Captain Ava Marie St.Janet Crispin VII, and this is a starship of the Amalgamation of Worlds! I know you're not supposed to be in my quarters!"],
+            [[[6,4], [10,16]], "???: And you can call me Lily, Ms. the Seventh. And honestly, I just wanted to loot the place; I thought you were all dead."],
             [[[1,4], [11,16]], "...\n ..."],
             [[[3,4], [11,16]], "AVA: Well let me tell you Lilth- All dead?"],
             [[[1,4], [10,16]], "LILY: Well, those flashing lights can't be good."],
@@ -191,6 +193,29 @@ var Script = {
             [[[6, 0], [12, 4], [19, 19]], "GREEN: Indeed. It is I, George Green. And I shall specify the boundary conditions of your defeat!"],
             [[[3, 0], [10, 4], [19, 19]], "LILY: Yeah, yeah, let's just get this over already."],
             [[[6, 0], [10, 4], [19, 19]], "GREEN: So be it. Set the initial conditions now! Shut up and calculate!"]
+        ]
+    },
+    scene7: {
+        bg: new Dialogue.Background(
+            function(ctx) {
+                ctx.drawImage(gfx.bg[0], 512, 0, this.width, this.height, 32, 16, this.width, this.height);
+            }
+        ),
+        script: [
+            function() {music.playMusic("chimier")},
+            [[[5, 0], [8, 4], [19, 19]], "GREEN: So be it! I am bested. But before I go, I have but one thing to add."],
+            [[[1, 0], [13, 4], [20, 19]], "GREEN: Had I been in charge, I would have called it... Electromagnetism."],
+            function() {music.playMusic("carousel")},
+            [[[2, 0], [11, 4]], "AVA: I don't get it..."],
+            [[[6, 0], [10, 4]], "LILY: It's probably for the best."],
+            function() {music.playMusic("spaceless")},
+            [[[5, 0], [13, 4], [26, 16]], "CINDY: Commander Cindy Palisade on a scientific survey of the native species of the black hole. No sign of my comrades."],
+            [[[2, 0], [14, 4], [26, 16]], "CINDY: I'm going to try to make contact. This could be a historic moment."],
+            [[[4, 0], [14, 4], [26, 16]], "AVA: Um, Ava to Commander Palisade? Hello?"],
+            [[[3, 0], [12, 4], [27, 16]], "CINDY: Ava?! Don't tell me I have to share authorship on this discovery..."],
+            [[[4, 0], [11, 4], [26, 16]], "LILY: Another one of your friends, I suppose?"],
+            function() {music.playMusic("steady")},
+            [[[1, 0], [10, 4], [28, 16]], "AVA: Just one more to go..."]
         ]
     }
 }

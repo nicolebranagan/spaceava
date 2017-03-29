@@ -36,7 +36,7 @@ class Application(tk.Frame):
 
         self.__select = 0
 
-        self.tiles = Image.open("../images/tiles.png")
+        self.tiles = Image.open("../images/tiles.gif").convert("RGBA")
         self.tiles = self.tiles.resize(
                 (self.tiles.width * 2, self.tiles.height * 2),
                 Image.NEAREST)

@@ -322,7 +322,7 @@ Game.object.shooter = class extends Game.object {
         if (this.movetime == this.frequency)
             this.movetime = 0;
         if (this.movetime == Math.floor(this.frequency/2)) {
-            this.parent.enemies.push(new Game.object.bullet(this.parent, new Point(this.point), this.layer, this.facing));
+            this.parent.enemies.push(new Game.object.bullet(this.parent, new Point(this.point), this.layer, this.facing, this.visible));
             music.queueSound('boom', true);
         }
         if (this.type == Game.object.shooter.Type.SPINNER) {
@@ -347,7 +347,7 @@ Game.object.shooter.Type = {
 }
 
 Game.object.bullet = class extends Game.object {
-    constructor(parent, pt, layer, facing) {
+    constructor(parent, pt, layer, facing, visible) {
         super();
         super.initialize(parent, pt);
         this.layer = layer;
@@ -356,6 +356,7 @@ Game.object.bullet = class extends Game.object {
         this.tile = 32;
         this.byte = 1;
         this.doomed = false;
+        this.visible = visible;
     }
     update(mode) {
         super.update(mode);
@@ -657,6 +658,57 @@ Game.object.ghost = class extends Game.object {
         }
         return false;
     }
+}
+
+Game.object.tile = class extends Game.object {
+    constructor(health) {
+        super();
+        this.health = health ? health : 3;
+        this.playerOn = false;
+    }
+
+    draw(ctr) {
+        var drawable = {};
+        var tile = 94 - this.health;
+        drawable.draw = function (ctx) {
+            ctx.drawImage(gfx.objects, (tile)*16, 0, 16, 16, this.coord.x , this.coord.y, 16, 16)
+        };
+        drawable.coord = new Point((this.point.x-this.layer)*8, (this.point.y-this.layer)*8).getIsometric();
+        drawable.position = new Position(this.point.x, this.point.y, this.layer);
+
+        var iso_pt = new Point(ctr.x, ctr.y);
+        var ctr_x = -iso_pt.x + Game.center.x - 8;
+        var ctr_y = -iso_pt.y + Game.center.y + 2;
+        drawable.coord.add(new Point(ctr_x, ctr_y));
+        return drawable;
+    }
+
+    update(mode) {
+        if (mode == Game.Mode.ENEMY && this.playerOn) {
+            if (!(this.point.equals(this.parent.player.point))) {
+                this.playerOn = false;
+                if (this.health > 0)
+                    this.health--;
+                if (this.health == 0)
+                    music.queueSound("ding2");
+                else
+                    music.queueSound("ding1");
+            }
+        }
+        this.ready = true;
+    }
+
+    interact(interactor) {
+        if (this.health <= 0) {
+            return false;
+        }
+        if (interactor === this.parent.player) {
+            this.playerOn = true;
+        }
+        return true;
+    }
+
+
 }
 
 Game.object.stationary = class extends Game.object {
@@ -975,9 +1027,11 @@ Game.object.boss2 = class extends Game.object {
             break;
             case Game.object.boss2.State.DISPL:
                 this.state = Game.object.boss2.State.CYCLE;
-                this.hide();
-                this.visible = false;
-                music.queueSound("ghost");
+                if (this.round !== 4) {
+                    music.queueSound("ghost");
+                    this.hide();
+                    this.visible = false;
+                }
             break;
             case Game.object.boss2.State.CYCLE:
                 if (this.willStep) {
@@ -1023,8 +1077,29 @@ Game.object.boss2 = class extends Game.object {
                     new Point(3, 8));
             break;
             case 3:
-            break;
+                this.summon(new Game.object.boss2.orb(true, () => {this.step();}),
+                    new Point(5, 5));
 
+                this.summon(new Game.object.boss2.solid(),
+                    new Point(7, 7));
+                this.summon(new Game.object.boss2.solid(),
+                    new Point(7, 6));
+                this.summon(new Game.object.boss2.solid(),
+                    new Point(7, 5));
+                this.summon(new Game.object.boss2.solid(),
+                    new Point(7, 4));
+                this.summon(new Game.object.boss2.solid(),
+                    new Point(7, 3));
+
+                this.summon(new Game.object.shooter(Dir.Right, 0, 4),
+                    new Point(3, 7));
+            break;
+            case 4:
+                this.frames = [90, 90];
+                this.summon(new Game.object.winObject(false),
+                    new Point(8,8));
+                music.playMusic('');
+            break;
         }
     }
 
