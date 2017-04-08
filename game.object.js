@@ -210,6 +210,11 @@ Game.object.player = class extends Game.object {
             Controls.Right = false;
             this.facing = Dir.Right;
             this.ready = true;
+        } else if (Controls.Reset) {
+            Controls.Reset = false;
+            this.parent.hurt(this);
+            this.ready = true;
+            return;
         }
         if (this.ready) {
             var test = new Point(this.point);
@@ -663,8 +668,13 @@ Game.object.ghost = class extends Game.object {
 Game.object.tile = class extends Game.object {
     constructor(health) {
         super();
-        this.health = health ? health : 3;
+        this.health = health ? health : 2;
         this.playerOn = false;
+    }
+
+    initialize(parent, point) {
+        super.initialize(parent,point);
+        this.code = this.parent.stage.register(this.point, this.layer, Game.TileType.SOLID);
     }
 
     draw(ctr) {
@@ -674,7 +684,7 @@ Game.object.tile = class extends Game.object {
             ctx.drawImage(gfx.objects, (tile)*16, 0, 16, 16, this.coord.x , this.coord.y, 16, 16)
         };
         drawable.coord = new Point((this.point.x-this.layer)*8, (this.point.y-this.layer)*8).getIsometric();
-        drawable.position = new Position(this.point.x, this.point.y, this.layer);
+        drawable.position = new Position(this.point.x, this.point.y, this.layer-1);
 
         var iso_pt = new Point(ctr.x, ctr.y);
         var ctr_x = -iso_pt.x + Game.center.x - 8;
@@ -689,9 +699,10 @@ Game.object.tile = class extends Game.object {
                 this.playerOn = false;
                 if (this.health > 0)
                     this.health--;
-                if (this.health == 0)
+                if (this.health == 0) {
                     music.queueSound("ding2");
-                else
+                    this.parent.stage.unregister(this.code)
+                } else
                     music.queueSound("ding1");
             }
         }

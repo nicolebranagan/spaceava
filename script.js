@@ -16,13 +16,15 @@ var Script = {
     ["08", function(gov) {runner = new Game(7, function() {gov.step();}, gov.arcade)}],
     ["D6", function(gov) {runner = new Dialogue(Script.scene7, function() {gov.step();})}],
     ["09", function(gov) {runner = new Game(8, function() {gov.step();}, gov.arcade)}],
+    ["D7", function(gov) {runner = new Dialogue(Script.scene8, function() {gov.step();})}],
+    ["10", function(gov) {runner = new Game(9, function() {gov.step();}, gov.arcade)}],
     ],
 
     arcade: {
         bg: new Dialogue.Background(
             function (ctx) {
                 ctx.drawImage(gfx.bg[0], 0, 0, this.width, this.height, 32, 16, this.width, this.height);
-                ctx.drawImage(gfx.bg[0], 768, 0, 16*3, 16*2, 32+64+8, 24, 16*3, 16*2);
+                ctx.drawImage(gfx.bg[0], this.width, 16*2, 16*3, 16*2, 32+64+8, 24, 16*3, 16*2);
                 ctx.drawImage(gfx.bg[0], 240, 0, 16, 32, 192, 48, 16, 32);
             }
         ),
@@ -214,8 +216,32 @@ var Script = {
             [[[4, 0], [14, 4], [26, 16]], "AVA: Um, Ava to Commander Palisade? Hello?"],
             [[[3, 0], [12, 4], [27, 16]], "CINDY: Ava?! Don't tell me I have to share authorship on this discovery..."],
             [[[4, 0], [11, 4], [26, 16]], "LILY: Another one of your friends, I suppose?"],
+            [[[5, 0], [8, 4], [26, 16]], "AVA: That's right!"],
             function() {music.playMusic("steady")},
             [[[1, 0], [10, 4], [28, 16]], "AVA: Just one more to go..."]
+        ]
+    },
+    scene8: {
+        bg: new Dialogue.Background(
+            function(ctx) {
+                ctx.drawImage(gfx.bg[0], 768, 0, this.width, this.height, 32, 16, this.width, this.height);
+            }
+        ),
+        script: [
+            function() {music.playMusic("carousel")},
+            [[[1, 6], [8, 2]], "LILY: I've got an idea for how to protect you from quantum!"],
+            [[[4, 6], [9, 2]], "AVA: Oh?"],
+            [[[1, 6], [15, 4]], "LILY: Just a second..."],
+            [[[2, 6], [15, 5]], "AVA: Lilith... what are you doing?"],
+            [[[2, 6], [15, 6]], "LILY: Just hold still, okay?"],
+            function() {music.playSound("crash")},
+            [[[6, 6], [15, 5]], "AVA: Ouch!"],
+            [[[6, 6], [15, 6]], "LILY: I told you to stay still!"],
+            [[[6, 6], [15, 6]], "AVA: ..."],
+            [[[7, 6], [8, 2]], "LILY: There! Do you like it?"],
+            [[[7, 6], [8, 2]], "AVA: Uh..."],
+            [[[7, 6], [14, 2]], "AVA: Do you really think this is going to work?"],
+            [[[7, 6], [9, 2]], "LILY: I don't know, but you look adorable!"]
         ]
     }
 }

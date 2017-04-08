@@ -165,18 +165,29 @@ class Game {
             drawPt = drawPt.getIsometric();
             drawPt.y = drawPt.y - 8;
             this.stage.drawBase(ctx, drawPt, i);
+
+            var enemy_drawables = [];
+            for (var i = 0; i < this.enemies.length; i++) {
+                var d = this.enemies[i].draw(drawPt);
+                if (d.position.layer == -1)
+                    d.draw(ctx);
+                else {
+                    enemy_drawables.push(d);
+                }
+            }
+
             var drawables = [];
             for (var i = 0; i <= this.stage.layers; i++) {
                 if (i !== 0 && i !== this.stage.layers)
                     drawables = drawables.concat(this.stage.getDrawables(i, drawPt));
                 if (i == this.player.layer+1 && drawPlayer)
                     drawables.push(this.player.draw(drawPt));
-                for (var j = 0; j < this.enemies.length; j++) {
+                for (var j = 0; j < enemy_drawables.length; j++) {
                     if (!drawSprites)
                         break;
-                    var e = this.enemies[j];
-                    if (e.layer == i)
-                        drawables.push(e.draw(drawPt));
+                    var e = enemy_drawables[j];
+                    if (e.position.layer == i)
+                        drawables.push(e);
                 }
             }
             drawables.sort(function(a,b) {
