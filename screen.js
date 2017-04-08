@@ -3,7 +3,6 @@
 class TitleScreen {
     constructor() {
         this.selection = 0;
-        this.count = 0;
         music.playMusic("title");
     }
     update() {
@@ -26,97 +25,80 @@ class TitleScreen {
                 this.selection--;
             Controls.Up = false;
         }   else if (Controls.Down) {
-            if (this.selection != 2 || (this.count == 9 && this.selection != 3))
+            if (this.selection != 3)
                 this.selection++;
-            else {
-                this.count++;
-                if (this.count == 9)
-                    this.selection++;
-            }
             Controls.Down = false;
         }
     }
     draw(ctx) {
         ctx.drawImage(gfx.title, 0, 0, 256, 192, 0, 0, 256, 192);
-        drawText(ctx, 12*8, 14*8, "New Game");
-        drawText(ctx, 12*8, 16*8, "Arcade Mode");
-        drawText(ctx, 12*8, 18*8, "Continue");
-        drawText(ctx, 10*8, (14 + (this.selection*2))*8, [26]);
-        if (this.count !== 9) {
-            drawCenteredText(ctx, 21*8, "(c) 2017 Nicole Express");
-        } else {
-            drawText(ctx, 12*8, 20*8, "Options");
-            drawCenteredText(ctx, 22*8, "(c) 2017 Nicole Express");
-        }
+        drawText(ctx, 12*8, 13*8 + 4, "New Game");
+        drawText(ctx, 12*8, 15*8 + 4, "Arcade Mode");
+        drawText(ctx, 12*8, 17*8 + 4, "Continue");
+        drawText(ctx, 10*8, (13 + (this.selection*2))*8 + 4, [26]);
+        drawText(ctx, 12*8, 19*8 + 4, "Options");
+        drawCenteredText(ctx, 22*8, "(c) 2017 Nicole Express");
     }
 };
 
 class OptionsScreen {
     constructor() {
         this.music = music.music.concat(music.sounds);
-        this.selection = 7;
+        this.selection = 4;
         this.currentmusic = 0;
-        this.locations = [4*8, 5*8, 6*8, 8*8, 9*8, 11*8, 13*8, 16*8];
+        this.locations = [8*8, 10*8, 13*8, 16*8, 21*8];
+        this.bg = 2;
         music.playMusic("");
     }
 
     draw(ctx) {
-        //ctx.drawImage(gfx.objects, 0, 0, 16, 16, 16, 16, 16, 16);
-        //ctx.drawImage(gfx.blocks, 14*16, 0, 16, 16, 144 - 16, 16, 16, 16);
-        drawCenteredText(ctx, 1*8, "Space Ava");
-        drawCenteredText(ctx, 2*8, "Options");
-        
-        drawText(ctx, 3*8, 4*8, "Level Select");
-        /*drawText(ctx, 3*8, 5*8, this.saveFailed ? "No save data" : "Save to file");
-        drawText(ctx, 3*8, 6*8, "Load from file");*/
+        for (var i = 0; i < (256/16)+1; i++)
+            for (var j = 0; j < (192/16); j++) {
+                ctx.drawImage(gfx.tiles, (254-this.bg)*16, 0, 16, 16, i*16-j, j*16, 16, 16);
+            }
 
-        drawText(ctx, 3*8, 8*8, musicEnabled ? "Music enabled" : "Music disabled");
-        drawText(ctx, 3*8, 9*8, soundEnabled ? "Sound enabled" : "Sound disabled");
-        //drawText(ctx, 3*8, 11*8, "Palette " + this.currentpalette.toString());
-        drawText(ctx, 3*8, 13*8, "Sound test");
-        drawText(ctx, 5*8, 14*8, this.music[this.currentmusic]);
+        ctx.fillRect(Game.center.x - 6*8, 12, 12*8, 4*8); 
+        drawCenteredText(ctx, 2*8, "Space Ava");
+        drawCenteredText(ctx, 4*8, "Options");
         
-        drawText(ctx, 3*8, 16*8, "Return       v0")
+        ctx.fillRect(Game.center.x - 9*8, this.locations[0] - 4, 18*8, 4*8); 
+        drawText(ctx, 10*8, this.locations[0], musicEnabled ? "Music enabled" : "Music disabled");
+        drawText(ctx, 10*8, this.locations[1], soundEnabled ? "Sound enabled" : "Sound disabled");
+
+        ctx.fillRect(Game.center.x - 9*8, this.locations[2] - 4, 18*8, 2*8); 
+        drawText(ctx, 10*8, this.locations[2], "Level select");
+
+        ctx.fillRect(Game.center.x - 9*8, this.locations[3] - 4, 18*8, 3*8); 
+        drawText(ctx, 10*8, this.locations[3], "Sound test");
+        drawText(ctx, 14*8, this.locations[3] + 8, this.music[this.currentmusic]);
         
-        drawText(ctx, 1*8, this.locations[this.selection], [26]);
+        ctx.fillRect(Game.center.x - 9*8, this.locations[4] - 4, 10*8, 2*8);
+        drawText(ctx, 10*8, this.locations[4], "Return")
+
+        ctx.fillRect(Game.center.x + 4*8, this.locations[4] - 4, 5*8, 2*8);
+        drawText(ctx, 21*8 - 4, this.locations[4], "v0.0")
+        
+        drawText(ctx, 8*8, this.locations[this.selection], [26]);
     }
     update() {
         if (Controls.Enter || Controls.Shoot) {
             Controls.Enter = false;
             Controls.Shoot = false;
+
             if (this.selection == 0) {
-                // Level selection
-                runner = new LevelSelect();
-            } else if (this.selection == 1) {
-                // Save game to file
-                /*var data = "";
-                if (localStorage.getItem('saved'))
-                    data = localStorage.getItem('saved');
-                else {
-                    this.saveFailed = true;
-                    return;
-                }
-                var string = btoa(data);
-                string = "data:application/octet-stream," + string;
-                newWindow = window.open(string, 'saved.sav');*/
-            } else if (this.selection == 2) {
-                // Load file screen
-                runner = new LoadFileScreen(this);
-            } else if (this.selection == 3) {
                 // Disable music
                 music.playMusic("");
                 musicEnabled = !musicEnabled;
-            } else if (this.selection == 4) {
+            } else if (this.selection == 1) {
                 // Disable sound
                 soundEnabled = !soundEnabled;
-            } else if (this.selection == 5) {
-                // Change palette
-                //gfx.adapt(this.currentpalette);
-            } else if (this.selection == 6) {
+            } else if (this.selection == 2) {
+                // Level selection
+                runner = new LevelSelect();
+            } else if (this.selection == 3) {
                 // Sound test
-                music.playMusic(this.
-                music[this.currentmusic]);
-            } else if (this.selection == 7) {
+                music.playMusic(this.music[this.currentmusic]);
+            } else if (this.selection == 4) {
                 // Return to title screen
                 runner = new TitleScreen();
             }
@@ -126,24 +108,12 @@ class OptionsScreen {
                 this.selection--;
             Controls.Up = false;
         }   else if (Controls.Down) {
-            if (this.selection != 7)
+            if (this.selection != 4)
                 this.selection++;
             Controls.Down = false;
         }
         
-        if (this.selection == 5) {
-            if (Controls.Left) {
-                Controls.Left = false;
-                //if (this.currentpalette != 0)
-                //    this.currentpalette--;
-            } else if (Controls.Right) {
-                Controls.Right = false;
-                //if (this.currentpalette != (gfx.backgrounds.length - 1))
-                //    this.currentpalette++;
-            }
-        }
-        
-        if (this.selection == 6) {
+        if (this.selection == 3) {
             if (Controls.Left) {
                 Controls.Left = false;
                 if (this.currentmusic != 0)
@@ -157,14 +127,15 @@ class OptionsScreen {
     }
 };
 
-var ControlsScreen = function() {
-    music.playMusic("");
-    this.timer = 0;
-    this.bg = Math.floor(Math.random() * 4)
-};
 
-ControlsScreen.prototype = {
-    draw: function(ctx) {
+class ControlsScreen {
+    constructor() {
+        music.playMusic("");
+        this.timer = 0;
+        this.bg = [0,3,4][Math.floor(Math.random() * 3)]
+    }
+
+    draw(ctx) {
         for (var i = 0; i < (256/16)+1; i++)
             for (var j = 0; j < (192/16); j++) {
                 ctx.drawImage(gfx.tiles, (254-this.bg)*16, 0, 16, 16, i*16-j, j*16, 16, 16);
@@ -184,9 +155,9 @@ ControlsScreen.prototype = {
         //drawCenteredText(ctx, 13*8, "tap screen")
 
         drawCenteredText(ctx, 21*8, "Press 'Pause' to start")
-    },
+    }
 
-    update: function(ctx) {
+    update() {
         if (Controls.Enter) {
             Controls.Enter = false;
             new Governor();
