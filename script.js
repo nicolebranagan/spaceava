@@ -18,6 +18,8 @@ var Script = {
     ["09", function(gov) {runner = new Game(8, function() {gov.step();}, gov.arcade)}],
     ["D7", function(gov) {runner = new Dialogue(Script.scene8, function() {gov.step();})}],
     ["10", function(gov) {runner = new Game(9, function() {gov.step();}, gov.arcade)}],
+    ["11", function(gov) {runner = new Game(10, function() {gov.step();}, gov.arcade)}],
+    ["D8", function(gov) {runner = new Dialogue(Script.scene9, function() {gov.step();})}],
     ],
 
     arcade: {
@@ -130,7 +132,7 @@ var Script = {
             [[[4,0], [11,4]], "LILY: Don't get cocky..."],
             [[[4,0], [10,4]], "AVA: What could possibly go wrong?"],
             function() {music.playMusic("chime");},
-            [[[3,0], [11,4], [16, 19]], "MAN: Halt in the name of Quantum!"],
+            [[[3,0], [11,4], [16, 19]], "MAN: Halt in the name of quantum!"],
             [[[6,0], [12,4], [16, 19]], "LILY: Oh brother..."],
             [[[1,0], [11,4], [16, 19]], "AVA: Wait a second..."],
             [[[3,0], [12,4], [16, 19]], "AVA: Quantum's a group?!"],
@@ -152,7 +154,7 @@ var Script = {
             [[[2, 0], [12, 4], [18, 19]], "MAN: Quantum may have lost today... but we live on to fight tomorrow! ...Probably..."],
             function() {music.playMusic("steady");},
             [[[1, 0], [8, 4]], "AVA: Glad that's done with... But, Lilith, what about that person he was talking about? I bet they were one of my friends..."],
-            [[[1, 0], [14, 4]], "LILY: As a rule, Quantum doesn't kill people... it's a long story, but I'm sure your friend is around here somewhere."],
+            [[[1, 0], [14, 4]], "LILY: As a rule, quantum doesn't kill people... it's a long story, but I'm sure your friend is around here somewhere."],
             function() {music.playMusic("spaceless")},
             [[[5, 0], [8, 4], [24, 18]], "???: It is I, Ava. Lieutenant Nelehu, Chief Engineer."],
             [[[3, 0], [11, 4], [24, 18]], "AVA: Nelehu! Are you okay? Did they hurt you?!"],
@@ -242,6 +244,36 @@ var Script = {
             [[[7, 6], [8, 2]], "AVA: Uh..."],
             [[[7, 6], [14, 2]], "AVA: Do you really think this is going to work?"],
             [[[7, 6], [9, 2]], "LILY: I don't know, but you look adorable!"]
+        ]
+    },
+    scene9: {
+        bg: new Dialogue.Background(
+            function(ctx) {
+                ctx.drawImage(gfx.bg[0], 768, 0, this.width, this.height, 32, 16, this.width, this.height);
+            }
+        ),
+        script: [
+            function() {music.playMusic("steady")},
+            [[[7, 6], [8, 2]], "LILY: I haven't been this deep into quantum territory for a long time... you can feel the superposition."],
+            [[[1, 6], [11, 2]], "AVA: Um... Lilith... you've been really helpful this whole game, but maybe I should take the rest myself."],
+            [[[1, 6], [13, 2]], "LILY: Captain the Seventh! I thought we were in this together! What brought this on?"],
+            [[[4, 6], [10, 2]], "AVA: Well, things are going pretty well, right? So I can do this myself, right?"],
+            [[[1, 6], [8, 2]], "LILY: Look, you're not bothering me any. I've been meaning to stick it to quantum for a long time."],
+            [[[6, 6], [10, 2]], "AVA: It's just a little complicated, okay! And by the way--"],
+            function() {music.playMusic("chime")},
+            [[[3, 6], [12, 2], [17, 20]], "MAN: All rise for the supreme leader of quantum!"],
+            [[[2, 6], [14, 2], [18, 20]], "AVA: But we're already standing."],
+            [[[6, 6], [13, 2], [16, 20]], "MAN: Then... remain so! Good work... for traitors and outsiders, at least."],
+            [[[2, 6], [11, 2], [17, 20]], "MAN: And now without any further ado... Shut up, calculate, and give a big round of applause for Schrodinger's Cat!"],
+            [[[3, 6], [14, 2], [21, 16], [16, 20]], "AVA: The leader of quantum is a cat?! A black cat too, how stereotypical."],
+            [[[3, 6], [13, 2], [21, 16], [16, 20]], "LILY: Ava, most black cats are perfectly nice. But Schrodinger's cat... this is serious."],
+            function() {music.playMusic("deadboing")},
+            [[[6, 6], [14, 2], [22, 16], [16, 20]], "CAT: I knew it would be humans! The species that ruined my life with their damned superposition!"],
+            [[[1, 6], [14, 2], [21, 16], [16, 20]], "CAT: What kind of life is it anyway, being constantly alive or dead? It was just supposed to be a thought experiment!"],
+            [[[3, 6], [14, 2], [23, 16], [18, 20]], "AVA: But I've certainly never meant you any harm! And... ... ... are you dead?"],
+            [[[6, 6], [12, 2], [22, 16], [16, 20]], "CAT: See what your species has reduced me to! And now you invade here, the place I was finally able to be at home?"],
+            [[[3, 6], [12, 2], [23, 16], [18, 20]], "AVA: No seriously though you were just dead and now you're alive and... now you're dead again!"],
+            [[[3, 6], [14, 2], [22, 16], [17, 20]], "CAT: I tire of this. Prepare yourself! Ready your calculations, human, this ends now!"]
         ]
     }
 }
