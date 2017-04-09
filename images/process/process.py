@@ -23,6 +23,11 @@ def process(designation):
     pixelgrid.changepage(3)
     pixelgrid.getTkStrip(2, False).write(filen, format='gif')
 
+    # Scenery/Tiles (font.png)
+    filen = designation + "font.gif"
+    pixelgrid.changepage(4)
+    pixelgrid.getTkStrip(1, False).write(filen, format='gif')
+
     # Faces (faces.png)
     filen = designation + "faces.gif"
     pixelgrid2.changepage(0)

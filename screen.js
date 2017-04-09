@@ -37,7 +37,8 @@ class TitleScreen {
         drawText(ctx, 12*8, 17*8 + 4, "Continue");
         drawText(ctx, 10*8, (13 + (this.selection*2))*8 + 4, [26]);
         drawText(ctx, 12*8, 19*8 + 4, "Options");
-        drawCenteredText(ctx, 22*8, "(c) 2017 Nicole Express");
+        drawText(ctx, 6*8, 22*8, [9])
+        drawCenteredText(ctx, 22*8, " 2017 Nicole Express");
     }
 };
 
@@ -76,7 +77,8 @@ class OptionsScreen {
         drawText(ctx, 10*8, this.locations[4], "Return")
 
         ctx.fillRect(Game.center.x + 4*8, this.locations[4] - 4, 5*8, 2*8);
-        drawText(ctx, 21*8 - 4, this.locations[4], "v0.0")
+        drawText(ctx, 21*8 - 4, this.locations[4], "v . ")
+        drawText(ctx, 21*8 - 4, this.locations[4] + 1, " 1 0")
         
         drawText(ctx, 8*8, this.locations[this.selection], [26]);
     }

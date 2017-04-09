@@ -1,6 +1,6 @@
 var music = {
     sounds: ["die", "get", "boom", "crash", "shove", "ghost", "ding1", "ding2"],
-    music: ["prelude", "title", "steady", "spaceless", "power", "chime", "bossy", "jungle", "carousel", "chimier", "harsh"],
+    music: ["prelude", "title", "steady", "spaceless", "power", "chime", "bossy", "jungle", "carousel", "chimier", "harsh", "complain"],
     data: {},
     loaded: 0,
     initialize: function() {
@@ -94,7 +94,7 @@ var music = {
 var gfx = {
     initialize: function() {
         this.font = new Image();
-        this.font.src = "./images/font.png";
+        this.font.src = "./images/font.gif";
         this.objects = new Image();
         this.objects.src = "./images/objects.gif";
         this.tiles = new Image();

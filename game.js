@@ -13,7 +13,7 @@ class Game {
         this.enemies = this.stage.getEnemies(this);
         this.mode = Game.Mode.STARTUP;
         this.startTimer = 0;
-        this.startString = "Singularity " + (stage+1).toString();
+        this.startString = "Singularity" + (stage+1).toString();
         this.willDie = false;
         this.arcade = arcade;
         this.deaths = deaths ? deaths : 0;
@@ -411,7 +411,7 @@ Game.resultsScreen = class {
         this.parent.draw(ctx);
         ctx.fillRect(Game.center.x - this.boxw, Game.center.y - this.boxh, 2 * this.boxw, 2 * this.boxh); 
         if (this.mode == Game.resultsScreen.State.DISPLAY) {
-            drawCenteredText(ctx, 8*8, "Results #" + (this.parent.level + 1).toString());
+            drawCenteredText(ctx, 8*8, "Results" + (this.parent.level + 1).toString());
             drawText(ctx, 11*8, 10*8, "Turns: " + this.parent.turns.toString());
             drawText(ctx, 11*8, 11*8, "Par: ");          
             drawText(ctx, 11*8, 13*8, "Deaths: " + this.parent.deaths.toString());

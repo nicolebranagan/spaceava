@@ -327,6 +327,7 @@ Game.object.shooter = class extends Game.object {
         if (this.movetime == this.frequency)
             this.movetime = 0;
         if (this.movetime == Math.floor(this.frequency/2)) {
+            this.parent.enemies.push(new Game.object.flash(this.parent, new Point(this.point), this.layer, this.facing))
             this.parent.enemies.push(new Game.object.bullet(this.parent, new Point(this.point), this.layer, this.facing, this.visible));
             music.queueSound('boom', true);
         }
@@ -349,6 +350,32 @@ Game.object.shooter = class extends Game.object {
 Game.object.shooter.Type = {
     STATIONARY: 0,
     SPINNER: 1
+}
+
+Game.object.flash = class extends Game.object {
+    constructor(parent, pt, layer, facing) {
+        super();
+        super.initialize(parent, pt);
+        this.layer = layer;
+        this.facing = facing;
+        this.frameMax = 3;
+        this.timerMax = 10;
+        this.tile = 96;
+        this.start = false;
+    }
+
+    update(mode) {
+        if (!this.start && mode !== Game.Mode.ENEMY_ANIM) {
+            this.ready = true;
+            return;
+        }
+        this.start = true;
+        super.update(mode);
+        if (this.frame == 2 && this.timer <= 1) {
+            this.active = false;
+        }
+        this.ready = true;
+    }
 }
 
 Game.object.bullet = class extends Game.object {
