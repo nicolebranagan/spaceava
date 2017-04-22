@@ -2,6 +2,7 @@
 class Game {
     constructor(stage, winfunc, arcade, turns, deaths) {
         this.winfunc = winfunc;
+        this.diefunc = null;
         this.level = stage;
         this.stage = new Game.stage(worldfile.rooms[stage]);
         this.music = worldfile.rooms[stage].music;
@@ -48,7 +49,10 @@ class Game {
         } else if (this.mode == Game.Mode.DIE_ANIM) {
             this.deathTimer++;
             if (this.deathTimer == 150) {
-                runner = new Game(this.level, this.winfunc, this.arcade, this.turns, this.deaths + 1);
+                if (!this.diefunc)
+                    runner = new Game(this.level, this.winfunc, this.arcade, this.turns, this.deaths + 1);
+                else
+                    this.diefunc();
             }
             //return;
         } else if (this.mode == Game.Mode.WIN_ANIM) {
@@ -134,26 +138,31 @@ class Game {
             });
     }
     draw(ctx) {
-        for (var i = 0; i < (256/16)+1; i++)
-            for (var j = 0; j < (192/16); j++) {
-                ctx.drawImage(gfx.tiles, (254-this.bg)*16, 0, 16, 16, i*16-j, j*16, 16, 16);
-            }
+        var drawBg = true;
         var drawStage = true;
         var drawSprites = true;
         var drawPlayer = true;
         if (this.mode === Game.Mode.STARTUP) {
-            drawStage = (this.startTimer > 75);
+            if (this.level !== 12)
+                drawStage = (this.startTimer > 75);
+            else {
+                drawStage = false;
+                drawBg = false;
+            }
             drawSprites = (this.startTimer > 150)
             drawPlayer = false;
         } else if (this.mode === Game.Mode.PAUSED || this.mode === Game.Mode.DIE_ANIM || 
-                   this.mode === Game.Mode.WIN_ANIM) {
+            (this.mode === Game.Mode.WIN_ANIM) && this.level !== 12) {
             drawSprites = false;
         }
 
-        if (__debug) {
-            drawText(ctx, 0, 8, "M"+this.mode.toString());
-            drawText(ctx, 0, 16, "T"+this.turns.toString());
+        if (drawBg) {
+            for (var i = 0; i < (256/16)+1; i++)
+                for (var j = 0; j < (192/16); j++) {
+                    ctx.drawImage(gfx.tiles, (254-this.bg)*16, 0, 16, 16, i*16-j, j*16, 16, 16);
+            }
         }
+
         if (drawStage) {
             var drawPt = new Point(this.player.point).multiply(8).add(this.player.offset);
             if (this.stage.centered)
@@ -196,6 +205,9 @@ class Game {
             drawables.sort(function(a,b) {
                 return a.position.y - b.position.y;
             });
+            drawables.sort(function(a,b) {
+                return a.position.layer - b.position.layer;
+            });
             drawables.forEach(function (e) {e.draw(ctx);});
         }
 
@@ -208,8 +220,14 @@ class Game {
                 drawCenteredText(ctx, 96, SaveGame.getPass(this.level));
             }
         }
-        for (var j = 0; j < (256/16); j++) {
-            ctx.drawImage(gfx.tiles, (255)*16, 0, 16, 16, j*16, 0, 16, 16);
+        if (drawBg)
+            for (var j = 0; j < (256/16); j++) {
+                ctx.drawImage(gfx.tiles, (255)*16, 0, 16, 16, j*16, 0, 16, 16);
+            }
+
+        if (__debug) {
+            drawText(ctx, 0, 8, "M"+this.mode.toString());
+            drawText(ctx, 0, 16, "T"+this.turns.toString());
         }
     }
     hurt(hurter, mus) {
@@ -220,6 +238,9 @@ class Game {
     win() {
         this.winGot++;
         return (this.winGot === this.winCount)
+    }
+    hookDeath(func) {
+        this.diefunc = func;
     }
 }
 
@@ -356,7 +377,7 @@ Game.stage = class {
                         drawTile(ctx, this.coord, base.getTile(new Point(i,j), layer));
                     };
                     drawable.coord = new Point((i-layer)*8, (j-layer)*8).getIsometric();
-                    drawable.position = new Position(i, j, layer);
+                    drawable.position = new Position(i, j, layer-1);
                     if (ctrpt) {
                         var iso_pt = new Point(ctrpt.x, ctrpt.y);
                         var ctr_x = -iso_pt.x + Game.center.x - 8;

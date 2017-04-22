@@ -1,6 +1,6 @@
 var music = {
     sounds: ["die", "get", "boom", "crash", "shove", "ghost", "ding1", "ding2"],
-    music: ["prelude", "title", "steady", "spaceless", "power", "chime", "bossy", "jungle", "carousel", "chimier", "harsh", "complain", "deadboing"],
+    music: ["prelude", "title", "steady", "spaceless", "power", "chime", "bossy", "jungle", "carousel", "chimier", "harsh", "complain", "deadboing", "chimiest"],
     data: {},
     loaded: 0,
     initialize: function() {
@@ -39,6 +39,8 @@ var music = {
     },
     soundqueue: [],
     queueSound: function(sound, unique) {
+        if (!soundEnabled)
+            return;
         if (unique && this.soundqueue.indexOf(sound) !== -1)
             return;
         this.soundqueue.push(sound);

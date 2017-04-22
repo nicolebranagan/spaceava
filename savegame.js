@@ -4,7 +4,8 @@ var SaveGame = {
     password: [
         "Y65M9", "YH9V8", "TH65G", "HTY65", 
         "F65ND", "9P9TT", "8RN7N", "TH7SB",
-        "5TY65", "D7DNT", "R89LL", "Y6K9Y"
+        "5TY65", "D7DNT", "R89LL", "?????",
+        "Y6K9Y"
     ],
 
     savedPass: "",
@@ -36,6 +37,8 @@ var SaveGame = {
 
     savePass: function(stg) {
         var pass = this.getPass(stg);
+        if (pass == "?????")
+            return;
         this.savedPass = pass;
         try {
             window.localStorage.setItem('ava_pass', pass);

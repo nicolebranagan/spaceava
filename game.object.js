@@ -1199,3 +1199,236 @@ Game.object.boss2.solid = class extends Game.object.stationary {
         return false;
     }
 }
+
+Game.object.cat = class extends Game.object {
+    constructor() {
+        super();
+        this.frameMax = 2;
+        this.tile = 16*7;
+        this.facing = Dir.Down;
+        this.step = 0;
+        this.ticker = [Dir.Down, Dir.Down, -1, Dir.Down, Dir.Down, Dir.Left, Dir.Left, Dir.Left, Dir.Left, Dir.Left, Dir.Left, Dir.Left, Dir.Down, Dir.Down, -1, Dir.Down];
+        this.need = true;
+    }
+
+    initialize(parent, point) {
+        super.initialize(parent, point);
+        parent.hookDeath(parent.winfunc);
+    }
+
+    update(mode) {
+        super.update(mode);
+        if (mode == Game.Mode.ENEMY) {
+            music.playMusic("deadboing");
+            this.ready = true;
+            this.moving = true;
+        } else if (mode == Game.Mode.ENEMY_ANIM) { 
+            this.animate();
+            if (this.ready) {
+                this.ready = false;
+                this.moving = true;
+                this.step++;
+                if (this.step == -1)
+                    this.ready = true;
+                else if (this.step < this.ticker.length) {
+                    var step = this.ticker[this.step];
+                    if (step == -1) {
+                        this.step++;
+                        this.dy = -1;
+                    }
+                    this.facing = this.ticker[this.step];
+                    if (this.parent.player.point.equals(this.point)) {
+                        this.parent.hurt(this);
+                        this.step = -2;
+                        this.moving = false;
+                    }
+                } else {
+                    if (this.parent.player.point.equals(this.point)) {
+                        this.step = -2;
+                        this.parent.hurt(this);
+                        this.moving = false;
+                        this.ready = true;
+                    } else {
+                        var delx = this.parent.player.point.x - this.point.x;
+                        var dely = this.parent.player.point.y - this.point.y;
+                        if (dely == 0) {
+                            if (delx == 1)
+                                this.facing = Dir.Right;
+                            else
+                                this.facing = Dir.Left;
+                        }
+                    }
+                }
+            }
+        } else {
+            this.ready = true;
+        }
+    }
+}
+
+Game.object.boss3 = class extends Game.object {
+    constructor() {
+        super();
+        this.frameMax = 2;
+        this.tile = 16*7;
+        this.facing = Dir.Up;
+        this.need = true;
+        this.hp = 5;
+        this.start = false;
+        this.flicker = false;
+    }
+
+    initialize(parent, point) {
+        console.log(parent)
+        super.initialize(parent, point);
+    }
+
+    draw(ctr) {
+        if (this.hp > 0 && !this.flicker || (this.timer < 5 || this.timer > 14))
+            return super.draw(ctr);
+        else
+            return Game.nullDrawable;
+    }
+
+    update(mode) {
+        if (!this.start && this.parent.enemies) {
+            var gun = new Game.object.gun(this.parent, new Point(6, 8), 2);
+            this.start = true;
+            this.buttons = [
+                new Game.object.button(true, this.parent, new Point(8, 3), 1),
+                new Game.object.button(false, this.parent, new Point(4, 4), 1),
+                new Game.object.button(false, this.parent, new Point(7, 5), 1)
+            ]
+            this.buttons.forEach(
+                (e) => {
+                    e.buttons = this.buttons;
+                    e.gun = gun;
+                    this.parent.enemies.push(e);
+                }
+            );
+            this.parent.enemies.push(gun);
+        }
+        super.update(mode);
+        if (mode == Game.Mode.ENEMY) {
+            if (this.flicker)
+                this.flicker = false;
+        } else if (mode == Game.Mode.ENEMY_ANIM)
+            this.checkoverlap();
+        this.ready = true;
+    }
+
+    checkoverlap() {
+        for (var i = 0; i < this.parent.enemies.length; i++) {
+            var e = this.parent.enemies[i];
+            if (e === this)
+                continue;
+            if (this.point.equals(e.point)) {
+                this.hp--;
+                music.playSound("crash");
+                if (this.hp <= 0)
+                    this.parent.win();
+                else
+                    this.flicker = true;
+                e.active = false;
+            }
+        }
+        
+        this.ready = true;
+    }
+}
+
+Game.object.button = class extends Game.object {
+    constructor(active, parent, point, layer) {
+        super();
+        super.initialize(parent, point);
+        this.layer = layer;
+        this.frameMax = 0;
+
+        this.stepped = false;
+
+        if (active)
+            this.activate();
+        else
+            this.deactivate();
+    }
+
+    update(mode) {
+        if (mode == Game.Mode.ENEMY && this.stepped) {
+            this.stepped = false;
+            this.gun.fire = true;
+            this.run();
+        }
+        this.ready = true;
+    }
+
+    draw(ctr) {
+        var drawable = {};
+        var tile = this.tile;
+        drawable.draw = function (ctx) {
+            ctx.drawImage(gfx.objects, (tile)*16, 0, 16, 16, this.coord.x , this.coord.y, 16, 16)
+        };
+        drawable.coord = new Point((this.point.x-this.layer)*8, (this.point.y-this.layer)*8).getIsometric();
+        drawable.position = new Position(this.point.x, this.point.y, this.layer-1);
+
+        var iso_pt = new Point(ctr.x, ctr.y);
+        var ctr_x = -iso_pt.x + Game.center.x - 8;
+        var ctr_y = -iso_pt.y + Game.center.y + 2;
+        drawable.coord.add(new Point(ctr_x, ctr_y));
+        return drawable;
+    }
+
+    interact(interactor) {
+        if (interactor == this.parent.player && this.online) {
+            this.stepped = true;
+        }
+        return true;
+    }
+
+    run() {
+        music.queueSound('ding1')
+        var place = 0;
+        for (var i = 0; i < this.buttons.length; i++) {
+            if (this.buttons[i].online) {
+                place = i;
+                this.buttons[i].deactivate();
+                break;
+            }
+        }
+        place++;
+        if (place == 3)
+            place = 0;
+        this.buttons[place].activate();
+    }
+
+    activate() {
+        this.tile = 255 - 14;
+        this.online = true;
+    }
+
+    deactivate() {
+        this.tile = 255 - 15;
+        this.online = false;
+    }
+
+}
+
+Game.object.gun = class extends Game.object {
+    constructor(parent, point, layer) {
+        super();
+        super.initialize(parent, point);
+        this.facing = Dir.Down;
+        this.layer = layer;
+        this.frameMax = 0;
+        this.tile = 255 - 13;
+    }
+
+    update(mode) {
+        if (this.fire && mode == Game.Mode.ENEMY) {
+            this.fire = false;
+            music.queueSound('boom', true);
+            this.parent.enemies.push(new Game.object.flash(this.parent, new Point(this.point), this.layer, this.facing))
+            this.parent.enemies.push(new Game.object.bullet(this.parent, new Point(this.point), this.layer, this.facing, this.visible));
+        }
+        this.ready = true;
+    }
+}

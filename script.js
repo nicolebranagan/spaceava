@@ -20,6 +20,9 @@ var Script = {
     ["10", function(gov) {runner = new Game(9, function() {gov.step();}, gov.arcade)}],
     ["11", function(gov) {runner = new Game(10, function() {gov.step();}, gov.arcade)}],
     ["D8", function(gov) {runner = new Dialogue(Script.scene9, function() {gov.step();})}],
+    ["~", function(gov) {runner = new Game(11, function() {gov.step();}, gov.arcade)}],
+    ["D9", function(gov) {runner = new Dialogue(Script.bosstalk, function() {gov.step();})}],
+    ["12", function(gov) {runner = new Game(12, function() {gov.step();}, gov.arcade)}],
     ],
 
     arcade: {
@@ -255,7 +258,7 @@ var Script = {
         script: [
             function() {music.playMusic("steady")},
             [[[7, 6], [8, 2]], "LILY: I haven't been this deep into quantum territory for a long time... you can feel the superposition."],
-            [[[1, 6], [11, 2]], "AVA: Um... Lilith... you've been really helpful this whole game, but maybe I should take the rest myself."],
+            [[[1, 6], [11, 2]], "AVA: Um... Lilith... you've been really helpful this whole quest, but maybe I should take the rest myself."],
             [[[1, 6], [13, 2]], "LILY: Captain the Seventh! I thought we were in this together! What brought this on?"],
             [[[4, 6], [10, 2]], "AVA: Well, things are going pretty well, right? So I can do this myself, right?"],
             [[[1, 6], [8, 2]], "LILY: Look, you're not bothering me any. I've been meaning to stick it to quantum for a long time."],
@@ -274,6 +277,33 @@ var Script = {
             [[[6, 6], [12, 2], [22, 16], [16, 20]], "CAT: See what your species has reduced me to! And now you invade here, the place I was finally able to be at home?"],
             [[[3, 6], [12, 2], [23, 16], [18, 20]], "AVA: No seriously though you were just dead and now you're alive and... now you're dead again!"],
             [[[3, 6], [14, 2], [22, 16], [17, 20]], "CAT: I tire of this. Prepare yourself! Ready your calculations, human, this ends now!"]
+        ]
+    },
+    bosstalk: {
+        bg: new Dialogue.Background(
+            function(ctx) {
+                for (var i = 0; i < (this.width / 16); i++)
+                    for (var j = 0; j < (this.height/16); j++) {
+                        ctx.drawImage(gfx.tiles, (254-7)*16, 0, 16, 16, 32+i*16, 16+j*16, 16, 16);
+                    }
+            }
+        ),
+        script: [
+            function() {music.playMusic('deadboing')},
+            [[[3, 5], [21, 14]], "AVA: That isn't fair! I thought there were rules to all of this!"],
+            [[[6, 5], [22, 14]], "CAT: Meowhahahaha! I didn't call my organization quantum for nothing! You'll never take over this black hole!"],
+            [[[3, 5], [23, 14]], "AVA: But all I want to do is leave! We ended up here by accident!"],
+            function() {music.playMusic('steady')},
+            [[[1, 5], [21, 14]], "CAT: All you wanted to do... was leave?"],
+            [[[6, 5], [23, 14]], "AVA: That's right! You can have this black hole, just release us and let us figure out a way out of here!"],
+            [[[1, 5], [22, 14]], "CAT: That's impossible! No one would enter a black hole just by accident... and even if you did, you can't get out."],
+            [[[5, 5], [21, 14]], "AVA: You'd be amazed what Lieutenant Nelehu can do. I know we can get out, but you need to release our last crewmember first!"],
+            [[[4, 5], [21, 14]], "CAT: Your sob story is oddly convincing! However, I can't just let you go that easily."],
+            function() {music.playMusic('deadboing')},
+            [[[6, 5], [22, 14]], "CAT: I'll have my men set up a challenge for you. And if you survive it, maybe I'll let you go."],
+            [[[3, 5], [22, 14]], "CAT: And if you fail, then I'll make sure you don't ruin this black hole for the rest of us!"],
+            [[[3, 5], [23, 14]], "..."],
+            [[[3, 5], [23, 14]], "..."],
         ]
     }
 }

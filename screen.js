@@ -150,7 +150,7 @@ class ControlsScreen {
         drawText(ctx, 5*8, 9*8, "Backspace     Reset")
 
         drawCenteredText(ctx, 13*8, "In Dialogue Mode");
-        drawText(ctx, 5*8, 15*8, "Space         Continue");
+        drawText(ctx, 5*8, 15*8, "Space or Z    Continue");
         drawText(ctx, 5*8, 17*8, "Enter         Skip");
 
         //drawCenteredText(ctx, 12*8, "For mobile,")
@@ -224,11 +224,20 @@ class LevelSelect {
         this.posy = 0;
         this.perline = 7;
         this.width = this.perline * 3;
-        this.rows = 3;
+        this.rows = 4;
+        this.bg = 0;
 
         music.playMusic("carousel");
     }
     update() {
+        if (this.posy == 0)
+            this.bg = 0;
+        else if (this.posy == 1)
+            this.bg = 2;
+        else if (this.posy == 2)
+            this.bg = 4;
+        else
+            this.bg = 10;
         if (Controls.Left) {
             Controls.Left = false;
             if (this.posx > 0)
@@ -260,27 +269,35 @@ class LevelSelect {
             if (pos < Script.tickerTape.length) {
                 music.playMusic("");
                 new Governor(pos + 1);
-            } else {
-                console.log(pos + 1);
             }
         }
 
     }
     draw(ctx) {
+        for (var i = 0; i < (256/16); i++)
+            for (var j = 0; j < (192/16); j++) {
+                ctx.drawImage(gfx.tiles, (254-this.bg)*16, 0, 16, 16, i*16, j*16, 16, 16);
+            }
+        ctx.fillRect(Game.center.x - 7*8, 4, 14*8, 4*8); 
         drawCenteredText(ctx, 8, "Space Ava");
-        drawCenteredText(ctx, 16, "Level Select");
+        drawCenteredText(ctx, 24, "Level Select");
         var x = 0;
-        var y = 24;
-        drawText(ctx, this.posx*24 + 48, this.posy*16 + 8 + 24, [25]);
+        var y = 32;
+        ctx.fillRect(Game.center.x - 11*8, y + 8, 22*8, this.rows*3*8 + 8); 
+        drawText(ctx, this.posx*24 + 48, this.posy*24 + 16 + 32, [25]);
         for (var i = 1; i < Script.tickerTape.length; i++) {
             if ((i-1) % this.perline == 0) {
                 x = 48;
-                y += 16;
+                y += 24;
             } else {
                 x += 3*8;
             }
             drawText(ctx, x, y, Script.tickerTape[i][0]);
         }
+        ctx.fillRect(4, 18*8 + 4, 31*8, 5*8); 
+        drawCenteredText(ctx, 19*8, "Pause, Continue: Enter level")
+        drawCenteredText(ctx, 21*8, "D# - Dialogue screen")
+        drawCenteredText(ctx, 22*8, " # - Singularities  ")
     }
 }
 
@@ -288,7 +305,7 @@ class PasswordScreen {
     constructor() {
         this.posx = 0;
         this.posy = 0;
-        this.letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789     O"
+        this.letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789      "
         this.perline = 7;
         this.width = this.perline * 2;
         this.rows = Math.ceil(this.letters.length / this.perline);
@@ -299,9 +316,14 @@ class PasswordScreen {
         }
         this.lastInvalid = false;
 
+        this.timer = 0;
+
         music.playMusic("steady");
     }
     update() {
+        this.timer++;
+        if (this.timer > 100)
+            this.timer = 0;
         if (Controls.Left) {
             Controls.Left = false;
             if (this.posx > 0)
@@ -350,8 +372,15 @@ class PasswordScreen {
 
     }
     draw(ctx) {
+        for (var i = 0; i < (256/16); i++)
+            for (var j = 0; j < (192/16); j++) {
+                ctx.drawImage(gfx.tiles, (254-8)*16, 0, 16, 16, i*16, j*16, 16, 16);
+            }
+        ctx.fillRect(Game.center.x - 10*8, 4, 20*8, 4*8); 
         drawCenteredText(ctx, 8, "Space Ava");
         drawCenteredText(ctx, 24, this.lastInvalid? "Invalid password!" : "Enter your password");
+
+        ctx.fillRect(24, 40, 15*8, 12*8 + 4); 
         var x = 0;
         var y = 32;
         drawText(ctx, this.posx*16 + 32, this.posy*16 + 8 + 32, [25]);
@@ -364,8 +393,9 @@ class PasswordScreen {
             }
             drawText(ctx, x, y, this.letters[i]);
         }
-        drawText(ctx, x+8, y, "K");
+        drawText(ctx, x-8, y, "OK!");
 
+        ctx.fillRect(172, 40, 7*8, 3*8); 
         var char = this.triedPass.length == 5 ? 254 : 25;
         drawText(ctx, this.triedPass.length*8 + 180, 40, [char]);
         var drawStrip = this.triedPass;
@@ -373,14 +403,25 @@ class PasswordScreen {
             drawStrip = drawStrip + "_";
         drawText(ctx, 180, 48, drawStrip);
 
+        ctx.fillRect(172 + 1*8, 80, 4*8, 5*8);
+        ctx.drawImage(gfx.tiles, 16, 0, 16, 16, 188, 88+11, 16, 16);
+        ctx.drawImage(gfx.objects, 16 + (this.timer < 50 ? 0: 11*16), 0, 16, 16, 188, 88, 16, 16);
+
+        ctx.fillRect(4, 18*8 + 4, 31*8, 5*8); 
         drawCenteredText(ctx, 19*8, "Pause, Continue: Add character")
         drawCenteredText(ctx, 20*8, "Reset: Backspace")
         drawCenteredText(ctx, 22*8, "Choose 'OK' when complete")
     }
 
     submit() {
-        if (this.triedPass == "HELP") {
+        if (this.triedPass == "HELP ") {
             runner = new LevelSelect();
+            return;
+        }
+        if (this.triedPass == "D8B5G") {
+            __debug = !__debug
+            runner = new TitleScreen();
+            music.playSound("ghost");
             return;
         }
         if (this.triedPass.length < 5) {

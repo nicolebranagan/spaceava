@@ -24,7 +24,7 @@ class Governor {
                 window.location.hash = this.position.toString();
         } catch (e) { }*/
         if (this.arcade) {
-            if (Script.tickerTape[this.position][0].substring(0, 1) == "D") {
+            if (Script.tickerTape[this.position][0].substring(0, 1) == "D" || Script.tickerTape[this.position][0] == "~") {
                 this.step();
                 return;
             }

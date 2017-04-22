@@ -54,7 +54,7 @@ var Controls = {
     Reset: false,
 
     keyDown: function(event) {
-        if (event.keyCode == 32) { // SPACE
+        if (event.keyCode == 32 || event.keyCode == 90) { // SPACE
             Controls.Shoot = true;
         }
         if (event.keyCode == 38 || event.keyCode == 87) {
@@ -78,7 +78,7 @@ var Controls = {
     },
 
     keyUp: function(event) {
-        if (event.keyCode == 32) { // SPACE
+        if (event.keyCode == 32 || event.keyCode == 90) { // SPACE
             Controls.Shoot = false;
         }
         if (event.keyCode == 38 || event.keyCode == 87) {
@@ -99,7 +99,7 @@ var Controls = {
         if (event.keyCode == 8) {
             Controls.Reset = false;
         }
-        if (event.keyCode == 9) {
+        if (__debug && event.keyCode == 9) {
             // Take screenshot
             var offCanvas = document.createElement('canvas');
             offCanvas.width = gamecanvas.width; offCanvas.height = gamecanvas.height;
