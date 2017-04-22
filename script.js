@@ -120,12 +120,12 @@ var Script = {
             [[[6,0], [11,4]], "AVA: 1. What with with that timestep?"],
             [[[1,0], [10,4]], "LILY: Well that's easy. It's a black hole, time is proportional to the observer. Time only moves when the observer does."],
             [[[1,0], [11,4]], "AVA: Is that how it works?"],
-            [[[1,0], [9,4]], "LILY: Sure, why not."],
+            [[[4,0], [9,4]], "LILY: Sure, why not."],
             [[[1,0], [8,4]], "AVA: Uh-huh...\nAnyway, Number 2. Why are people shooting at me? I just want to help my friends!"],
             [[[1,0], [11,4]], "LILY: About that..."],
-            [[[1,0], [10,4]], "LILY: Not all of us in the black hole are so friendly, unfortunately... There are a lot of us who don't like outsiders."],
+            [[[6,0], [10,4]], "LILY: Not all of us in the black hole are so friendly, unfortunately... There are a lot of us who don't like outsiders."],
             [[[3,0], [10,4]], "AVA: But I'm in need! Shouldn't they be more helpful?"],
-            [[[6,0], [11,4]], "LILY: Your Amalgamation must be a wonderful place, if that's how you think the world works.."]
+            [[[3,0], [11,4]], "LILY: Your Amalgamation must be a wonderful place, if that's how you think the world works.."]
         ]
     },
     scene3: {
@@ -307,8 +307,9 @@ var Script = {
             function() {music.playMusic('deadboing')},
             [[[6, 5], [22, 14]], "CAT: I'll have my men set up a challenge for you. And if you survive it, maybe I'll let you go."],
             [[[3, 5], [22, 14]], "CAT: And if you fail, then I'll make sure you don't ruin this black hole for the rest of us!"],
-            [[[3, 5], [23, 14]], "..."],
-            [[[3, 5], [23, 14]], "..."],
+            [[[1, 5], [23, 14]], "..."],
+            [[[1, 5], [23, 14]], "..."],
+            [[[3, 5], [22, 14]], "..."],
         ]
     },
     ending: {
@@ -334,13 +335,13 @@ var Script = {
             function() {music.playMusic('steady')},
             [[[3, 6], [14, 2], [29, 14]], "LILY: Did she say ensign? But the Seventh, you told me that you were the captain..."],
             [[[6, 6], [14, 2], [30, 14]], "STELLA: Is this true? Have you been impersonating a Spacefleet captain, Ensign?"],
-            [[[1, 6], [11, 2], [29, 14]], "STELLA: I'm sorry for my subordinate's behavior, I'm Captain Stella Harmony of the Starship Zip."],
-            [[[1, 6], [10, 2], [29, 14]], "LILY: Ava's been great, Captain Harmony. I'm sure she had her reasons..."],
+            [[[1, 6], [11, 2], [29, 14]], "STELLA: Ms. Alien, I'm sorry for my subordinate's behavior. I'm Captain Stella Harmony of the Starship Zip."],
+            [[[1, 6], [10, 2], [29, 14]], "LILY: Ensign the Seventh's been great, Captain Harmony. I'm sure she had her reasons..."],
             [[[3, 6], [11, 2], [29, 14]], "AVA: I'm sorry, Lily! I just wanted to make you think I was important..."],
             function() {music.playMusic('spaceless')},
             [[[5, 6], [8, 2], [29, 14]], "LILY: Aww Ava, you didn't need to try to intimidate me. I helped you out, didn't I?"],
-            [[[1, 6], [8, 2], [31, 14]], "STELLA: Well, since you apologized I don't think any further punishment is necessary..."],
-            [[[5, 6], [11, 2], [29, 14]], "LILY: Is that really how you run a military?"],
+            [[[4, 6], [8, 2], [31, 14]], "STELLA: Well, since you apologized I don't think any further punishment is necessary..."],
+            [[[1, 6], [11, 2], [29, 14]], "LILY: Is that really how you run a military?"],
             [[[5, 6], [12, 2], [31, 14]], "STELLA: Sure!"]
         ]
     },
@@ -374,11 +375,11 @@ var Script = {
             [[[4, 2], [24, 6]], "GAME CONCEPT\n \n Nicole", Dialogue.textStyle.CENTERED],
             [[[1, 2], [25, 6]], "PROGRAMMING\n \n Nicole", Dialogue.textStyle.CENTERED],
             [[[3, 2], [25, 6]], "LEVEL DESIGN\n \n Nicole", Dialogue.textStyle.CENTERED],
-            (e) => {e.bg = Script.scene5.bg},
+            (e) => {e.bg = Script.scene9.bg},
             [[[16, 15], [28, 19]], "GRAPHICS\n \n Nicole", Dialogue.textStyle.CENTERED],
             [[[17, 15], [27, 19]], "MUSIC\n \n Nicole", Dialogue.textStyle.CENTERED],
             [[[18, 15]], "SOUND EFFECTS\n \n Nicole", Dialogue.textStyle.CENTERED],
-            (e) => {e.bg = Script.scene9.bg},
+            (e) => {e.bg = Script.scene5.bg},
             [[[31, 7], [21, 13]], "TESTING\n \n No one!", Dialogue.textStyle.CENTERED],
             [[[30, 7], [22, 13]], "TESTING\n \n (sorry)", Dialogue.textStyle.CENTERED],
             (e) => {e.setAuto(true, 180); e.bg = Script.credits.bg2},
@@ -389,11 +390,11 @@ var Script = {
             [[[21, 18], [19, 10], [16, 6], [16, 2]], "SPECIAL THANKS TO\n itch.io\n \n Distribution, hosting", Dialogue.textStyle.CENTERED],
             [[[21, 18], [19, 10], [16, 6], [16, 2]], "SPECIAL THANKS TO\n Sega Enterprises\n \n Master System graphics style", Dialogue.textStyle.CENTERED],
             [[[23, 18], [20, 10], [18, 6], [18, 2]], "SPECIAL THANKS TO\n You!\n \n Putting up with the\n nonsense that I call a game", Dialogue.textStyle.CENTERED],
-            (e) => {e.setAuto(true, 200); e.bg = Script.scene5.bg},
+            (e) => {e.setAuto(true, 200); e.bg = Script.credits.bg4},
             [[[40, 8], [41, 12]], "\n And of course,\n Marion\n", Dialogue.textStyle.CENTERED],
             (e) => {e.bg = Script.credits.bg3},
             [[[]], "\n \n A\n Nicole Express\n Production", Dialogue.textStyle.CENTERED],
-            function(e) {e.setAuto(false); e.bg = Script.credits.bg4},
+            function(e) {e.setAuto(false); e.bg = Script.credits.bg},
             [[[35, 8], [36, 12]], "\n Thanks for playing!", Dialogue.textStyle.CENTERED],
         ]
     }

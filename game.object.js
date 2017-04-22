@@ -1279,7 +1279,6 @@ Game.object.boss3 = class extends Game.object {
     }
 
     initialize(parent, point) {
-        console.log(parent)
         super.initialize(parent, point);
     }
 

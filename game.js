@@ -155,6 +155,10 @@ class Game {
             (this.mode === Game.Mode.WIN_ANIM) && this.level !== 12) {
             drawSprites = false;
         }
+        if (this.level == 12 && ((this.mode === Game.Mode.DIE_ANIM) || (this.mode == Game.Mode.PAUSED))) {
+            drawBg = false;
+            drawStage = false;
+        }
 
         if (drawBg) {
             for (var i = 0; i < (256/16)+1; i++)
@@ -199,16 +203,20 @@ class Game {
                         drawables.push(e);
                 }
             }
-            drawables.sort(function(a,b) {
+            drawables.stablesort(function(a,b) {
                 return a.position.x - b.position.x;
             });
-            drawables.sort(function(a,b) {
+            drawables.stablesort(function(a,b) {
                 return a.position.y - b.position.y;
             });
-            drawables.sort(function(a,b) {
+            drawables.stablesort(function(a,b) {
                 return a.position.layer - b.position.layer;
             });
             drawables.forEach(function (e) {e.draw(ctx);});
+        } else if (drawPlayer) {
+            var drawPt = this.stage.center.getIsometric();
+            drawPt.y -= 8;
+            this.player.draw(drawPt).draw(ctx);
         }
 
         if (this.mode == Game.Mode.STARTUP && Math.floor(this.startTimer / 20) % 2 == 0) {

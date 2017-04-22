@@ -270,6 +270,9 @@ class LevelSelect {
                 music.playMusic("");
                 new Governor(pos + 1);
             }
+        } else if (Controls.Reset) {
+            Controls.Reset = false;
+            runner = new TitleScreen();
         }
 
     }
@@ -419,6 +422,10 @@ class PasswordScreen {
     submit() {
         if (this.triedPass == "HELP ") {
             runner = new LevelSelect();
+            return;
+        }
+        if (this.triedPass == "TITLE") {
+            runner = new TitleScreen();
             return;
         }
         if (this.triedPass == "D8B5G") {
