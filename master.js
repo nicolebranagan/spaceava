@@ -217,7 +217,6 @@ var Dir = {
     Right: 2
 }
 
-// Fuck everything
 // From https://medium.com/@fsufitch/is-javascript-array-sort-stable-46b90822543f
 Array.prototype.stablesort = function(cmp) {
   let stabilizedThis = this.map((el, index) => [el, index]);
