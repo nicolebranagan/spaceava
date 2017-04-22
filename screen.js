@@ -292,7 +292,10 @@ class LevelSelect {
             } else {
                 x += 3*8;
             }
-            drawText(ctx, x, y, Script.tickerTape[i][0]);
+            var text = Script.tickerTape[i][0];
+            if (text.substr(0, 1) == "~")
+                text = text.substr(1, 2);
+            drawText(ctx, x, y, text);
         }
         ctx.fillRect(4, 18*8 + 4, 31*8, 5*8); 
         drawCenteredText(ctx, 19*8, "Pause, Continue: Enter level")

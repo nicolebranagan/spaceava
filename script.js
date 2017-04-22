@@ -1,28 +1,30 @@
 var Script = { 
     tickerTape: [
-    ["D0", function(gov) {runner = new Dialogue(Script.scene1, function() {gov.step();})}],
-    ["01", function(gov) {runner = new Game(0, function() {gov.step();}, gov.arcade)}],
-    ["D1", function(gov) {runner = new Dialogue(Script.scene2, function() {gov.step();})}],
-    ["02", function(gov) {runner = new Game(1, function() {gov.step();}, gov.arcade)}],
-    ["03", function(gov) {runner = new Game(2, function() {gov.step();}, gov.arcade)}],
-    ["D2", function(gov) {runner = new Dialogue(Script.scene3, function() {gov.step();})}],
-    ["04", function(gov) {runner = new Game(3, function() {gov.step();}, gov.arcade)}],
-    ["D3", function(gov) {runner = new Dialogue(Script.scene4, function() {gov.step();})}],
-    ["05", function(gov) {runner = new Game(4, function() {gov.step();}, gov.arcade)}],
-    ["D4", function(gov) {runner = new Dialogue(Script.scene5, function() {gov.step();})}],
-    ["06", function(gov) {runner = new Game(5, function() {gov.step();}, gov.arcade)}],
-    ["07", function(gov) {runner = new Game(6, function() {gov.step();}, gov.arcade)}],
-    ["D5", function(gov) {runner = new Dialogue(Script.scene6, function() {gov.step();})}],
-    ["08", function(gov) {runner = new Game(7, function() {gov.step();}, gov.arcade)}],
-    ["D6", function(gov) {runner = new Dialogue(Script.scene7, function() {gov.step();})}],
-    ["09", function(gov) {runner = new Game(8, function() {gov.step();}, gov.arcade)}],
-    ["D7", function(gov) {runner = new Dialogue(Script.scene8, function() {gov.step();})}],
-    ["10", function(gov) {runner = new Game(9, function() {gov.step();}, gov.arcade)}],
-    ["11", function(gov) {runner = new Game(10, function() {gov.step();}, gov.arcade)}],
-    ["D8", function(gov) {runner = new Dialogue(Script.scene9, function() {gov.step();})}],
-    ["~", function(gov) {runner = new Game(11, function() {gov.step();}, gov.arcade)}],
-    ["D9", function(gov) {runner = new Dialogue(Script.bosstalk, function() {gov.step();})}],
-    ["12", function(gov) {runner = new Game(12, function() {gov.step();}, gov.arcade)}],
+        ["~", function(gov) {runner = new Dialogue(Script.scene1, function() {gov.step();})}],
+        ["01", function(gov) {runner = new Game(0, function() {gov.step();}, gov.arcade)}],
+        ["D0", function(gov) {runner = new Dialogue(Script.scene2, function() {gov.step();})}],
+        ["02", function(gov) {runner = new Game(1, function() {gov.step();}, gov.arcade)}],
+        ["03", function(gov) {runner = new Game(2, function() {gov.step();}, gov.arcade)}],
+        ["D1", function(gov) {runner = new Dialogue(Script.scene3, function() {gov.step();})}],
+        ["04", function(gov) {runner = new Game(3, function() {gov.step();}, gov.arcade)}],
+        ["D2", function(gov) {runner = new Dialogue(Script.scene4, function() {gov.step();})}],
+        ["05", function(gov) {runner = new Game(4, function() {gov.step();}, gov.arcade)}],
+        ["D3", function(gov) {runner = new Dialogue(Script.scene5, function() {gov.step();})}],
+        ["06", function(gov) {runner = new Game(5, function() {gov.step();}, gov.arcade)}],
+        ["07", function(gov) {runner = new Game(6, function() {gov.step();}, gov.arcade)}],
+        ["D4", function(gov) {runner = new Dialogue(Script.scene6, function() {gov.step();})}],
+        ["08", function(gov) {runner = new Game(7, function() {gov.step();}, gov.arcade)}],
+        ["D5", function(gov) {runner = new Dialogue(Script.scene7, function() {gov.step();})}],
+        ["09", function(gov) {runner = new Game(8, function() {gov.step();}, gov.arcade)}],
+        ["D6", function(gov) {runner = new Dialogue(Script.scene8, function() {gov.step();})}],
+        ["10", function(gov) {runner = new Game(9, function() {gov.step();}, gov.arcade)}],
+        ["11", function(gov) {runner = new Game(10, function() {gov.step();}, gov.arcade)}],
+        ["D7", function(gov) {runner = new Dialogue(Script.scene9, function() {gov.step();})}],
+        ["~12", function(gov) {runner = new Game(11, function() {gov.step();}, gov.arcade)}],
+        ["D8", function(gov) {runner = new Dialogue(Script.bosstalk, function() {gov.step();})}],
+        ["13", function(gov) {runner = new Game(12, function() {gov.step();}, gov.arcade)}],
+        ["D9", function(gov) {runner = new Dialogue(Script.ending, function() {gov.step();})}],
+        ["END", function(gov) {runner = new Dialogue(Script.credits, function() {runner = new TitleScreen();})}],
     ],
 
     arcade: {
@@ -81,6 +83,9 @@ var Script = {
         bg: new Dialogue.Background(
             function (ctx) {
                 ctx.drawImage(gfx.bg[0], 0, 0, this.width, this.height, 32, 16, this.width, this.height);
+                if (this.timer < 200) {
+                    ctx.drawImage(gfx.bg[0], this.width, 0, 16*3, 16*2, 32+64+8, 24, 16*3, 16*2);
+                }
             }
         ),
         script: [
@@ -304,6 +309,92 @@ var Script = {
             [[[3, 5], [22, 14]], "CAT: And if you fail, then I'll make sure you don't ruin this black hole for the rest of us!"],
             [[[3, 5], [23, 14]], "..."],
             [[[3, 5], [23, 14]], "..."],
+        ]
+    },
+    ending: {
+        bg: new Dialogue.Background(
+            function(ctx) {
+                ctx.drawImage(gfx.bg[0], 768, 0, this.width, this.height, 32, 16, this.width, this.height);
+            }
+        ),
+        script: [
+            function() {music.playMusic('power')},
+            [[[5, 6], [8, 2], [23, 16]], "AVA: We did it!"],
+            [[[4, 6], [8, 2], [23, 16]], "LILY: I'm impressed! I didn't think anyone could take on Schrodinger's Cat and win!"],
+            [[[1, 6], [12, 2], [22, 16]], "CAT: I let you win. Sympathy is a weakness."],
+            [[[5, 6], [8, 2], [21, 16]], "AVA: Still counts as a victory to me!"],
+            function() {music.playMusic('carousel')},
+            [[[1, 6], [10, 2], [23, 16]], "AVA: So um, Lilith, it was good doing business with you and now you can go back to scavenging or whatever it is you do..."],
+            [[[1, 6], [11, 2], [23, 16]], "LILY: What's wrong, Captain? Why are you suddenly so eager to get rid of me?"],
+            [[[6, 6], [10, 2], [21, 16]], "CAT: Um, not to interrupt anything, but don't you want me to release your friend?"],
+            [[[3, 6], [10, 2], [22, 16]], "AVA: Yes of course you should release her it's just that..."],
+            [[[6, 6], [10, 2], [22, 16]], "CAT: Look, I'm a busy animal, I've got a lot of things to do at once, okay? I'm going to go get her."],
+            function() {music.playMusic('spaceless')},
+            [[[3, 6], [11, 2], [31, 14]], "STELLA: Ensign Crispin! Good work, we were really in a bind here without you!"],
+            function() {music.playMusic('steady')},
+            [[[3, 6], [14, 2], [29, 14]], "LILY: Did she say ensign? But the Seventh, you told me that you were the captain..."],
+            [[[6, 6], [14, 2], [30, 14]], "STELLA: Is this true? Have you been impersonating a Spacefleet captain, Ensign?"],
+            [[[1, 6], [11, 2], [29, 14]], "STELLA: I'm sorry for my subordinate's behavior, I'm Captain Stella Harmony of the Starship Zip."],
+            [[[1, 6], [10, 2], [29, 14]], "LILY: Ava's been great, Captain Harmony. I'm sure she had her reasons..."],
+            [[[3, 6], [11, 2], [29, 14]], "AVA: I'm sorry, Lily! I just wanted to make you think I was important..."],
+            function() {music.playMusic('spaceless')},
+            [[[5, 6], [8, 2], [29, 14]], "LILY: Aww Ava, you didn't need to try to intimidate me. I helped you out, didn't I?"],
+            [[[1, 6], [8, 2], [31, 14]], "STELLA: Well, since you apologized I don't think any further punishment is necessary..."],
+            [[[5, 6], [11, 2], [29, 14]], "LILY: Is that really how you run a military?"],
+            [[[5, 6], [12, 2], [31, 14]], "STELLA: Sure!"]
+        ]
+    },
+    credits: {
+        bg: new Dialogue.Background(
+            function(ctx) {
+                ctx.drawImage(gfx.bg[0], 256, 0, this.width, this.height, 32, 16, this.width, this.height);
+            }
+        ),
+        bg2: new Dialogue.Background(
+            function (ctx) {
+                ctx.drawImage(gfx.bg[0], 0, 0, this.width, this.height, 32, 16, this.width, this.height);
+                //ctx.drawImage(gfx.bg[0], this.width, 0, 16*3, 16*2, 32+64+8, 24, 16*3, 16*2);
+            }
+        ),
+        bg3: new Dialogue.Background(
+            function(ctx) {
+                ctx.drawImage(gfx.title, 0, 0, 256, 192, 0, 0, 256, 192);
+            }
+        ),
+        bg4: new Dialogue.Background( 
+            function(ctx) {
+                ctx.drawImage(gfx.bg[0], 64, 0, this.width-64, this.height, 32, 16, this.width-64, this.height);
+                ctx.drawImage(gfx.bg[0], this.width-64, 0, 64, this.height, this.width - 32, 16, 64, this.height);
+            }
+        ),
+        script: [
+            function(e) {e.setAuto(true, 240); music.playMusic('imperfection')},
+            [[[4, 8], [8, 12]], "Space Ava\n Credits", Dialogue.textStyle.CENTERED],
+            (e) => {e.setAuto(true, 145); e.bg = Script.opening.bg},
+            [[[4, 2], [24, 6]], "GAME CONCEPT\n \n Nicole", Dialogue.textStyle.CENTERED],
+            [[[1, 2], [25, 6]], "PROGRAMMING\n \n Nicole", Dialogue.textStyle.CENTERED],
+            [[[3, 2], [25, 6]], "LEVEL DESIGN\n \n Nicole", Dialogue.textStyle.CENTERED],
+            (e) => {e.bg = Script.scene5.bg},
+            [[[16, 15], [28, 19]], "GRAPHICS\n \n Nicole", Dialogue.textStyle.CENTERED],
+            [[[17, 15], [27, 19]], "MUSIC\n \n Nicole", Dialogue.textStyle.CENTERED],
+            [[[18, 15]], "SOUND EFFECTS\n \n Nicole", Dialogue.textStyle.CENTERED],
+            (e) => {e.bg = Script.scene9.bg},
+            [[[31, 7], [21, 13]], "TESTING\n \n No one!", Dialogue.textStyle.CENTERED],
+            [[[30, 7], [22, 13]], "TESTING\n \n (sorry)", Dialogue.textStyle.CENTERED],
+            (e) => {e.setAuto(true, 180); e.bg = Script.credits.bg2},
+            [[[29, 4], [26, 12], [24, 16], [4, 20]], "SPECIAL THANKS TO\n howler.js\n \n Javascript audio library", Dialogue.textStyle.CENTERED],
+            [[[29, 4], [26, 12], [24, 16], [4, 20]], "SPECIAL THANKS TO\n DefleMask\n \n Chiptune tracker", Dialogue.textStyle.CENTERED],
+            [[[31, 4], [26, 12], [24, 16], [4, 20]], "SPECIAL THANKS TO\n neonlare\n \n Isometric base sprite", Dialogue.textStyle.CENTERED],
+            (e) => {e.bg = Script.credits.bg},
+            [[[21, 18], [19, 10], [16, 6], [16, 2]], "SPECIAL THANKS TO\n itch.io\n \n Distribution, hosting", Dialogue.textStyle.CENTERED],
+            [[[21, 18], [19, 10], [16, 6], [16, 2]], "SPECIAL THANKS TO\n Sega Enterprises\n \n Master System graphics style", Dialogue.textStyle.CENTERED],
+            [[[23, 18], [20, 10], [18, 6], [18, 2]], "SPECIAL THANKS TO\n You!\n \n Putting up with the\n nonsense that I call a game", Dialogue.textStyle.CENTERED],
+            (e) => {e.setAuto(true, 200); e.bg = Script.scene5.bg},
+            [[[40, 8], [41, 12]], "\n And of course,\n Marion\n", Dialogue.textStyle.CENTERED],
+            (e) => {e.bg = Script.credits.bg3},
+            [[[]], "\n \n A\n Nicole Express\n Production", Dialogue.textStyle.CENTERED],
+            function(e) {e.setAuto(false); e.bg = Script.credits.bg4},
+            [[[35, 8], [36, 12]], "\n Thanks for playing!", Dialogue.textStyle.CENTERED],
         ]
     }
 }

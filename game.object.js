@@ -1273,7 +1273,7 @@ Game.object.boss3 = class extends Game.object {
         this.tile = 16*7;
         this.facing = Dir.Up;
         this.need = true;
-        this.hp = 5;
+        this.hp = 9;
         this.start = false;
         this.flicker = false;
     }

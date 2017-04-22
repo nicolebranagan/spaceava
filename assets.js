@@ -1,6 +1,6 @@
 var music = {
     sounds: ["die", "get", "boom", "crash", "shove", "ghost", "ding1", "ding2"],
-    music: ["prelude", "title", "steady", "spaceless", "power", "chime", "bossy", "jungle", "carousel", "chimier", "harsh", "complain", "deadboing", "chimiest"],
+    music: ["prelude", "title", "steady", "spaceless", "power", "chime", "bossy", "jungle", "carousel", "chimier", "harsh", "complain", "deadboing", "chimiest", "imperfection"],
     data: {},
     loaded: 0,
     initialize: function() {
@@ -19,7 +19,7 @@ var music = {
                 src: ["./music/" + this.music[i] + ".ogg"],
                 volume: 0.6,
                 autoplay: false,
-                loop: true
+                loop: this.music[i] !== "imperfection",
             })
             music.once('load', () => {this.loaded++})
             this.data[this.music[i]] = music;

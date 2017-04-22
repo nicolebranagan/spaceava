@@ -19,12 +19,8 @@ class Governor {
                 return;
             }
         }
-        /*try {
-            if (!__debug)
-                window.location.hash = this.position.toString();
-        } catch (e) { }*/
         if (this.arcade) {
-            if (Script.tickerTape[this.position][0].substring(0, 1) == "D" || Script.tickerTape[this.position][0] == "~") {
+            if (Script.tickerTape[this.position][0].substring(0, 1) == "D" || Script.tickerTape[this.position][0].substring(0, 1) == "~") {
                 this.step();
                 return;
             }

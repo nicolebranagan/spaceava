@@ -8,16 +8,18 @@ class Dialogue {
         this.script = Dialogue.parseScript(28, convo.script);
         this.talkTimer = -1;
         this.string = "";
+        this.auto = false;
+        this.bg = this.convo.bg;
 
         this.next();
     }
 
     update () {
-        this.convo.bg.update();
+        this.bg.update();
         this.blinkTimer++;
         if (this.blinkTimer == 80)
             this.blinkTimer = 0;
-        if (Controls.Shoot) {
+        if (Controls.Shoot && !this.auto) {
             Controls.Shoot = false;
             if (this.talkTimer == -1) {
                 if (this.position == (this.script.length - 1))
@@ -27,17 +29,27 @@ class Dialogue {
             } else {
                 this.talkTimer = -1;
             }
-        } else if (Controls.Enter) {
-            // You can always skip dialog
+        } else if (Controls.Enter && !this.auto) {
+            // You can always skip dialog if not auto
             Controls.Enter = false;
             this.returner();
+        }
+        if (this.talkTimer == -1 && this.auto) {
+            this.autoTimer++;
+            if (this.autoTimer == this.autoTime) {
+                this.autoTimer = 0;
+                if (this.position == (this.script.length - 1))
+                    this.returner();
+                else
+                    this.next();
+            }
         }
         if (this.talkTimer > -1)
             this.talkTimer--;
     }
 
     draw(ctx) {
-        this.convo.bg.draw(ctx);
+        this.bg.draw(ctx);
         /*if (this.chara1 > 0)
             ctx.drawImage(gfx.faces, 32 * this.chara1, 0, 32, 40, 64, 40, 32, 40);
         if (this.chara2 > 0)
@@ -46,7 +58,7 @@ class Dialogue {
             var char = this.chara[i];
             ctx.drawImage(gfx.faces, 32*char[0], 0, 32, 40, 32 + 8*char[1], 40, 32, 40)
         }
-        if (this.blinkTimer > 40 && this.talkTimer == -1) {
+        if (!this.auto && this.blinkTimer > 40 && this.talkTimer == -1) {
             var point = (this.position == (this.script.length - 1) ? 22 : 31);
             ctx.drawImage(gfx.font, point*8, 0, 8, 8, 256-16, 192-16, 8, 8);
         }
@@ -64,7 +76,7 @@ class Dialogue {
         }
         this.position = newpos;
         if (typeof this.script[this.position] == "function") {
-            this.script[this.position]();
+            this.script[this.position](this);
             this.next();
         } else {
             this.string = this.script[this.position][1];
@@ -72,6 +84,15 @@ class Dialogue {
             this.talkTimer = this.script[this.position][1].length;
         }
     }
+
+    setAuto(auto, time) {
+        this.auto = auto;
+        if (auto) {
+            this.autoTime = time;
+            this.autoTimer = 0;
+        }
+    }
+
     // Static methods
     static parseScript(width, script) {
         var newscript = script.slice();
