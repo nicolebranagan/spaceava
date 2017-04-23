@@ -217,21 +217,6 @@ var Dir = {
     Right: 2
 }
 
-// From https://medium.com/@fsufitch/is-javascript-array-sort-stable-46b90822543f
-Array.prototype.stablesort = function(cmp) {
-  let stabilizedThis = this.map((el, index) => [el, index]);
-  let stableCmp = (a, b) => {
-    let order = cmp(a[0], b[0]);
-    if (order != 0) return order;
-    return a[1] - b[1];
-  }
-  stabilizedThis.sort(stableCmp);
-  for (let i=0; i<this.length; i++) {
-    this[i] = stabilizedThis[i][0];
-  }
-  return this;
-}
-
 // Text-drawing functions
 
 function drawText(ctx, x, y, text) {
