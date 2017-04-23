@@ -15,7 +15,7 @@ class Governor {
         if (this.arcade) {
             if (Script.tickerTape[this.position][0] == "END") {
                 let total = Governor.calcTotal(this.storage, Script.par);
-                runner = new ArcadeResultsScreen(this.storage, Script.par);
+                runner = new ArcadeResultsScreen(this.storage, Script.par, total);
                 return;
             } else if (Script.tickerTape[this.position][0].substring(0, 1) == "D" || Script.tickerTape[this.position][0].substring(0, 1) == "~") {
                 this.step();
@@ -34,6 +34,10 @@ class Governor {
             if (isNaN(data[i]) || isNaN(par[i]))
                 continue;
             let del = data[i] - par[i];
+            if (del > 0)
+                del = del / 2;
+            else
+                del = del * 2;
             let gap = par[i] - del;
             if (gap < 0)
                 gap = 0;

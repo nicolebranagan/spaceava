@@ -506,6 +506,10 @@ class ArcadeResultsScreen {
 
         ctx.fillRect(Game.center.x - 14*8, 160, 28*8, 16); 
         if (this.showTotal) {
+            if (__debug) {
+                drawText(ctx, 24, 164, "Total Score:    DEBUG MODE");
+                return
+            }
             drawText(ctx, 24, 164, "Total Score:    "+this.total.toString());
         }
     }

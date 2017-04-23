@@ -50,9 +50,12 @@ class Game {
         } else if (this.mode == Game.Mode.DIE_ANIM) {
             this.deathTimer++;
             if (this.deathTimer == 150) {
-                if (!this.diefunc)
-                    runner = new Game(this.level, this.winfunc, this.arcade, this.arcadefunc, this.turns, this.deaths + 1);
-                else
+                if (!this.diefunc) {
+                    if (__debug)
+                        runner = new Game(this.level, this.winfunc, this.arcade, this.arcadefunc, 0, this.deaths + 1);
+                    else
+                        runner = new Game(this.level, this.winfunc, this.arcade, this.arcadefunc, this.turns, this.deaths + 1);
+                } else
                     this.diefunc();
             }
             //return;
@@ -449,7 +452,8 @@ Game.resultsScreen = class {
         if (this.mode == Game.resultsScreen.State.DISPLAY) {
             drawCenteredText(ctx, 8*8, "Results" + (this.parent.level + 1).toString());
             drawText(ctx, 11*8, 10*8, "Turns: " + this.parent.turns.toString());
-            drawText(ctx, 11*8, 11*8, "Par:   " + Script.par[this.parent.level].toString());          
+            drawText(ctx, 11*8, 11*8, "Par:   " + Script.par[this.parent.level].toString());    
+            if (__debug) drawText(ctx, 11*8, 12*8, "DEBUG MODE")      
             drawText(ctx, 11*8, 13*8, "Deaths: " + this.parent.deaths.toString());
             drawCenteredText(ctx, 15*8, "Press 'Pause'")
         }
