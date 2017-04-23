@@ -177,9 +177,9 @@ class Point {
     getIsometric() {
         return new Point(this.x - this.y, (this.x + this.y) / 2)
     }
-    getCartesian() {
+    /*getCartesian() {
         return new Point((2*this.y + this.x) / 2, (2*this.y - this.x) / 2);
-    }
+    }*/
     add(pt) {
         this.x = this.x + pt.x;
         this.y = this.y + pt.y;

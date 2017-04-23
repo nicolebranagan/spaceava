@@ -12,12 +12,15 @@ class TitleScreen {
                 // New Game
                 runner = new ControlsScreen();
             } else if (this.selection == 1) {
-                // Arcade Mode
-                runner = new Dialogue(Script.arcade, function() {new Governor(0, true)});
-            } else if (this.selection == 2) {
                 // Continue                
                 runner = new PasswordScreen();
+            } else if (this.selection == 2) {
+                // Arcade Mode
+                runner = new Dialogue(Script.arcade, function() {new Governor(0, Governor.Mode.ARCADE)});
             } else if (this.selection == 3) {
+                // Cinema Mode
+                new Governor(0, Governor.Mode.CINEMA);
+            } else if (this.selection == 4) {
                 runner = new OptionsScreen();
             }
         } else if (Controls.Up) {
@@ -25,20 +28,21 @@ class TitleScreen {
                 this.selection--;
             Controls.Up = false;
         }   else if (Controls.Down) {
-            if (this.selection != 3)
+            if (this.selection != 4)
                 this.selection++;
             Controls.Down = false;
         }
     }
     draw(ctx) {
         ctx.drawImage(gfx.title, 0, 0, 256, 192, 0, 0, 256, 192);
-        drawText(ctx, 12*8, 13*8 + 4, "New Game");
-        drawText(ctx, 12*8, 15*8 + 4, "Arcade Mode");
-        drawText(ctx, 12*8, 17*8 + 4, "Continue");
-        drawText(ctx, 10*8, (13 + (this.selection*2))*8 + 4, [26]);
-        drawText(ctx, 12*8, 19*8 + 4, "Options");
-        drawText(ctx, 6*8, 22*8, [9])
-        drawCenteredText(ctx, 22*8, " 2017 Nicole Express");
+        drawText(ctx, 12*8, 12*8, "New Game");
+        drawText(ctx, 12*8, 14*8, "Continue");
+        drawText(ctx, 12*8, 16*8, "Arcade Mode");
+        drawText(ctx, 10*8, (12 + (this.selection*2))*8, [26]);
+        drawText(ctx, 12*8, 18*8, "Cinema Mode");
+        drawText(ctx, 12*8, 20*8, "Options");
+        drawText(ctx, 6*8, 22*8 + 4, [9])
+        drawCenteredText(ctx, 22*8 + 4, " 2017 Nicole Express");
     }
 };
 
@@ -242,8 +246,12 @@ class LevelSelect {
             Controls.Left = false;
             if (this.posx > 0)
                 this.posx--;
-            else
-                this.posx = this.perline-1;
+            else {
+                if (this.posy == 3)
+                    this.posx = 2;
+                else
+                    this.posx = this.perline-1;
+            }
         } else if (Controls.Right) {
             Controls.Right = false;
             let max = this.perline-1;

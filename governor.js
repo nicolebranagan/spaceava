@@ -1,24 +1,29 @@
 'use strict';
 // The governor is the repository of state
 class Governor {
-    constructor(pos, arcade) {
+    constructor(pos, mode) {
         if (!pos)
             this.position = -1;
         else
             this.position = pos - 1;
-        this.arcade = arcade ? true : false;
+        this.mode = mode ? mode : Governor.Mode.STANDARD;
         this.storage = [];
         this.step();
     }
     step() {
         this.position++;
-        if (this.arcade) {
+        if (this.mode == Governor.Mode.ARCADE) {
             if (Script.tickerTape[this.position][0] == "END") {
                 let total = Governor.calcTotal(this.storage, Script.par);
                 runner = new ArcadeResultsScreen(this.storage, Script.par, total);
                 return;
             } else if (Script.tickerTape[this.position][0].substring(0, 1) == "D" || Script.tickerTape[this.position][0].substring(0, 1) == "~") {
                 this.step();
+                return;
+            }
+        } else if (this.mode == Governor.Mode.CINEMA) {
+            if (Script.tickerTape[this.position][0].substring(0, 1) !== "D" && Script.tickerTape[this.position][0].substring(0, 1) !== "E") {
+                runner = new Dialogue(Script.null, () => {this.step();});
                 return;
             }
         }
@@ -45,4 +50,10 @@ class Governor {
         }
         return total;
     }
+}
+
+Governor.Mode = {
+    STANDARD: 0,
+    ARCADE: 1,
+    CINEMA: 2,
 }

@@ -1,6 +1,6 @@
 var Script = { 
     tickerTape: [
-        ["~", function(gov) {runner = new Dialogue(Script.scene1, function() {gov.step();})}],
+        ["D~", function(gov) {runner = new Dialogue(Script.scene1, function() {gov.step();})}],
         ["01", function(gov) {runner = new Game(0, function() {gov.step();}, gov.arcade, function(n, t) {gov.store(n, t)})}],
         ["D0", function(gov) {runner = new Dialogue(Script.scene2, function() {gov.step();})}],
         ["02", function(gov) {runner = new Game(1, function() {gov.step();}, gov.arcade, function(n, t) {gov.store(n, t)})}],
@@ -361,7 +361,7 @@ var Script = {
         ),
         bg3: new Dialogue.Background(
             function(ctx) {
-                ctx.drawImage(gfx.title, 0, 0, 256, 192, 0, 0, 256, 192);
+                ctx.drawImage(gfx.title, 0, 0, 256, 192, 0, 8, 256, 192);
             }
         ),
         bg4: new Dialogue.Background( 
@@ -398,6 +398,15 @@ var Script = {
             [[[]], "\n \n A\n Nicole Express\n Production", Dialogue.textStyle.CENTERED],
             function(e) {e.setAuto(false); e.bg = Script.credits.bg},
             [[[35, 8], [36, 12]], "\n Thanks for playing!", Dialogue.textStyle.CENTERED],
+        ]
+    },
+    null: {
+        bg: new Dialogue.Background(
+            function (ctx) {;}
+        ),
+        script: [
+            function() {music.playMusic("")},
+            [[], "..."]
         ]
     }
 }
