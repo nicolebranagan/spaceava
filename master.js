@@ -160,6 +160,10 @@ window.oncontextmenu = function(event) {
 
 // Helper functions and classes
 
+function inRectangle(x, y, tlx, tly, sx, sy) {
+    return ((x - tlx) >= 0) && ((x - tlx) <= sx) && ((y - tly) >= 0) && ((y - tly) <= sy)
+}
+
 class Point {
     constructor(x, y) {
         if (x instanceof Point) {
@@ -242,14 +246,6 @@ function drawCenteredText(ctx, y, text) {
     drawText(ctx, x, y, text);
 }
 
-function drawNumber(ctx, x, y, num, len) {
-    var chars = num.toString();
-    while(chars.length < len)
-        chars = "0" + chars
-    drawText(ctx, x, y, chars);
-}
-
-var saveEnabled = true;
 var musicEnabled = true;
 var soundEnabled = true;
 
