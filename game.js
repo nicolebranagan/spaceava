@@ -213,19 +213,11 @@ class Game {
                     } else if (a.position.x !== b.position.x) {
                         return a.position.x - b.position.x;
                     } else {
-                        return (drawables.indexOf(b) - drawables.indexOf(a));
+                        return (drawables.indexOf(a) - drawables.indexOf(b));
                     }
                 }
             );
-            /*drawables.stablesort(function(a,b) {
-                return a.position.x - b.position.x;
-            });
-            drawables.stablesort(function(a,b) {
-                return a.position.y - b.position.y;
-            });
-            drawables.stablesort(function(a,b) {
-                return a.position.layer - b.position.layer;
-            });*/
+
             drawables.forEach(function (e) {e.draw(ctx);});
         } else if (drawPlayer) {
             var drawPt = this.stage.center.getIsometric();
@@ -248,6 +240,7 @@ class Game {
             }
 
         if (__debug) {
+            ctx.fillRect(0, 0, 3*8, 3*8);
             drawText(ctx, 0, 8, "M"+this.mode.toString());
             drawText(ctx, 0, 16, "T"+this.turns.toString());
         }
@@ -456,7 +449,7 @@ Game.resultsScreen = class {
         if (this.mode == Game.resultsScreen.State.DISPLAY) {
             drawCenteredText(ctx, 8*8, "Results" + (this.parent.level + 1).toString());
             drawText(ctx, 11*8, 10*8, "Turns: " + this.parent.turns.toString());
-            drawText(ctx, 11*8, 11*8, "Par: ");          
+            drawText(ctx, 11*8, 11*8, "Par:   " + Script.par[this.parent.level].toString());          
             drawText(ctx, 11*8, 13*8, "Deaths: " + this.parent.deaths.toString());
             drawCenteredText(ctx, 15*8, "Press 'Pause'")
         }
@@ -491,6 +484,7 @@ Game.resultsScreen = class {
 
     cycle() {
         if (Controls.Enter) {
+            this.parent.arcadefunc(this.parent.level, this.parent.turns);
             this.parent.winfunc();
         }
     }

@@ -7,24 +7,38 @@ class Governor {
         else
             this.position = pos - 1;
         this.arcade = arcade ? true : false;
+        this.storage = [];
         this.step();
     }
     step() {
         this.position++;
-        if (__debug) {
-            // Test code; shouldn't make it into the final version
-            if (this.position == Script.tickerTape.length) {
-                console.log("Ran out of tape!")
-                runner = new TitleScreen();
-                return;
-            }
-        }
         if (this.arcade) {
-            if (Script.tickerTape[this.position][0].substring(0, 1) == "D" || Script.tickerTape[this.position][0].substring(0, 1) == "~") {
+            if (Script.tickerTape[this.position][0] == "END") {
+                let total = Governor.calcTotal(this.storage, Script.par);
+                runner = new ArcadeResultsScreen(this.storage, Script.par);
+                return;
+            } else if (Script.tickerTape[this.position][0].substring(0, 1) == "D" || Script.tickerTape[this.position][0].substring(0, 1) == "~") {
                 this.step();
                 return;
             }
         }
         Script.tickerTape[this.position][1](this);
+    }
+    store(n, t) {
+        this.storage[n] = t;
+    }
+
+    static calcTotal(data, par) {
+        var total = 100;
+        for (var i = 0; i < data.length; i++) {
+            if (isNaN(data[i]) || isNaN(par[i]))
+                continue;
+            let del = data[i] - par[i];
+            let gap = par[i] - del;
+            if (gap < 0)
+                gap = 0;
+            total = total + Math.floor((gap/par[i])*100);
+        }
+        return total;
     }
 }

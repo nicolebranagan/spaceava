@@ -27,6 +27,8 @@ var Script = {
         ["END", function(gov) {runner = new Dialogue(Script.credits, function() {runner = new TitleScreen();})}],
     ],
 
+    par: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, NaN, 1],
+
     arcade: {
         bg: new Dialogue.Background(
             function (ctx) {

@@ -246,7 +246,10 @@ class LevelSelect {
                 this.posx = this.perline-1;
         } else if (Controls.Right) {
             Controls.Right = false;
-            if (this.posx < (this.perline-1))
+            let max = this.perline-1;
+            if (this.posy == 3)
+                max = 2;
+            if (this.posx < max)
                 this.posx++;
             else
                 this.posx = 0;
@@ -254,14 +257,19 @@ class LevelSelect {
             Controls.Up = false;
             if (this.posy > 0)
                 this.posy--;
-            else
+            else {
                 this.posy = this.rows - 1;
+                if (this.posx > 2)
+                    this.posy--;
+            }
         } else if (Controls.Down) {
             Controls.Down = false;
             if (this.posy < (this.rows-1))
                 this.posy++
             else
                 this.posy = 0;
+            if (this.posy == 3 && this.posx > 2)
+                this.posx = 2;
         } else if (Controls.Enter || Controls.Shoot) {
             Controls.Enter = false;
             Controls.Shoot = false;
@@ -448,6 +456,75 @@ class PasswordScreen {
             this.triedPass = "";
         } else {
             SaveGame.getStage(attempt);
+        }
+    }
+}
+
+class ArcadeResultsScreen {
+    constructor(data, par, total) {
+        this.data = data;
+        this.par = par;
+        this.total = total;
+        this.stages = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12];
+        this.timer = 0;
+        music.playMusic('spaceless');
+        this.showTotal = false;
+
+        for (var i = 0; i < this.stages.length; i++) {
+            if (this.data[this.stages[i]] > 9999)
+                this.data[this.stages[i]] = 9999;
+        }
+    }
+
+    draw(ctx) {
+        for (var i = 0; i < (256/16); i++)
+            for (var j = 0; j < (192/16); j++) {
+                ctx.drawImage(gfx.tiles, (254-9)*16, 0, 16, 16, i*16, j*16, 16, 16);
+            }
+
+        ctx.fillRect(Game.center.x - 9*8, 4, 18*8, 3*8); 
+        drawCenteredText(ctx, 8, "Space Ava");
+        drawCenteredText(ctx, 16, "Arcade Results");
+
+        ctx.fillRect(Game.center.x - 14*8, 36, 28*8, 14*8+4); 
+        drawText(ctx, 24, 40, "               Turns   Par")
+        var tiles = Math.min(Math.floor(this.timer/40), this.stages.length)
+        for(var i = 0; i < tiles; i++) {
+            let stg = (this.stages[i] + 1).toString();
+            if (this.stages[i] < 9)
+                stg = stg + " ";
+            let data = this.data[this.stages[i]].toString();
+            if (data.length < 4)
+                while(data.length < 4)
+                    data = " " + data;
+            let par = this.par[this.stages[i]].toString();
+            if (par.length < 3)
+                while(par.length < 3)
+                    par = " " + par;
+            drawText(ctx, 24, 52 + (8*i), "Singularity"+stg+"   "+data+"   "+par);
+        }
+
+        ctx.fillRect(Game.center.x - 14*8, 160, 28*8, 16); 
+        if (this.showTotal) {
+            drawText(ctx, 24, 164, "Total Score:    "+this.total.toString());
+        }
+    }
+
+    update() {
+        if (this.timer < ((this.stages.length) * 40)) {
+            this.timer++;
+            if (this.timer % 40 == 0 && this.timer !== 0)
+                music.playSound('ding1');
+        } else if (this.timer < ((this.stages.length) * 40) + 80) {
+            this.timer ++;
+            if (this.timer == ((this.stages.length) * 40) + 80) {
+                music.playSound('get');
+                this.showTotal = true;
+            }
+        } else {
+            if (Controls.Enter || Controls.Shoot) {
+                new Governor(Script.tickerTape.length-1);
+            }
         }
     }
 }
