@@ -1,6 +1,6 @@
 'use strict';
 class Game {
-    constructor(stage, winfunc, arcade, turns, deaths) {
+    constructor(stage, winfunc, arcade, arcadefunc, turns, deaths) {
         this.winfunc = winfunc;
         this.diefunc = null;
         this.level = stage;
@@ -17,6 +17,7 @@ class Game {
         this.startString = "Singularity" + (stage+1).toString();
         this.willDie = false;
         this.arcade = arcade;
+        this.arcadefunc = arcadefunc;
         this.deaths = deaths ? deaths : 0;
 
         if (!this.arcade)
@@ -50,7 +51,7 @@ class Game {
             this.deathTimer++;
             if (this.deathTimer == 150) {
                 if (!this.diefunc)
-                    runner = new Game(this.level, this.winfunc, this.arcade, this.turns, this.deaths + 1);
+                    runner = new Game(this.level, this.winfunc, this.arcade, this.arcadefunc, this.turns, this.deaths + 1);
                 else
                     this.diefunc();
             }
@@ -203,7 +204,20 @@ class Game {
                         drawables.push(e);
                 }
             }
-            drawables.stablesort(function(a,b) {
+            drawables.sort(
+                function(a,b) {
+                    if (a.position.layer !== b.position.layer) {
+                        return a.position.layer - b.position.layer;
+                    } else if (a.position.y !== b.position.y) {
+                        return a.position.y - b.position.y;
+                    } else if (a.position.x !== b.position.x) {
+                        return a.position.x - b.position.x;
+                    } else {
+                        return (drawables.indexOf(b) - drawables.indexOf(a));
+                    }
+                }
+            );
+            /*drawables.stablesort(function(a,b) {
                 return a.position.x - b.position.x;
             });
             drawables.stablesort(function(a,b) {
@@ -211,7 +225,7 @@ class Game {
             });
             drawables.stablesort(function(a,b) {
                 return a.position.layer - b.position.layer;
-            });
+            });*/
             drawables.forEach(function (e) {e.draw(ctx);});
         } else if (drawPlayer) {
             var drawPt = this.stage.center.getIsometric();
