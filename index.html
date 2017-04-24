@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
 <title>Space Ava</title>
 <style>
-body {background-color: #FFF;
+body {background-color: #000;
     image-rendering: -moz-crisp-edges;
     image-rendering: -o-crisp-edges;
     image-rendering: -webkit-optimize-contrast;
@@ -16,16 +16,23 @@ body {background-color: #FFF;
 #gamecanvas { width: 512px; height: 384px; background-color: #000000;}
 #gamecontrols { width: 100%; display:none; overflow:hidden; -webkit-touch-callout: none !important; }
 /* Media queries */
-@media all and (max-width:999999px) and (min-width:768px) {
-	#gamecanvas { width: 768px; height: 576px;}
-}
+
 @media all and (max-width:511px) {
 	#gamecanvas { width: 256px; height: 192px }
+}
+@media all and (min-width:768px) and (min-height:576px) {
+	#gamecanvas { width: 768px; height: 576px;}
+}
+@media all and (min-width:1024px) and (min-height:768px) {
+	#gamecanvas { width: 1024px; height: 768px;}
+}
+@media all and (min-width:1280px) and (min-height:960px) {
+	#gamecanvas { width: 1280px; height: 960px;}
 }
 </style>
 </head>
 
-<body bgcolor=#FFF>
+<body bgcolor=#000>
 
 <center><div id="holderdiv">
 <canvas id="gamecanvas" width="256" height="192"></canvas>

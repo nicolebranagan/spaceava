@@ -7,10 +7,7 @@ class Governor {
         else
             this.position = pos - 1;
         this.mode = mode ? mode : Governor.Mode.STANDARD;
-        if (mode == Governor.Mode.ARCADE)
-            this.arcade = true;
-        else
-            this.arcade = false;
+        this.arcade = (mode == Governor.Mode.ARCADE);
         this.storage = [];
         this.step();
     }
