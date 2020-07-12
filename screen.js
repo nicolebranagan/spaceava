@@ -41,8 +41,8 @@ class TitleScreen {
         drawText(ctx, 10*8, (12 + (this.selection*2))*8, [26]);
         drawText(ctx, 12*8, 18*8, "Cinema Mode");
         drawText(ctx, 12*8, 20*8, "Options");
-        drawText(ctx, 6*8, 22*8 + 4, [9])
-        drawCenteredText(ctx, 22*8 + 4, " 2017 Nicole Express");
+        drawText(ctx, 4*8 + 4, 22*8 + 4, [9])
+        drawCenteredText(ctx, 22*8 + 4, " 2017-20 Nicole Express");
     }
 };
 
@@ -53,6 +53,7 @@ class OptionsScreen {
         this.currentmusic = 0;
         this.locations = [8*8, 10*8, 13*8, 16*8, 21*8];
         this.bg = 2;
+        this.timer = 20;
         music.playMusic("");
     }
 
@@ -80,13 +81,18 @@ class OptionsScreen {
         ctx.fillRect(Game.center.x - 9*8, this.locations[4] - 4, 10*8, 2*8);
         drawText(ctx, 10*8, this.locations[4], "Return")
 
-        ctx.fillRect(Game.center.x + 4*8, this.locations[4] - 4, 5*8, 2*8);
-        drawText(ctx, 21*8 - 4, this.locations[4], "v . ")
-        drawText(ctx, 21*8 - 4, this.locations[4] + 1, " 1 0")
+        ctx.fillRect(Game.center.x + 3*8, this.locations[4] - 4, 6*8, 2*8);
+        drawText(ctx, 20*8 - 4, this.locations[4], "v . ")
+        drawText(ctx, 20*8 - 4, this.locations[4] + 1, " 1 01")
         
         drawText(ctx, 8*8, this.locations[this.selection], [26]);
     }
     update() {
+        if (this.timer > 0) {
+            this.timer--;
+            return;
+        }
+
         if (Controls.Enter || Controls.Shoot) {
             Controls.Enter = false;
             Controls.Shoot = false;
